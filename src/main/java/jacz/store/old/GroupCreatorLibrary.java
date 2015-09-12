@@ -1,9 +1,9 @@
 package jacz.store.old;
 
-import jacz.store.Database;
-import jacz.store.common.GroupCreator;
-import jacz.store.db_mediator.DBException;
-import jacz.store.db_mediator.DBMediator;
+import jacz.store.old2.Database;
+import jacz.store.old2.common.GroupCreator;
+import jacz.store.old2.db_mediator.DBException;
+import jacz.store.old2.db_mediator.DBMediator;
 
 import java.io.IOException;
 import java.text.ParseException;

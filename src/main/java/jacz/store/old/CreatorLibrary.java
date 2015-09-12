@@ -1,6 +1,6 @@
 package jacz.store.old;
 
-import jacz.store.common.Creator;
+import jacz.store.old2.common.Creator;
 
 /**
  * Joint creators (single creators, groups, companies) library

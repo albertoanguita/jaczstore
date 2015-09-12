@@ -1,7 +1,5 @@
 package jacz.store.old;
 
-import jacz.store.files.OldFile;
-
 /**
  * OldFile (all types) library
  */

@@ -1,9 +1,9 @@
 package jacz.store.old;
 
-import jacz.store.Filter;
-import jacz.store.common.LibraryItem;
-import jacz.store.db_mediator.CorruptDataException;
-import jacz.store.db_mediator.DBException;
+import jacz.store.old2.Filter;
+import jacz.store.old2.common.LibraryItem;
+import jacz.store.old2.db_mediator.CorruptDataException;
+import jacz.store.old2.db_mediator.DBException;
 
 import java.util.*;
 

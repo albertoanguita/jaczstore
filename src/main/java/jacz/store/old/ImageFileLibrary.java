@@ -1,10 +1,5 @@
 package jacz.store.old;
 
-import jacz.store.Database;
-import jacz.store.db_mediator.DBException;
-import jacz.store.db_mediator.DBMediator;
-import jacz.store.files.ImageFile;
-
 /**
  * Image files library
  */

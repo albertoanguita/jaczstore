@@ -4,7 +4,7 @@
 
   <groupId>jacz.store</groupId>
   <artifactId>store</artifactId>
-  <version>0.1</version>
+  <version>0.1a</version>
   <packaging>jar</packaging>
 
   <name>store</name>

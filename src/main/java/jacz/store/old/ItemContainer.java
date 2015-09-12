@@ -1,11 +1,11 @@
 package jacz.store.old;
 
-import jacz.store.Database;
-import jacz.store.Filter;
-import jacz.store.common.LibraryItem;
-import jacz.store.db_mediator.CorruptDataException;
-import jacz.store.db_mediator.DBException;
-import jacz.store.db_mediator.DBMediator;
+import jacz.store.old2.Database;
+import jacz.store.old2.Filter;
+import jacz.store.old2.common.LibraryItem;
+import jacz.store.old2.db_mediator.CorruptDataException;
+import jacz.store.old2.db_mediator.DBException;
+import jacz.store.old2.db_mediator.DBMediator;
 
 import java.io.IOException;
 import java.io.Serializable;
