@@ -7,10 +7,6 @@ import java.util.List;
  */
 public final class Chapter extends LibraryItem {
 
-    private String title;
-
-    private String originalTitle;
-
     // todo genres
     // todo countries
 

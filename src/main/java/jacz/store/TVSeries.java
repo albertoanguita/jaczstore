@@ -7,12 +7,6 @@ import java.util.List;
  */
 public final class TVSeries extends LibraryItem {
 
-    private String title;
-
-    private String originalTitle;
-
-    private Integer year;
-
     // todo genres
     // todo countries
 

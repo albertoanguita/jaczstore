@@ -5,13 +5,7 @@ import java.util.List;
 /**
  * Created by Alberto on 12/09/2015.
  */
-public final class Movie extends LibraryItem {
-
-    private String title;
-
-    private String originalTitle;
-
-    private Integer year;
+public final class Movie extends CreationItem {
 
     // todo genres
     // todo countries
