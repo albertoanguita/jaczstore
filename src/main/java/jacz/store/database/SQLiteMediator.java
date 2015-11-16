@@ -62,12 +62,6 @@ public class SQLiteMediator implements DatabaseMediator {
                         ")"
         );
         connection.createStatement().executeUpdate(
-                "CREATE TABLE season (" +
-                        "id INTEGER NOT NULL PRIMARY KEY, " +
-                        "name TEXT " +
-                        ")"
-        );
-        connection.createStatement().executeUpdate(
                 "CREATE TABLE chapter (" +
                         "id INTEGER NOT NULL PRIMARY KEY, " +
                         "title TEXT, " +

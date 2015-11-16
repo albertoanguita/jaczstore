@@ -3,5 +3,5 @@ package jacz.store;
 /**
  * Created by Alberto on 12/09/2015.
  */
-public class Person extends NamedStoreItem {
+public final class Person extends NamedLibraryItem {
 }

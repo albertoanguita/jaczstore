@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by Alberto on 12/09/2015.
  */
-public class NamedStoreItem extends StoreItem {
+public class NamedLibraryItem extends LibraryItem {
 
     private String name;
 

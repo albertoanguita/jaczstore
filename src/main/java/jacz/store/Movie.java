@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by Alberto on 12/09/2015.
  */
-public class Movie {
+public final class Movie extends LibraryItem {
 
     private String title;
 
@@ -15,11 +15,14 @@ public class Movie {
 
     // todo genres
     // todo countries
+    // todo image hash
 
     private List<Person> directors;
 
     private List<Person> actors;
 
     private List<Company> ProductionCompanies;
+
+    private List<ExternalURL> externalURLs;
 
 }

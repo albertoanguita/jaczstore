@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by Alberto on 12/09/2015.
  */
-public class TVSeries {
+public final class TVSeries extends LibraryItem {
 
     private String title;
 
@@ -21,4 +21,6 @@ public class TVSeries {
     private List<Person> actors;
 
     private List<Company> ProductionCompanies;
+
+    private List<Chapter> chapters;
 }

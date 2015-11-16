@@ -3,7 +3,7 @@ package jacz.store;
 /**
  * Created by Alberto on 12/09/2015.
  */
-public class SubtitleFile extends File {
+public final class SubtitleFile extends File {
 
     // todo language
 }

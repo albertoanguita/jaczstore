@@ -6,12 +6,12 @@ package jacz.store.database;
 public class ID {
 
     public class TABLE {
-        public static final String MOVIE = "Movie";
-        public static final String TV_SERIES = "TVSeries";
-        public static final String SEASON = "Season";
-        public static final String CHAPTER = "Chapter";
-        public static final String PERSON = "Person";
-        public static final String COMPANY = "Company";
+        public static final String MOVIE = "movie";
+        public static final String TV_SERIES = "tv_series";
+        public static final String CHAPTER = "chapter";
+        public static final String PERSON = "person";
+        public static final String COMPANY = "company";
+        public static final String EXTERNAL_URL = "external_url";
     }
 
     public class FIELD {
