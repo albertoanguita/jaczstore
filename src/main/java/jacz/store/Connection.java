@@ -3,6 +3,7 @@ package jacz.store;
 import jacz.store.database.DatabaseMediator;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Alberto on 12/09/2015.
@@ -31,5 +32,35 @@ public class Connection {
 
     }
 
-
+//    public List<Movie> getMovies() {
+//
+//    }
+//
+//    public List<TVSeries> getTVSeries() {
+//
+//    }
+//
+//    public List<Person> getPersons() {
+//
+//    }
+//
+//    public List<Company> getCompanies() {
+//
+//    }
+//
+//    public void inflateMovies(List<Movie> movies) {
+//
+//    }
+//
+//    public void inflateTVSeries(List<TVSeries> tvSeries) {
+//
+//    }
+//
+//    public void inflatePersons(List<Person> persons) {
+//
+//    }
+//
+//    public void inflateCompanies(List<Company> companies) {
+//
+//    }
 }

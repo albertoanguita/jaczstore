@@ -2,25 +2,26 @@ package jacz.store;
 
 import com.neovisionaries.i18n.CountryCode;
 import jacz.store.database.DatabaseMediator;
+import jacz.store.util.GenreCode;
 
 import java.util.List;
 
 /**
- * Created by Alberto on 12/09/2015.
+ * Created by Alberto on 16/11/2015.
  */
-public final class Chapter extends CreationItem {
+public abstract class ProducedCreationItem extends CreationItem {
 
-    private String season;
+    private List<Company> ProductionCompanies;
 
-    private int minutes;
+    private List<GenreCode> genres;
 
-    private List<VideoFile> videoFiles;
+    private ImageFile imageFile;
 
-    public Chapter(DatabaseMediator databaseMediator) {
+    public ProducedCreationItem(DatabaseMediator databaseMediator) {
         super(databaseMediator);
     }
 
-    public Chapter(
+    public ProducedCreationItem(
             DatabaseMediator databaseMediator,
             Integer id,
             int timestamp,
@@ -31,22 +32,12 @@ public final class Chapter extends CreationItem {
             List<Person> actors,
             List<CountryCode> countries,
             List<String> externalURLs,
-            String season,
-            int minutes,
-            List<VideoFile> videoFiles) {
+            List<Company> productionCompanies,
+            List<GenreCode> genres,
+            ImageFile imageFile) {
         super(databaseMediator, id, timestamp, title, originalTitle, year, creatorsDirectors, actors, countries, externalURLs);
-        this.season = season;
-        this.minutes = minutes;
-        this.videoFiles = videoFiles;
-    }
-
-    @Override
-    public void save() {
-        databaseMediator.saveChapter(this);
-    }
-
-    @Override
-    public void inflate() {
-
+        ProductionCompanies = productionCompanies;
+        this.genres = genres;
+        this.imageFile = imageFile;
     }
 }

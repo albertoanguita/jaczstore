@@ -47,6 +47,19 @@
               </execution>
             </executions>
           </plugin>
+        <plugin>
+            <groupId>org.javalite</groupId>
+            <artifactId>activejdbc-instrumentation</artifactId>
+            <version>1.4.11</version>
+            <executions>
+                <execution>
+                    <phase>process-classes</phase>
+                    <goals>
+                        <goal>instrument</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
       </plugins>
   </build>
     <distributionManagement>
@@ -68,5 +81,17 @@
     	<artifactId>sqlite-jdbc</artifactId>
     	<version>3.8.11.1</version>
     </dependency>
+    <dependency>
+        <groupId>com.neovisionaries</groupId>
+        <artifactId>nv-i18n</artifactId>
+        <version>1.17</version>
+    </dependency>
+    <dependency>
+        <groupId>org.javalite</groupId>
+        <artifactId>activejdbc</artifactId>
+        <version>1.4.11</version>
+    </dependency>
   </dependencies>
+
+
 </project>
