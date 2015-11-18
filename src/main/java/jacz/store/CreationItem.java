@@ -1,7 +1,7 @@
 package jacz.store;
 
 import com.neovisionaries.i18n.CountryCode;
-import jacz.store.database.DatabaseMediator;
+import jacz.store.database_old.DatabaseMediator;
 
 import java.util.List;
 

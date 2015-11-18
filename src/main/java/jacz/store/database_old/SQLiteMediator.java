@@ -1,13 +1,6 @@
-package jacz.store.database;
-
-import jacz.store.Company;
-import jacz.store.Movie;
-import jacz.store.Person;
-import jacz.store.TVSeries;
+package jacz.store.database_old;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Alberto on 12/09/2015.

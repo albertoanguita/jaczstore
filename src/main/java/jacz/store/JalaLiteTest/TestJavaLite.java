@@ -27,16 +27,16 @@ public class TestJavaLite {
 //        for (Person person : people) {
 //            System.out.println("Person " + person.get("id") + ": " + person.get("name"));
 //        }
-        List<Movie> movies = Movie.findAll();
-        for (Movie movie : movies) {
-            System.out.println("Movie " + movie.getString("id") + ": " + movie.get("title") + ": " + movie.getInteger("year"));
-        }
+//        List<Movie> movies = Movie.findAll();
+//        for (Movie movie : movies) {
+//            System.out.println("Movie " + movie.getString("id") + ": " + movie.get("title") + ": " + movie.getInteger("year"));
+//        }
 
 
 
-        System.out.println("-------------");
-        Movie movie = Movie.findById(7);
-        Integer year = movie.getInteger("year");
+//        System.out.println("-------------");
+//        Movie movie = Movie.findById(7);
+//        Integer year = movie.getInteger("year");
 
 
 //        Person newPerson = new Person("Alice");
@@ -50,13 +50,13 @@ public class TestJavaLite {
 //        mp.saveIt();
 
 
-        logger.info("retrieving actors..");
-        List<Person> persons = movie.get(Person.class, "type = ? ", Person.TYPE.actor.name());
-
-        //get all patients of this doctor
-//        List<Person> actors = movie.getAll(Person.class);
-        for (Person person : persons) {
-            System.out.println("Person " + person.get("id") + ": " + person.get("name"));
-        }
+//        logger.info("retrieving actors..");
+//        List<Person> persons = movie.get(Person.class, "type = ? ", Person.TYPE.actor.name());
+//
+//        //get all patients of this doctor
+////        List<Person> actors = movie.getAll(Person.class);
+//        for (Person person : persons) {
+//            System.out.println("Person " + person.get("id") + ": " + person.get("name"));
+//        }
     }
 }

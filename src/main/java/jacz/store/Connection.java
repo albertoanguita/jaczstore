@@ -1,9 +1,6 @@
 package jacz.store;
 
-import jacz.store.database.DatabaseMediator;
-
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Alberto on 12/09/2015.

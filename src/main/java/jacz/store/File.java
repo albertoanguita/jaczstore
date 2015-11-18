@@ -1,6 +1,6 @@
 package jacz.store;
 
-import jacz.store.database.DatabaseMediator;
+import jacz.store.database_old.DatabaseMediator;
 
 /**
  * Created by Alberto on 12/09/2015.

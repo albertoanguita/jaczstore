@@ -1,6 +1,6 @@
 package jacz.store;
 
-import jacz.store.database.DatabaseMediator;
+import jacz.store.database_old.DatabaseMediator;
 
 /**
  * Created by Alberto on 12/09/2015.
@@ -8,8 +8,6 @@ import jacz.store.database.DatabaseMediator;
 public abstract class LibraryItem {
 
     protected final DatabaseMediator databaseMediator;
-
-    protected boolean isInflated;
 
     private Integer id;
 
@@ -20,7 +18,6 @@ public abstract class LibraryItem {
      */
     public LibraryItem(DatabaseMediator databaseMediator) {
         this.databaseMediator = databaseMediator;
-        isInflated = false;
         id = null;
         updateTimestamp();
     }
@@ -33,7 +30,6 @@ public abstract class LibraryItem {
      */
     public LibraryItem(DatabaseMediator databaseMediator, Integer id, int timestamp) {
         this.databaseMediator = databaseMediator;
-        isInflated = false;
         this.id = id;
         this.timestamp = timestamp;
     }

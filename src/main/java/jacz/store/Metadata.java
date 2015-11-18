@@ -11,11 +11,11 @@ public class Metadata {
 
     private String databaseIdentifier;
 
+    private Date creationDate;
+
     private Date lastAccess;
 
     private Date lastUpdate;
-
-    private Date creationDate;
 
     private int lastTimestamp;
 }

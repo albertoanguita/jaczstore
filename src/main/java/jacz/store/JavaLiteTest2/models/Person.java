@@ -1,14 +1,14 @@
-package jacz.store.JalaLiteTest;
+package jacz.store.JavaLiteTest2.models;
 
 import org.javalite.activejdbc.Model;
 
 /**
  * Created by Alberto on 17/11/2015.
  */
-public class Person /*extends Model */{
+public class Person extends Model {
 
-    enum TYPE {actor, director}
-//
+    public enum TYPE {actor, director}
+
 //    public Person() {
 //    }
 //
