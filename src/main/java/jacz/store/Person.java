@@ -9,21 +9,8 @@ import java.util.List;
  */
 public final class Person extends NamedLibraryItem {
 
-    public Person(DatabaseMediator databaseMediator) {
-        super(databaseMediator);
+    public Person() {
+        super();
     }
 
-    public Person(DatabaseMediator databaseMediator, Integer id, int timestamp, String name, List<String> aliases) {
-        super(databaseMediator, id, timestamp, name, aliases);
-    }
-
-    @Override
-    public void save() {
-        databaseMediator.savePerson(this);
-    }
-
-    @Override
-    public void inflate() {
-
-    }
 }

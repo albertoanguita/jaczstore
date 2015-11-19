@@ -13,36 +13,8 @@ public final class TVSeries extends ProducedCreationItem {
 
     private List<Chapter> chapters;
 
-    public TVSeries(DatabaseMediator databaseMediator) {
-        super(databaseMediator);
+    public TVSeries() {
+        super();
     }
 
-    public TVSeries(
-            DatabaseMediator databaseMediator,
-            Integer id,
-            int timestamp,
-            String title,
-            String originalTitle,
-            Integer year,
-            List<Person> creatorsDirectors,
-            List<Person> actors,
-            List<CountryCode> countries,
-            List<String> externalURLs,
-            List<Company> productionCompanies,
-            List<GenreCode> genres,
-            ImageFile imageFile,
-            List<Chapter> chapters) {
-        super(databaseMediator, id, timestamp, title, originalTitle, year, creatorsDirectors, actors, countries, externalURLs, productionCompanies, genres, imageFile);
-        this.chapters = chapters;
-    }
-
-    @Override
-    public void save() {
-        databaseMediator.saveTVSeries(this);
-    }
-
-    @Override
-    public void inflate() {
-
-    }
 }

@@ -13,11 +13,6 @@ public abstract class CreationItem extends LibraryItem {
         super();
     }
 
-    public CreationItem(String title) {
-        super();
-        set("title", title, false);
-    }
-
     public CreationItem(Model model) {
         super(model);
     }

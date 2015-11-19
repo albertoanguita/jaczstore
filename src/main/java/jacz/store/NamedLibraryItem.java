@@ -13,18 +13,7 @@ public abstract class NamedLibraryItem extends LibraryItem {
 
     private List<String> aliases;
 
-    public NamedLibraryItem(DatabaseMediator databaseMediator) {
-        super(databaseMediator);
-    }
-
-    public NamedLibraryItem(
-            DatabaseMediator databaseMediator,
-            Integer id,
-            int timestamp,
-            String name,
-            List<String> aliases) {
-        super(databaseMediator, id, timestamp);
-        this.name = name;
-        this.aliases = aliases;
+    public NamedLibraryItem() {
+        super();
     }
 }

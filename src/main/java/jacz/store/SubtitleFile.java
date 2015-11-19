@@ -10,28 +10,8 @@ public final class SubtitleFile extends File {
 
     private LanguageCode language;
 
-    public SubtitleFile(DatabaseMediator databaseMediator) {
-        super(databaseMediator);
+    public SubtitleFile() {
+        super();
     }
 
-    public SubtitleFile(
-            DatabaseMediator databaseMediator,
-            Integer id,
-            int timestamp,
-            String hash,
-            Long length,
-            LanguageCode language) {
-        super(databaseMediator, id, timestamp, hash, length);
-        this.language = language;
-    }
-
-    @Override
-    public void save() {
-        databaseMediator.saveSubtitleFile(this);
-    }
-
-    @Override
-    public void inflate() {
-
-    }
 }

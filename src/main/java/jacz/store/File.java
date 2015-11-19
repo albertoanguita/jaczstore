@@ -11,13 +11,8 @@ public abstract class File extends LibraryItem {
 
     private Long length;
 
-    public File(DatabaseMediator databaseMediator) {
-        super(databaseMediator);
+    public File() {
+        super();
     }
 
-    public File(DatabaseMediator databaseMediator, Integer id, int timestamp, String hash, Long length) {
-        super(databaseMediator, id, timestamp);
-        this.hash = hash;
-        this.length = length;
-    }
 }

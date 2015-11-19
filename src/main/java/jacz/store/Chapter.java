@@ -2,6 +2,7 @@ package jacz.store;
 
 import com.neovisionaries.i18n.CountryCode;
 import jacz.store.database_old.DatabaseMediator;
+import org.javalite.activejdbc.Model;
 
 import java.util.List;
 
@@ -16,37 +17,14 @@ public final class Chapter extends CreationItem {
 
     private List<VideoFile> videoFiles;
 
-    public Chapter(DatabaseMediator databaseMediator) {
-        super(databaseMediator);
+    public Chapter() {
+        super();
     }
 
-    public Chapter(
-            DatabaseMediator databaseMediator,
-            Integer id,
-            int timestamp,
-            String title,
-            String originalTitle,
-            Integer year,
-            List<Person> creatorsDirectors,
-            List<Person> actors,
-            List<CountryCode> countries,
-            List<String> externalURLs,
-            String season,
-            int minutes,
-            List<VideoFile> videoFiles) {
-        super(databaseMediator, id, timestamp, title, originalTitle, year, creatorsDirectors, actors, countries, externalURLs);
-        this.season = season;
-        this.minutes = minutes;
-        this.videoFiles = videoFiles;
-    }
+//    @Override
+//    protected Model buildModel() {
+//        return null;
+//    }
 
-    @Override
-    public void save() {
-        databaseMediator.saveChapter(this);
-    }
 
-    @Override
-    public void inflate() {
-
-    }
 }

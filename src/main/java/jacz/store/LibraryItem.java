@@ -1,41 +1,43 @@
 package jacz.store;
 
-import jacz.store.database_old.DatabaseMediator;
+import org.javalite.activejdbc.LazyList;
+import org.javalite.activejdbc.Model;
 
 /**
  * Created by Alberto on 12/09/2015.
  */
 public abstract class LibraryItem {
 
-    protected final DatabaseMediator databaseMediator;
-
-    private Integer id;
+    private Model model;
 
     private int timestamp;
 
-    /**
-     * New item, not in the database
-     */
-    public LibraryItem(DatabaseMediator databaseMediator) {
-        this.databaseMediator = databaseMediator;
-        id = null;
+    public LibraryItem() {
+        this.model = buildModel();
         updateTimestamp();
+        save();
     }
 
-    /**
-     * Item recovered from the database
-     *
-     * @param id        item id
-     * @param timestamp timestamp of last item update
-     */
-    public LibraryItem(DatabaseMediator databaseMediator, Integer id, int timestamp) {
-        this.databaseMediator = databaseMediator;
-        this.id = id;
-        this.timestamp = timestamp;
+    public LibraryItem(Model model) {
+        this.model = model;
     }
+
+    protected abstract Model buildModel();
 
     public Integer getId() {
-        return id;
+        return (Integer) model.getId();
+    }
+
+    public String getString(String field) {
+        return model.getString(field);
+    }
+
+    public Integer getInteger(String field) {
+        return model.getInteger(field);
+    }
+
+    public <C extends Model> LazyList<C> get(Class<C> clazz, String query, Object... params) {
+        return model.get(clazz, query, params);
     }
 
     public int getTimestamp() {
@@ -46,13 +48,26 @@ public abstract class LibraryItem {
         // todo
     }
 
-    /**
-     * Save the item data into the database
-     */
-    public abstract void save();
+    public void set(String field, Object value) {
+        set(field, value, true);
+    }
 
-    /**
-     * Inflates objects related to this object with data from the database
-     */
-    public abstract void inflate();
+    public void set(String field, Object value, boolean save) {
+        model.set(field, value);
+        if (save) {
+            save();
+        }
+    }
+
+    protected void save() {
+        model.saveIt();
+    }
+
+    public void delete() {
+        model.deleteCascadeShallow();
+    }
+
+
+
+
 }

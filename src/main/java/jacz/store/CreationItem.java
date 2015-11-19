@@ -24,29 +24,8 @@ public abstract class CreationItem extends LibraryItem {
 
     private List<String> externalURLs;
 
-    public CreationItem(DatabaseMediator databaseMediator) {
-        super(databaseMediator);
-    }
-
-    public CreationItem(
-            DatabaseMediator databaseMediator,
-            Integer id,
-            int timestamp,
-            String title,
-            String originalTitle,
-            Integer year,
-            List<Person> creatorsDirectors,
-            List<Person> actors,
-            List<CountryCode> countries,
-            List<String> externalURLs) {
-        super(databaseMediator, id, timestamp);
-        this.title = title;
-        this.originalTitle = originalTitle;
-        this.year = year;
-        this.creatorsDirectors = creatorsDirectors;
-        this.actors = actors;
-        this.countries = countries;
-        this.externalURLs = externalURLs;
+    public CreationItem() {
+        super();
     }
 
     public String getTitle() {

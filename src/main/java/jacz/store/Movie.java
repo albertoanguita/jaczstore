@@ -3,6 +3,7 @@ package jacz.store;
 import com.neovisionaries.i18n.CountryCode;
 import jacz.store.database_old.DatabaseMediator;
 import jacz.store.util.GenreCode;
+import org.javalite.activejdbc.Model;
 
 import java.util.List;
 
@@ -15,39 +16,14 @@ public final class Movie extends ProducedCreationItem {
 
     private List<VideoFile> videoFiles;
 
-    public Movie(DatabaseMediator databaseMediator) {
-        super(databaseMediator);
-    }
-
-    public Movie(
-            DatabaseMediator databaseMediator,
-            Integer id,
-            int timestamp,
-            String title,
-            String originalTitle,
-            Integer year,
-            List<Person> creatorsDirectors,
-            List<Person> actors,
-            List<CountryCode> countries,
-            List<String> externalURLs,
-            List<Company> productionCompanies,
-            List<GenreCode> genres,
-            ImageFile imageFile,
-            int minutes,
-            List<VideoFile> videoFiles) {
-        super(databaseMediator, id, timestamp, title, originalTitle, year, creatorsDirectors, actors, countries, externalURLs, productionCompanies, genres, imageFile);
-        this.minutes = minutes;
-        this.videoFiles = videoFiles;
+    public Movie() {
+        super();
     }
 
     @Override
-    public void save() {
-        databaseMediator.saveMovie(this);
+    protected Model buildModel() {
+        return null;
     }
 
-    @Override
-    public void inflate() {
-
-    }
 
 }

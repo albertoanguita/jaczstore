@@ -1,6 +1,10 @@
 package jacz.store.JavaLiteTest2;
 
+import jacz.util.concurrency.ThreadUtil;
+import jacz.util.concurrency.task_executor.ParallelTask;
+import jacz.util.concurrency.task_executor.ParallelTaskExecutor;
 import org.javalite.activejdbc.Base;
+import org.javalite.activejdbc.DB;
 import org.javalite.activejdbc.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +24,43 @@ public class Test {
 //            e.printStackTrace();
 //        }
         final Logger logger = LoggerFactory.getLogger(Test.class);
+        Base.open("org.sqlite.JDBC", "jdbc:sqlite:test2.db", "", "");
 
+//        ParallelTaskExecutor.executeTask(new ParallelTask() {
+//            @Override
+//            public void performTask() {
+//                Base.open("org.sqlite.JDBC", "jdbc:sqlite:test2.db", "", "");
+//                Base.openTransaction();
+//
+//                ThreadUtil.safeSleep(5000);
+//                Movie newMovie = new Movie();
+//                newMovie.setTitle("Casino");
+//                newMovie.setYear(2015);
+//
+//                Base.commitTransaction();
+//                Base.close();
+//            }
+//        });
+//        ThreadUtil.safeSleep(1000);
+//        ParallelTaskExecutor.executeTask(new ParallelTask() {
+//            @Override
+//            public void performTask() {
+//                Base.open("org.sqlite.JDBC", "jdbc:sqlite:test3.db", "", "");
+//                Base.openTransaction();
+//
+//                ThreadUtil.safeSleep(5000);
+//                Movie newMovie = new Movie();
+//                newMovie.setTitle("Casino3");
+//                newMovie.setYear(2013);
+//
+//                Base.commitTransaction();
+//                Base.close();
+//            }
+//        });
 
-        Base.open("org.sqlite.JDBC", "jdbc:sqlite:test3.db", "", "");
+//        Base.open("org.sqlite.JDBC", "jdbc:sqlite:test3.db", "", "");
+//        DB db = new DB("db");
+//        db.open("org.sqlite.JDBC", "jdbc:sqlite:test3.db", "", "");
 
 //        List<Person> people = Person.findAll();
 //        for (Person person : people) {
@@ -32,22 +70,25 @@ public class Test {
 //        for (jacz.store.JavaLiteTest2.models.Movie movie : movies) {
 //            System.out.println("Movie " + movie.getString("id") + ": " + movie.get("title") + ": " + movie.getInteger("year"));
 //        }
-//        List<Movie> movies = Movie.findAll();
-//        for (Movie movie : movies) {
-//            System.out.println("Movie " + movie.getId() + ": " + movie.getTitle() + ": " + movie.getYear());
-//        }
+        List<Movie> movies = Movie.findAll();
+        for (Movie movie : movies) {
+            System.out.println("Movie " + movie.getId() + ": " + movie.getTitle() + ": " + movie.getYear());
+        }
 
 
-        Movie aMovie = Movie.findById(0);
-        System.out.println(aMovie.getTitle());
+
+
+
+//        Movie aMovie = Movie.findById(0);
+//        System.out.println(aMovie.getTitle());
 //        Person person = Person.findById(7);
 //        Person person = new Person("Arnold");
 
-        Create.openTransaction();
-        Movie newMovie = new Movie();
-        newMovie.setTitle("Casino");
-        newMovie.setYear(2015);
-        Create.commitTransaction();
+//        db.openTransaction();
+//        Movie newMovie = new Movie();
+//        newMovie.setTitle("Casino");
+//        newMovie.setYear(2015);
+//        db.commitTransaction();
 
 //        person.delete();
 //        aMovie.addActor(person);
@@ -92,6 +133,6 @@ public class Test {
 //        } catch (ValidationException e) {
 //            e.printStackTrace();
 //        }
-        Create.close();
+//        db.close();
     }
 }

@@ -7,21 +7,8 @@ import jacz.store.database_old.DatabaseMediator;
  */
 public class ImageFile extends File {
 
-    public ImageFile(DatabaseMediator databaseMediator) {
-        super(databaseMediator);
+    public ImageFile() {
+        super();
     }
 
-    public ImageFile(DatabaseMediator databaseMediator, Integer id, int timestamp, String hash, Long length) {
-        super(databaseMediator, id, timestamp, hash, length);
-    }
-
-    @Override
-    public void save() {
-        databaseMediator.saveImageFile(this);
-    }
-
-    @Override
-    public void inflate() {
-
-    }
 }

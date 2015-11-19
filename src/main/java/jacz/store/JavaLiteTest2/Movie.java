@@ -15,11 +15,6 @@ public class Movie extends CreationItem {
         super();
     }
 
-    public Movie(String title, int year) {
-        super(title);
-        set("year", year, true);
-    }
-
     private Movie(Model model) {
         super(model);
     }

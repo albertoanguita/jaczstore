@@ -193,7 +193,7 @@ public class DatabaseMediator {
 
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        dropDatabase("store.db");
-        createDatabase("store.db");
+        dropDatabase("store2.db");
+        createDatabase("store2.db");
     }
 }

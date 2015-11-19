@@ -9,21 +9,8 @@ import java.util.List;
  */
 public final class Company extends NamedLibraryItem {
 
-    public Company(DatabaseMediator databaseMediator) {
-        super(databaseMediator);
+    public Company() {
+        super();
     }
 
-    public Company(DatabaseMediator databaseMediator, Integer id, int timestamp, String name, List<String> aliases) {
-        super(databaseMediator, id, timestamp, name, aliases);
-    }
-
-    @Override
-    public void save() {
-        databaseMediator.saveCompany(this);
-    }
-
-    @Override
-    public void inflate() {
-
-    }
 }
