@@ -21,7 +21,7 @@ public class Person extends LibraryItem {
 
     @Override
     protected Model buildModel() {
-        return new jacz.store.JavaLiteTest2.models.Person();
+        return null;
     }
 
     public String getName() {
@@ -42,11 +42,11 @@ public class Person extends LibraryItem {
         return persons;
     }
 
-    public static List<Person> findAll() {
-        return buildList(jacz.store.JavaLiteTest2.models.Person.findAll());
-    }
-
-    public static Person findById(Object id) {
-        return new Person(jacz.store.JavaLiteTest2.models.Person.findById(id));
-    }
+//    public static List<Person> findAll() {
+//        return buildList(jacz.store.JavaLiteTest2.models.Person.findAll());
+//    }
+//
+//    public static Person findById(Object id) {
+//        return new Person(jacz.store.JavaLiteTest2.models.Person.findById(id));
+//    }
 }

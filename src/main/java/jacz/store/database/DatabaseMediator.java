@@ -60,7 +60,7 @@ public class DatabaseMediator {
                         "countries      TEXT, " +
                         "externalURLs   TEXT, " +
                         "genres         TEXT, " +
-                        "image_files_id INTEGER NOT NULL REFERENCES image_files(id), " +
+                        "image_files_id INTEGER REFERENCES image_files(id), " +
                         "minutes        INTEGER " +
                         ")"
         );
@@ -74,7 +74,7 @@ public class DatabaseMediator {
                         "countries      TEXT, " +
                         "externalURLs   TEXT, " +
                         "genres         TEXT, " +
-                        "image_files_id INTEGER NOT NULL REFERENCES image_files(id) " +
+                        "image_files_id INTEGER REFERENCES image_files(id) " +
                         ")"
         );
         connection.createStatement().executeUpdate(
@@ -138,54 +138,56 @@ public class DatabaseMediator {
         );
         connection.createStatement().executeUpdate(
                 "CREATE TABLE movies_people (\n" +
+                        "id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "movie_id  INTEGER NOT NULL REFERENCES movies(id), " +
                         "person_id INTEGER NOT NULL REFERENCES people(id), " +
-                        "type      TEXT, " +
-                        "PRIMARY KEY (movie_id, person_id)\n" +
+                        "type      TEXT" +
                         ")"
         );
         connection.createStatement().executeUpdate(
                 "CREATE TABLE tv_series_people (\n" +
+                        "id           INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "tv_series_id INTEGER NOT NULL REFERENCES movies(id), " +
                         "person_id    INTEGER NOT NULL REFERENCES people(id), " +
-                        "type         TEXT, " +
-                        "PRIMARY KEY (tv_series_id, person_id)\n" +
+                        "type         TEXT" +
                         ")"
         );
         connection.createStatement().executeUpdate(
                 "CREATE TABLE chapters_people (\n" +
+                        "id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "chapter_id INTEGER NOT NULL REFERENCES movies(id), " +
                         "person_id  INTEGER NOT NULL REFERENCES people(id), " +
-                        "type       TEXT, " +
-                        "PRIMARY KEY (chapter_id, person_id)\n" +
+                        "type       TEXT" +
                         ")"
         );
         connection.createStatement().executeUpdate(
                 "CREATE TABLE movies_companies (\n" +
+                        "id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "movie_id   INTEGER NOT NULL REFERENCES movies(id), " +
-                        "company_id INTEGER NOT NULL REFERENCES people(id), " +
-                        "PRIMARY KEY (movie_id, company_id)\n" +
+                        "company_id INTEGER NOT NULL REFERENCES people(id)" +
                         ")"
         );
         connection.createStatement().executeUpdate(
                 "CREATE TABLE tv_series_companies (\n" +
+                        "id           INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "tv_series_id INTEGER NOT NULL REFERENCES movies(id), " +
-                        "company_id   INTEGER NOT NULL REFERENCES people(id), " +
-                        "PRIMARY KEY (tv_series_id, company_id)\n" +
+                        "company_id   INTEGER NOT NULL REFERENCES people(id)" +
                         ")"
         );
         connection.createStatement().executeUpdate(
                 "CREATE TABLE movies_video_files (\n" +
+                        "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "movie_id      INTEGER NOT NULL REFERENCES movies(id), " +
                         "video_file_id INTEGER NOT NULL REFERENCES video_files(id), " +
-                        "PRIMARY KEY (movie_id, video_file_id)\n" +
+                        "type          TEXT" +
                         ")"
         );
         connection.createStatement().executeUpdate(
                 "CREATE TABLE chapters_video_files (\n" +
-                        "chapter_id      INTEGER NOT NULL REFERENCES chapters(id), " +
+                        "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                        "chapter_id    INTEGER NOT NULL REFERENCES chapters(id), " +
                         "video_file_id INTEGER NOT NULL REFERENCES video_files(id), " +
-                        "PRIMARY KEY (chapter_id, video_file_id)\n" +
+                        "type          TEXT" +
                         ")"
         );
 
@@ -193,7 +195,11 @@ public class DatabaseMediator {
 
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        dropDatabase("store2.db");
-        createDatabase("store2.db");
+        dropAndCreate();
+    }
+
+    public static void dropAndCreate() throws SQLException, ClassNotFoundException {
+        dropDatabase("store.db");
+        createDatabase("store.db");
     }
 }

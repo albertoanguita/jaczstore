@@ -12,7 +12,7 @@ import java.util.List;
  */
 public final class Movie extends ProducedCreationItem {
 
-    private int minutes;
+//    private int minutes;
 
     private List<VideoFile> videoFiles;
 
@@ -22,7 +22,53 @@ public final class Movie extends ProducedCreationItem {
 
     @Override
     protected Model buildModel() {
-        return null;
+        return new jacz.store.database.models.Movie();
+    }
+
+    @Override
+    Class<? extends Model> getPeopleAssociationModel() {
+        return jacz.store.database.models.MoviesPeople.class;
+    }
+
+    @Override
+    String getAssociationIdField() {
+        return "movie_id";
+    }
+
+    protected List<Person> getDirectors() {
+        return getCreatorsDirectors();
+    }
+
+    protected <C extends Model> void removeDirectors() {
+        removeCreatorsDirectors();
+    }
+
+    protected void setDirectors(List<Person> persons) {
+        setCreatorsDirectors(persons);
+    }
+
+    protected void setDirectors(Person... persons) {
+        setCreatorsDirectors(persons);
+    }
+
+    protected <C extends Model> void addDirectors(List<Person> persons) {
+        addCreatorDirectors(persons);
+    }
+
+    protected <C extends Model> void addDirectors(Person... persons) {
+        addCreatorDirectors(persons);
+    }
+
+    protected <C extends Model> void addDirector(Person person) {
+        addCreatorDirector(person);
+    }
+
+    public Integer getMinutes() {
+        return getInteger("minutes");
+    }
+
+    public void setMinutes(Integer minutes) {
+        set("minutes", minutes);
     }
 
 

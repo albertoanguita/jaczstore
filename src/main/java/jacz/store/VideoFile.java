@@ -3,6 +3,7 @@ package jacz.store;
 import com.neovisionaries.i18n.LanguageCode;
 import jacz.store.database_old.DatabaseMediator;
 import jacz.store.util.QualityCode;
+import org.javalite.activejdbc.Model;
 
 import java.util.List;
 
@@ -21,6 +22,11 @@ public final class VideoFile extends File {
 
     public VideoFile() {
         super();
+    }
+
+    @Override
+    protected Model buildModel() {
+        return new jacz.store.database.models.VideoFile();
     }
 
 }

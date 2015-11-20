@@ -70,10 +70,10 @@ public class Test {
 //        for (jacz.store.JavaLiteTest2.models.Movie movie : movies) {
 //            System.out.println("Movie " + movie.getString("id") + ": " + movie.get("title") + ": " + movie.getInteger("year"));
 //        }
-        List<Movie> movies = Movie.findAll();
-        for (Movie movie : movies) {
-            System.out.println("Movie " + movie.getId() + ": " + movie.getTitle() + ": " + movie.getYear());
-        }
+//        List<Movie> movies = Movie.findAll();
+//        for (Movie movie : movies) {
+//            System.out.println("Movie " + movie.getId() + ": " + movie.getTitle() + ": " + movie.getYear());
+//        }
 
 
 

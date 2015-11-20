@@ -21,10 +21,19 @@ public final class Chapter extends CreationItem {
         super();
     }
 
-//    @Override
-//    protected Model buildModel() {
-//        return null;
-//    }
+    @Override
+    protected Model buildModel() {
+        return new jacz.store.database.models.Chapter();
+    }
 
+    @Override
+    Class<? extends Model> getPeopleAssociationModel() {
+        return jacz.store.database.models.ChaptersPeople.class;
+    }
+
+    @Override
+    String getAssociationIdField() {
+        return "chapter_id";
+    }
 
 }

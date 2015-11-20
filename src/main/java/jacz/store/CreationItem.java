@@ -1,7 +1,8 @@
 package jacz.store;
 
 import com.neovisionaries.i18n.CountryCode;
-import jacz.store.database_old.DatabaseMediator;
+import jacz.store.database.DatabaseMediator;
+import org.javalite.activejdbc.Model;
 
 import java.util.List;
 
@@ -10,77 +11,143 @@ import java.util.List;
  */
 public abstract class CreationItem extends LibraryItem {
 
-    private String title;
+//    private String title;
+//
+//    private String originalTitle;
+//
+//    private Integer year;
+//
+//    private List<Person> creatorsDirectors;
 
-    private String originalTitle;
+//    private List<Person> actors;
 
-    private Integer year;
+//    private List<CountryCode> countries;
 
-    private List<Person> creatorsDirectors;
-
-    private List<Person> actors;
-
-    private List<CountryCode> countries;
-
-    private List<String> externalURLs;
+//    private List<String> externalURLs;
 
     public CreationItem() {
         super();
     }
 
+    abstract Class<? extends Model> getPeopleAssociationModel();
+
+    abstract String getAssociationIdField();
+
     public String getTitle() {
-        return title;
+        return getString("title");
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        set("title", title);
     }
 
     public String getOriginalTitle() {
-        return originalTitle;
+        return getString("originalTitle");
     }
 
     public void setOriginalTitle(String originalTitle) {
-        this.originalTitle = originalTitle;
+        set("originalTitle", originalTitle);
     }
 
     public Integer getYear() {
-        return year;
+        return getInteger("year");
     }
 
     public void setYear(Integer year) {
-        this.year = year;
+        set("year", year);
     }
 
-    public List<Person> getCreatorsDirectors() {
-        return creatorsDirectors;
-    }
-
-    public void setCreatorsDirectors(List<Person> creatorsDirectors) {
-        this.creatorsDirectors = creatorsDirectors;
-    }
-
-    public List<Person> getActors() {
-        return actors;
-    }
-
-    public void setActors(List<Person> actors) {
-        this.actors = actors;
-    }
-
+    @Override
     public List<CountryCode> getCountries() {
-        return countries;
+        return super.getCountries();
     }
 
+    @Override
     public void setCountries(List<CountryCode> countries) {
-        this.countries = countries;
+        super.setCountries(countries);
     }
 
+    @Override
     public List<String> getExternalURLs() {
-        return externalURLs;
+        return super.getExternalURLs();
     }
 
+    @Override
     public void setExternalURLs(List<String> externalURLs) {
-        this.externalURLs = externalURLs;
+        super.setExternalURLs(externalURLs);
     }
+
+    protected List<Person> getCreatorsDirectors() {
+        List<jacz.store.database.models.Person> modelPersons = getAssociation(jacz.store.database.models.Person.class, "type = ? ", DatabaseMediator.PERSON_TYPE.CREATOR.name());
+        return Person.buildList(modelPersons);
+    }
+
+    protected <C extends Model> void removeCreatorsDirectors() {
+        removeAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.CREATOR.name());
+    }
+
+    protected void setCreatorsDirectors(List<Person> persons) {
+        setAssociationList(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.CREATOR.name(), persons);
+    }
+
+    protected void setCreatorsDirectors(Person... persons) {
+        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.CREATOR.name(), persons);
+    }
+
+    protected <C extends Model> void addCreatorDirectors(List<Person> persons) {
+        addAssociationList(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.CREATOR.name(), persons);
+    }
+
+    protected <C extends Model> void addCreatorDirectors(Person... persons) {
+        addAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.CREATOR.name(), persons);
+    }
+
+    protected <C extends Model> void addCreatorDirector(Person person) {
+        addAssociation(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.CREATOR.name(), person);
+    }
+
+    protected List<Person> getActors() {
+        List<jacz.store.database.models.Person> modelPersons = getAssociation(jacz.store.database.models.Person.class, "type = ? ", DatabaseMediator.PERSON_TYPE.ACTOR.name());
+        return Person.buildList(modelPersons);
+    }
+
+    protected <C extends Model> void removeActors() {
+        removeAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.ACTOR.name());
+    }
+
+    public void setActors(List<Person> persons) {
+        setAssociationList(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.ACTOR.name(), persons);
+    }
+
+    public void setActors(Person... persons) {
+        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.ACTOR.name(), persons);
+    }
+
+    public <C extends Model> void addActors(List<Person> persons) {
+        addAssociationList(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.ACTOR.name(), persons);
+    }
+
+    public <C extends Model> void addActors(Person... persons) {
+        addAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.ACTOR.name(), persons);
+    }
+
+    public <C extends Model> void addActor(Person person) {
+        addAssociation(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.ACTOR.name(), person);
+    }
+
+//    public List<CountryCode> getCountries() {
+//        return countries;
+//    }
+//
+//    public void setCountries(List<CountryCode> countries) {
+//        this.countries = countries;
+//    }
+//
+//    public List<String> getExternalURLs() {
+//        return externalURLs;
+//    }
+//
+//    public void setExternalURLs(List<String> externalURLs) {
+//        this.externalURLs = externalURLs;
+//    }
 }

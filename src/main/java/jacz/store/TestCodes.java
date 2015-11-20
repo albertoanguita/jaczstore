@@ -19,7 +19,8 @@ public class TestCodes {
         System.out.println(countryCode.getNumeric());
 
 
-        LanguageCode languageCode = LanguageCode.ca;
-        System.out.println(languageCode.getName());
+        LanguageCode languageCode = LanguageCode.es;
+        System.out.println(languageCode.name());
+        System.out.println(languageCode.getAlpha3().toString());
     }
 }

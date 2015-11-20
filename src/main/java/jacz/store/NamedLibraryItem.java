@@ -1,6 +1,8 @@
 package jacz.store;
 
+import jacz.store.database.models.*;
 import jacz.store.database_old.DatabaseMediator;
+import org.javalite.activejdbc.Model;
 
 import java.util.List;
 
@@ -15,5 +17,17 @@ public abstract class NamedLibraryItem extends LibraryItem {
 
     public NamedLibraryItem() {
         super();
+    }
+
+    public NamedLibraryItem(Model model) {
+        super(model);
+    }
+
+    public String getName() {
+        return getString("name");
+    }
+
+    public void setName(String name) {
+        set("name", name);
     }
 }
