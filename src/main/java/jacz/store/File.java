@@ -1,6 +1,7 @@
 package jacz.store;
 
 import jacz.store.database_old.DatabaseMediator;
+import org.javalite.activejdbc.Model;
 
 /**
  * Created by Alberto on 12/09/2015.
@@ -15,4 +16,7 @@ public abstract class File extends LibraryItem {
         super();
     }
 
+    public File(Model model) {
+        super(model);
+    }
 }

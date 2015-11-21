@@ -5,6 +5,7 @@ import jacz.store.database_old.DatabaseMediator;
 import jacz.store.util.QualityCode;
 import org.javalite.activejdbc.Model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,9 +25,21 @@ public final class VideoFile extends File {
         super();
     }
 
+    VideoFile(Model model) {
+        super(model);
+    }
+
     @Override
     protected Model buildModel() {
         return new jacz.store.database.models.VideoFile();
+    }
+
+    static List<VideoFile> buildList(List<? extends Model> models) {
+        List<VideoFile> videoFiles = new ArrayList<>();
+        for (Model model : models) {
+            videoFiles.add(new VideoFile(model));
+        }
+        return videoFiles;
     }
 
 }

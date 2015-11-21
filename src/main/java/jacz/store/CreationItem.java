@@ -106,12 +106,12 @@ public abstract class CreationItem extends LibraryItem {
         addAssociation(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.CREATOR.name(), person);
     }
 
-    protected List<Person> getActors() {
+    public List<Person> getActors() {
         List<jacz.store.database.models.Person> modelPersons = getAssociation(jacz.store.database.models.Person.class, "type = ? ", DatabaseMediator.PERSON_TYPE.ACTOR.name());
         return Person.buildList(modelPersons);
     }
 
-    protected <C extends Model> void removeActors() {
+    public <C extends Model> void removeActors() {
         removeAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.ACTOR.name());
     }
 
@@ -134,20 +134,4 @@ public abstract class CreationItem extends LibraryItem {
     public <C extends Model> void addActor(Person person) {
         addAssociation(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.ACTOR.name(), person);
     }
-
-//    public List<CountryCode> getCountries() {
-//        return countries;
-//    }
-//
-//    public void setCountries(List<CountryCode> countries) {
-//        this.countries = countries;
-//    }
-//
-//    public List<String> getExternalURLs() {
-//        return externalURLs;
-//    }
-//
-//    public void setExternalURLs(List<String> externalURLs) {
-//        this.externalURLs = externalURLs;
-//    }
 }

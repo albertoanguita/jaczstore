@@ -29,7 +29,7 @@ public abstract class LibraryItem {
         save();
     }
 
-    public LibraryItem(Model model) {
+    LibraryItem(Model model) {
         this.model = model;
     }
 
@@ -72,14 +72,31 @@ public abstract class LibraryItem {
         model.saveIt();
     }
 
-    public <C extends Model> LazyList<C> getAssociation(Class<C> clazz, String query, Object... params) {
+    protected <C extends Model> Model getDirectAssociation(Class<? extends Model> ownedClass) {
+        return model.parent(ownedClass);
+    }
+
+    protected void setDirectAssociation(LibraryItem item) {
+        item.model.add(model);
+    }
+
+    protected <C extends Model> LazyList<C> getAssociation(Class<C> clazz) {
+        return model.getAll(clazz);
+    }
+
+    protected <C extends Model> LazyList<C> getAssociation(Class<C> clazz, String query, Object... params) {
         return model.get(clazz, query, params);
     }
 
     protected <C extends Model> void removeAssociations(Class<? extends Model> modelClass, String idField, String type) {
         try {
             Method where = modelClass.getMethod("where", String.class, Object[].class);
-            List<C> associations = (List<C>) where.invoke(null, idField + " = '" + getId() + "' AND type = '" + type + "'", new Object[0]);
+            List<C> associations;
+            if (type == null) {
+                associations = (List<C>) where.invoke(null, idField + " = '" + getId() + "' AND type = '" + type + "'", new Object[0]);
+            } else {
+                associations = (List<C>) where.invoke(null, idField + " = '" + getId() + "'");
+            }
             for (C association : associations) {
                 association.delete();
             }
@@ -116,7 +133,9 @@ public abstract class LibraryItem {
             Model associativeModel = modelClass.newInstance();
             associativeModel.set(idField, getId());
             associativeModel.set("person_id", item.getId());
-            associativeModel.set("type", type);
+            if (type != null) {
+                associativeModel.set("type", type);
+            }
             associativeModel.saveIt();
         } catch (Exception e) {
             // todo internal error

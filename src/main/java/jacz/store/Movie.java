@@ -14,7 +14,7 @@ public final class Movie extends ProducedCreationItem {
 
 //    private int minutes;
 
-    private List<VideoFile> videoFiles;
+//    private List<VideoFile> videoFiles;
 
     public Movie() {
         super();
@@ -31,35 +31,44 @@ public final class Movie extends ProducedCreationItem {
     }
 
     @Override
+    Class<? extends Model> getCompanyAssociationModel() {
+        return jacz.store.database.models.MoviesCompanies.class;
+    }
+
+    private Class<? extends Model> getVideoFileAssociationModel() {
+        return jacz.store.database.models.MoviesVideoFiles.class;
+    }
+
+    @Override
     String getAssociationIdField() {
         return "movie_id";
     }
 
-    protected List<Person> getDirectors() {
+    public List<Person> getDirectors() {
         return getCreatorsDirectors();
     }
 
-    protected <C extends Model> void removeDirectors() {
+    public <C extends Model> void removeDirectors() {
         removeCreatorsDirectors();
     }
 
-    protected void setDirectors(List<Person> persons) {
+    public void setDirectors(List<Person> persons) {
         setCreatorsDirectors(persons);
     }
 
-    protected void setDirectors(Person... persons) {
+    public void setDirectors(Person... persons) {
         setCreatorsDirectors(persons);
     }
 
-    protected <C extends Model> void addDirectors(List<Person> persons) {
+    public <C extends Model> void addDirectors(List<Person> persons) {
         addCreatorDirectors(persons);
     }
 
-    protected <C extends Model> void addDirectors(Person... persons) {
+    public <C extends Model> void addDirectors(Person... persons) {
         addCreatorDirectors(persons);
     }
 
-    protected <C extends Model> void addDirector(Person person) {
+    public <C extends Model> void addDirector(Person person) {
         addCreatorDirector(person);
     }
 
@@ -71,5 +80,33 @@ public final class Movie extends ProducedCreationItem {
         set("minutes", minutes);
     }
 
+    public List<VideoFile> getVideoFiles() {
+        List<jacz.store.database.models.VideoFile> modelVideoFiles = getAssociation(jacz.store.database.models.VideoFile.class);
+        return VideoFile.buildList(modelVideoFiles);
+    }
+
+    public <C extends Model> void removeVideoFiles() {
+        removeAssociations(jacz.store.database.models.MoviesVideoFiles.class, getAssociationIdField(), null);
+    }
+
+    public void setVideoFiles(List<VideoFile> videoFiles) {
+        setAssociationList(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFiles);
+    }
+
+    public void setVideoFiles(VideoFile... videoFiles) {
+        setAssociations(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFiles);
+    }
+
+    public <C extends Model> void addVideoFiles(List<VideoFile> videoFiles) {
+        addAssociationList(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFiles);
+    }
+
+    public <C extends Model> void addVideoFiles(VideoFile... videoFiles) {
+        addAssociations(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFiles);
+    }
+
+    public <C extends Model> void addVideoFile(VideoFile videoFile) {
+        addAssociation(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFile);
+    }
 
 }

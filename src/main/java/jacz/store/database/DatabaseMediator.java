@@ -86,7 +86,7 @@ public class DatabaseMediator {
                         "year          INTEGER, " +
                         "countries     TEXT, " +
                         "externalURLs  TEXT, " +
-                        "tv_series_id  INTEGER NOT NULL REFERENCES tv_series(id), " +
+                        "tv_series_id  INTEGER REFERENCES tv_series(id), " +
                         "season        TEXT, " +
                         "minutes       INTEGER " +
                         ")"
@@ -178,16 +178,14 @@ public class DatabaseMediator {
                 "CREATE TABLE movies_video_files (\n" +
                         "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "movie_id      INTEGER NOT NULL REFERENCES movies(id), " +
-                        "video_file_id INTEGER NOT NULL REFERENCES video_files(id), " +
-                        "type          TEXT" +
+                        "video_file_id INTEGER NOT NULL REFERENCES video_files(id)" +
                         ")"
         );
         connection.createStatement().executeUpdate(
                 "CREATE TABLE chapters_video_files (\n" +
                         "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "chapter_id    INTEGER NOT NULL REFERENCES chapters(id), " +
-                        "video_file_id INTEGER NOT NULL REFERENCES video_files(id), " +
-                        "type          TEXT" +
+                        "video_file_id INTEGER NOT NULL REFERENCES video_files(id)" +
                         ")"
         );
 

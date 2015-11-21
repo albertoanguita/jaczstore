@@ -12,6 +12,10 @@ public class ImageFile extends File {
         super();
     }
 
+    ImageFile(Model model) {
+        super(model);
+    }
+
     @Override
     protected Model buildModel() {
         return new jacz.store.database.models.ImageFile();

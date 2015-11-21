@@ -15,7 +15,7 @@ public final class Person extends NamedLibraryItem {
         super();
     }
 
-    public Person(Model model) {
+    Person(Model model) {
         super(model);
     }
 

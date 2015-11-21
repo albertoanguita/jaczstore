@@ -29,8 +29,42 @@ public final class TVSeries extends ProducedCreationItem {
     }
 
     @Override
+    Class<? extends Model> getCompanyAssociationModel() {
+        return jacz.store.database.models.TVSeriesCompanies.class;
+    }
+
+    @Override
     String getAssociationIdField() {
         return "tv_series_id";
     }
+
+    public List<Person> getCreators() {
+        return getCreatorsDirectors();
+    }
+
+    public <C extends Model> void removeCreators() {
+        removeCreatorsDirectors();
+    }
+
+    public void setCreators(List<Person> persons) {
+        setCreatorsDirectors(persons);
+    }
+
+    public void setCreators(Person... persons) {
+        setCreatorsDirectors(persons);
+    }
+
+    public <C extends Model> void addCreators(List<Person> persons) {
+        addCreatorDirectors(persons);
+    }
+
+    public <C extends Model> void addCreators(Person... persons) {
+        addCreatorDirectors(persons);
+    }
+
+    public <C extends Model> void addCreators(Person person) {
+        addCreatorDirector(person);
+    }
+
 
 }
