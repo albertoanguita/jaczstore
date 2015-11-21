@@ -124,7 +124,7 @@ public class DatabaseMediator {
                         "timestamp      INTEGER, " +
                         "hash           TEXT, " +
                         "length         INTEGER, " +
-                        "video_files_id INTEGER NOT NULL REFERENCES video_files(id), " +
+                        "video_files_id INTEGER REFERENCES video_files(id), " +
                         "language       TEXT " +
                         ")"
         );

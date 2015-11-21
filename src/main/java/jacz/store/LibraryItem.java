@@ -47,6 +47,10 @@ public abstract class LibraryItem {
         return model.getInteger(field);
     }
 
+    public Long getLong(String field) {
+        return model.getLong(field);
+    }
+
     public int getTimestamp() {
         return timestamp;
     }

@@ -42,4 +42,38 @@ public final class VideoFile extends File {
         return videoFiles;
     }
 
+    public String getName() {
+        return getString("name");
+    }
+
+    public void setName(String name) {
+        set("name", name);
+    }
+
+    public QualityCode getQuality() {
+        return QualityCode.valueOf(getString("qualityCode"));
+    }
+
+    public void setQuality(QualityCode quality) {
+        set("qualityCode", quality.name());
+    }
+
+    @Override
+    public List<LanguageCode> getLanguages() {
+        return super.getLanguages();
+    }
+
+    @Override
+    public void setLanguages(List<LanguageCode> languages) {
+        super.setLanguages(languages);
+    }
+
+    public List<SubtitleFile> getSubtitleFiles() {
+        // todo
+        return null;
+    }
+
+    public void setSubtitleFiles(List<SubtitleFile> subtitleFiles) {
+        // todo
+    }
 }

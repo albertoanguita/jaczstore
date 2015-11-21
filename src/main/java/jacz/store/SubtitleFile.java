@@ -20,4 +20,12 @@ public final class SubtitleFile extends File {
         return new jacz.store.database.models.SubtitleFile();
     }
 
+    public LanguageCode getLanguage() {
+        // todo
+        return null;
+    }
+
+    public void setLanguage(LanguageCode language) {
+        // todo
+    }
 }

@@ -20,5 +20,4 @@ public class ImageFile extends File {
     protected Model buildModel() {
         return new jacz.store.database.models.ImageFile();
     }
-
 }
