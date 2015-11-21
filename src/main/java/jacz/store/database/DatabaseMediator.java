@@ -114,6 +114,7 @@ public class DatabaseMediator {
                         "hash        TEXT, " +
                         "length      INTEGER, " +
                         "name        TEXT, " +
+                        "minutes     INTEGER, " +
                         "qualityCode TEXT, " +
                         "languages   TEXT " +
                         ")"

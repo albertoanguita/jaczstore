@@ -11,7 +11,7 @@ import java.util.List;
  */
 public abstract class NamedLibraryItem extends LibraryItem {
 
-    private String name;
+//    private String name;
 
     private List<String> aliases;
 

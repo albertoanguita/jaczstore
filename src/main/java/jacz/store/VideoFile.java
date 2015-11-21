@@ -15,6 +15,8 @@ public final class VideoFile extends File {
 
     private String name;
 
+    private Integer minutes;
+
     private QualityCode quality;
 
     private List<LanguageCode> languages;
@@ -48,6 +50,14 @@ public final class VideoFile extends File {
 
     public void setName(String name) {
         set("name", name);
+    }
+
+    public Integer getMinutes() {
+        return getInteger("minutes");
+    }
+
+    public void setMinutes(Integer minutes) {
+        set("minutes", minutes);
     }
 
     public QualityCode getQuality() {

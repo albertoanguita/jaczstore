@@ -60,13 +60,13 @@ public final class Movie extends ProducedCreationItem {
         setCreatorsDirectors(persons);
     }
 
-    public <C extends Model> void addDirectors(List<Person> persons) {
-        addCreatorDirectors(persons);
-    }
-
-    public <C extends Model> void addDirectors(Person... persons) {
-        addCreatorDirectors(persons);
-    }
+//    public <C extends Model> void addDirectors(List<Person> persons) {
+//        addCreatorDirectors(persons);
+//    }
+//
+//    public <C extends Model> void addDirectors(Person... persons) {
+//        addCreatorDirectors(persons);
+//    }
 
     public <C extends Model> void addDirector(Person person) {
         addCreatorDirector(person);
@@ -90,20 +90,20 @@ public final class Movie extends ProducedCreationItem {
     }
 
     public void setVideoFiles(List<VideoFile> videoFiles) {
-        setAssociationList(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFiles);
+        setAssociations(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFiles);
     }
 
     public void setVideoFiles(VideoFile... videoFiles) {
         setAssociations(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFiles);
     }
 
-    public <C extends Model> void addVideoFiles(List<VideoFile> videoFiles) {
-        addAssociationList(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFiles);
-    }
-
-    public <C extends Model> void addVideoFiles(VideoFile... videoFiles) {
-        addAssociations(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFiles);
-    }
+//    public <C extends Model> void addVideoFiles(List<VideoFile> videoFiles) {
+//        addAssociation(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFiles);
+//    }
+//
+//    public <C extends Model> void addVideoFiles(VideoFile... videoFiles) {
+//        addAssociations(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFiles);
+//    }
 
     public <C extends Model> void addVideoFile(VideoFile videoFile) {
         addAssociation(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFile);

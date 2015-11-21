@@ -29,6 +29,10 @@ public abstract class CreationItem extends LibraryItem {
         super();
     }
 
+    public CreationItem(Model model) {
+        super(model);
+    }
+
     abstract Class<? extends Model> getPeopleAssociationModel();
 
     abstract String getAssociationIdField();
@@ -87,20 +91,20 @@ public abstract class CreationItem extends LibraryItem {
     }
 
     protected void setCreatorsDirectors(List<Person> persons) {
-        setAssociationList(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.CREATOR.name(), persons);
+        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.CREATOR.name(), persons);
     }
 
     protected void setCreatorsDirectors(Person... persons) {
         setAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.CREATOR.name(), persons);
     }
 
-    protected <C extends Model> void addCreatorDirectors(List<Person> persons) {
-        addAssociationList(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.CREATOR.name(), persons);
-    }
-
-    protected <C extends Model> void addCreatorDirectors(Person... persons) {
-        addAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.CREATOR.name(), persons);
-    }
+//    protected <C extends Model> void addCreatorDirectors(List<Person> persons) {
+//        addAssociation(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.CREATOR.name(), persons);
+//    }
+//
+//    protected <C extends Model> void addCreatorDirectors(Person... persons) {
+//        addAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.CREATOR.name(), persons);
+//    }
 
     protected <C extends Model> void addCreatorDirector(Person person) {
         addAssociation(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.CREATOR.name(), person);
@@ -116,20 +120,20 @@ public abstract class CreationItem extends LibraryItem {
     }
 
     public void setActors(List<Person> persons) {
-        setAssociationList(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.ACTOR.name(), persons);
+        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.ACTOR.name(), persons);
     }
 
     public void setActors(Person... persons) {
         setAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.ACTOR.name(), persons);
     }
 
-    public <C extends Model> void addActors(List<Person> persons) {
-        addAssociationList(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.ACTOR.name(), persons);
-    }
-
-    public <C extends Model> void addActors(Person... persons) {
-        addAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.ACTOR.name(), persons);
-    }
+//    public <C extends Model> void addActors(List<Person> persons) {
+//        addAssociation(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.ACTOR.name(), persons);
+//    }
+//
+//    public <C extends Model> void addActors(Person... persons) {
+//        addAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.ACTOR.name(), persons);
+//    }
 
     public <C extends Model> void addActor(Person person) {
         addAssociation(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.ACTOR.name(), person);

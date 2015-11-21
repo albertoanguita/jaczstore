@@ -2,7 +2,6 @@ package jacz.store;
 
 import com.neovisionaries.i18n.CountryCode;
 import com.neovisionaries.i18n.LanguageCode;
-import jacz.store.database.DatabaseMediator;
 import jacz.store.util.GenreCode;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
@@ -76,13 +75,54 @@ public abstract class LibraryItem {
         model.saveIt();
     }
 
-    protected <C extends Model> Model getDirectAssociation(Class<? extends Model> ownedClass) {
-        return model.parent(ownedClass);
+    protected <C extends Model> Model getDirectAssociationParent(Class<C> parentClass) {
+        return model.parent(parentClass);
     }
 
-    protected void setDirectAssociation(LibraryItem item) {
+    protected <C extends Model> LazyList<C> getDirectAssociationChildren(Class<C> childClass) {
+        return model.getAll(childClass);
+    }
+
+    protected <C extends Model> LazyList<C> getDirectAssociationChildren(Class<C> childClass, String query, Object... params) {
+        return model.get(childClass, query, params);
+    }
+
+    protected <C extends Model> void deleteDirectAssociationChildren(Class<C> childClass) {
+        List<C> children = getDirectAssociationChildren(childClass);
+        for (C child : children) {
+            child.delete();
+        }
+    }
+
+    protected <C extends Model> void setDirectAssociationChildren(Class<C> childrenClass, List<? extends LibraryItem> items) {
+        deleteDirectAssociationChildren(childrenClass);
+        for (LibraryItem item : items) {
+            addDirectAssociationChild(item);
+        }
+    }
+
+    protected <C extends Model> void setDirectAssociationChildren(Class<C> childrenClass, LibraryItem... items) {
+        deleteDirectAssociationChildren(childrenClass);
+        for (LibraryItem item : items) {
+            addDirectAssociationChild(item);
+        }
+    }
+
+    protected void addDirectAssociationChild(LibraryItem item) {
         item.model.add(model);
     }
+
+//    protected <C extends Model> Model getDirectAssociation(Class<? extends Model> ownedClass) {
+//        return model.parent(ownedClass);
+//    }
+//
+//    protected void setDirectAssociation(LibraryItem item) {
+//        item.model.add(model);
+//    }
+//
+//    protected <C extends Model> LazyList<C> getAssociation(Class<C> clazz) {
+//        return model.getAll(clazz);
+//    }
 
     protected <C extends Model> LazyList<C> getAssociation(Class<C> clazz) {
         return model.getAll(clazz);
@@ -110,28 +150,32 @@ public abstract class LibraryItem {
         }
     }
 
-    protected <C extends Model> void setAssociationList(Class<? extends Model> modelClass, String idField, String type, List<? extends LibraryItem> items) {
+    protected <C extends Model> void setAssociations(Class<? extends Model> modelClass, String idField, String type, List<? extends LibraryItem> items) {
         removeAssociations(modelClass, idField, type);
-        addAssociationList(modelClass, idField, type, items);
+        for (LibraryItem item : items) {
+            addAssociation(modelClass, idField, type, item);
+        }
     }
 
     protected <C extends Model> void setAssociations(Class<? extends Model> modelClass, String idField, String type, LibraryItem... items) {
         removeAssociations(modelClass, idField, type);
-        addAssociations(modelClass, idField, type, items);
-    }
-
-    protected <C extends Model> void addAssociationList(Class<? extends Model> modelClass, String idField, String type, List<? extends LibraryItem> items) {
         for (LibraryItem item : items) {
             addAssociation(modelClass, idField, type, item);
         }
     }
 
-    protected <C extends Model> void addAssociations(Class<? extends Model> modelClass, String idField, String type, LibraryItem... items) {
-        for (LibraryItem item : items) {
-            addAssociation(modelClass, idField, type, item);
-        }
-    }
-
+//    protected <C extends Model> void addAssociations(Class<? extends Model> modelClass, String idField, String type, List<? extends LibraryItem> items) {
+//        for (LibraryItem item : items) {
+//            addAssociation(modelClass, idField, type, item);
+//        }
+//    }
+//
+//    protected <C extends Model> void addAssociations(Class<? extends Model> modelClass, String idField, String type, LibraryItem... items) {
+//        for (LibraryItem item : items) {
+//            addAssociation(modelClass, idField, type, item);
+//        }
+//    }
+//
     protected <C extends Model> void addAssociation(Class<? extends Model> modelClass, String idField, String type, LibraryItem item) {
         try {
             Model associativeModel = modelClass.newInstance();

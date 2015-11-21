@@ -1,7 +1,5 @@
 package jacz.store;
 
-import com.neovisionaries.i18n.CountryCode;
-import jacz.store.database_old.DatabaseMediator;
 import jacz.store.util.GenreCode;
 import org.javalite.activejdbc.Model;
 
@@ -34,20 +32,20 @@ public abstract class ProducedCreationItem extends CreationItem {
     }
 
     public void setProductionCompanies(List<Person> persons) {
-        setAssociationList(getCompanyAssociationModel(), getAssociationIdField(), null, persons);
+        setAssociations(getCompanyAssociationModel(), getAssociationIdField(), null, persons);
     }
 
     public void setProductionCompanies(Person... persons) {
         setAssociations(getCompanyAssociationModel(), getAssociationIdField(), null, persons);
     }
 
-    public <C extends Model> void addProductionCompanies(List<Person> persons) {
-        addAssociationList(getCompanyAssociationModel(), getAssociationIdField(), null, persons);
-    }
-
-    public <C extends Model> void addProductionCompanies(Person... persons) {
-        addAssociations(getCompanyAssociationModel(), getAssociationIdField(), null, persons);
-    }
+//    public <C extends Model> void addProductionCompanies(List<Person> persons) {
+//        addAssociation(getCompanyAssociationModel(), getAssociationIdField(), null, persons);
+//    }
+//
+//    public <C extends Model> void addProductionCompanies(Person... persons) {
+//        addAssociations(getCompanyAssociationModel(), getAssociationIdField(), null, persons);
+//    }
 
     public <C extends Model> void addProductionCompany(Person person) {
         addAssociation(getCompanyAssociationModel(), getAssociationIdField(), null, person);
@@ -64,10 +62,10 @@ public abstract class ProducedCreationItem extends CreationItem {
     }
 
     public ImageFile getImage() {
-        return new ImageFile(getDirectAssociation(jacz.store.database.models.ImageFile.class));
+        return new ImageFile(getDirectAssociationParent(jacz.store.database.models.ImageFile.class));
     }
 
     public void setImage(ImageFile image) {
-        setDirectAssociation(image);
+        setDirectAssociationChildren(jacz.store.database.models.ImageFile.class, image);
     }
 }
