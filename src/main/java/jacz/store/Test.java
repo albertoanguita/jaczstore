@@ -28,8 +28,10 @@ public class Test {
         Movie movie = new Movie();
         movie.setTitle("Predator");
 
-        movie.addCreatorDirectors(arnold, silvester);
-        movie.addActors(christian, george);
+        movie.addDirector(arnold);
+        movie.addDirector(silvester);
+        movie.addActor(christian);
+        movie.addActor(george);
 
         List<Person> directors = movie.getCreatorsDirectors();
         for (Person person : directors) {
@@ -39,6 +41,9 @@ public class Test {
         for (Person person : actors) {
             System.out.println(person.getName());
         }
+
+        movie.removeDirector(arnold);
+        movie.removeActor(christian);
 
         movie.removeCreatorsDirectors();
         movie.removeActors();

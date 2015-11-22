@@ -52,6 +52,10 @@ public final class Movie extends ProducedCreationItem {
         removeCreatorsDirectors();
     }
 
+    public <C extends Model> void removeDirector(Person person) {
+        removeCreatorDirector(person);
+    }
+
     public void setDirectors(List<Person> persons) {
         setCreatorsDirectors(persons);
     }
@@ -59,14 +63,6 @@ public final class Movie extends ProducedCreationItem {
     public void setDirectors(Person... persons) {
         setCreatorsDirectors(persons);
     }
-
-//    public <C extends Model> void addDirectors(List<Person> persons) {
-//        addCreatorDirectors(persons);
-//    }
-//
-//    public <C extends Model> void addDirectors(Person... persons) {
-//        addCreatorDirectors(persons);
-//    }
 
     public <C extends Model> void addDirector(Person person) {
         addCreatorDirector(person);
@@ -96,14 +92,6 @@ public final class Movie extends ProducedCreationItem {
     public void setVideoFiles(VideoFile... videoFiles) {
         setAssociations(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFiles);
     }
-
-//    public <C extends Model> void addVideoFiles(List<VideoFile> videoFiles) {
-//        addAssociation(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFiles);
-//    }
-//
-//    public <C extends Model> void addVideoFiles(VideoFile... videoFiles) {
-//        addAssociations(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFiles);
-//    }
 
     public <C extends Model> void addVideoFile(VideoFile videoFile) {
         addAssociation(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFile);

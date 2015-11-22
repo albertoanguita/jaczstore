@@ -136,7 +136,7 @@ public abstract class LibraryItem {
         try {
             Method where = modelClass.getMethod("where", String.class, Object[].class);
             List<C> associations;
-            if (type == null) {
+            if (type != null) {
                 associations = (List<C>) where.invoke(null, idField + " = '" + getId() + "' AND type = '" + type + "'", new Object[0]);
             } else {
                 associations = (List<C>) where.invoke(null, idField + " = '" + getId() + "'");
@@ -144,6 +144,22 @@ public abstract class LibraryItem {
             for (C association : associations) {
                 association.delete();
             }
+        } catch (Exception e) {
+            // todo internal error
+            e.printStackTrace();
+        }
+    }
+
+    protected <C extends Model> void removeAssociation(Class<? extends Model> modelClass, String idField, LibraryItem otherItem, String otherIdField, String type) {
+        try {
+            Method findFirst = modelClass.getMethod("findFirst", String.class, Object[].class);
+            C  association;
+            if (type != null) {
+                association = (C) findFirst.invoke(null, idField + " = '" + getId() + "' AND " + otherIdField + " = '" + otherItem.getId() + "' AND type = '" + type + "'", new Object[0]);
+            } else {
+                association = (C) findFirst.invoke(null, idField + " = '" + getId() + "' AND " + otherIdField + " = '" + otherItem.getId() + "'", new Object[0]);
+            }
+            association.delete();
         } catch (Exception e) {
             // todo internal error
             e.printStackTrace();
@@ -164,18 +180,6 @@ public abstract class LibraryItem {
         }
     }
 
-//    protected <C extends Model> void addAssociations(Class<? extends Model> modelClass, String idField, String type, List<? extends LibraryItem> items) {
-//        for (LibraryItem item : items) {
-//            addAssociation(modelClass, idField, type, item);
-//        }
-//    }
-//
-//    protected <C extends Model> void addAssociations(Class<? extends Model> modelClass, String idField, String type, LibraryItem... items) {
-//        for (LibraryItem item : items) {
-//            addAssociation(modelClass, idField, type, item);
-//        }
-//    }
-//
     protected <C extends Model> void addAssociation(Class<? extends Model> modelClass, String idField, String type, LibraryItem item) {
         try {
             Model associativeModel = modelClass.newInstance();

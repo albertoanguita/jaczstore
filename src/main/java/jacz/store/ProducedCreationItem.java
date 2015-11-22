@@ -31,6 +31,10 @@ public abstract class ProducedCreationItem extends CreationItem {
         removeAssociations(getCompanyAssociationModel(), getAssociationIdField(), null);
     }
 
+    public <C extends Model> void removeProductionCompany(Company company) {
+        removeAssociation(getCompanyAssociationModel(), getAssociationIdField(), company, "company_id", null);
+    }
+
     public void setProductionCompanies(List<Person> persons) {
         setAssociations(getCompanyAssociationModel(), getAssociationIdField(), null, persons);
     }
@@ -38,14 +42,6 @@ public abstract class ProducedCreationItem extends CreationItem {
     public void setProductionCompanies(Person... persons) {
         setAssociations(getCompanyAssociationModel(), getAssociationIdField(), null, persons);
     }
-
-//    public <C extends Model> void addProductionCompanies(List<Person> persons) {
-//        addAssociation(getCompanyAssociationModel(), getAssociationIdField(), null, persons);
-//    }
-//
-//    public <C extends Model> void addProductionCompanies(Person... persons) {
-//        addAssociations(getCompanyAssociationModel(), getAssociationIdField(), null, persons);
-//    }
 
     public <C extends Model> void addProductionCompany(Person person) {
         addAssociation(getCompanyAssociationModel(), getAssociationIdField(), null, person);
