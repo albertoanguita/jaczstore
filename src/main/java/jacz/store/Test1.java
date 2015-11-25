@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by Alberto on 20/11/2015.
  */
-public class Test {
+public class Test1 {
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
 
@@ -62,6 +62,9 @@ public class Test {
         movie.addDirector(silvester);
         movie.addActor(christian);
         movie.addActor(george);
+
+        List<Movie> movies = Movie.getMovies();
+        movie.delete();
 
         for (Person person : movie.getCreatorsDirectors()) {
             System.out.println(person.getName());

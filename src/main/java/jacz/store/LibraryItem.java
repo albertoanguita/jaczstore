@@ -24,6 +24,7 @@ public abstract class LibraryItem {
 
     public LibraryItem() {
         this.model = buildModel();
+        set("alive", 1, false);
         updateTimestamp();
         save();
     }
@@ -62,8 +63,15 @@ public abstract class LibraryItem {
     }
 
     protected void set(String field, Object value) {
+        set(field, value, true);
+    }
+
+    protected void set(String field, Object value, boolean updateTimestamp) {
 //        set(field, value, true);
         model.set(field, value);
+        if (updateTimestamp) {
+            updateTimestamp();
+        }
         save();
     }
 
@@ -76,6 +84,35 @@ public abstract class LibraryItem {
 
     protected void save() {
         model.saveIt();
+    }
+
+    protected static <C extends Model> List<C> getModels(Class<? extends Model> modelClass) {
+        return getModels(modelClass, null, null);
+//        try {
+//            Method findAll = modelClass.getMethod("findAll");
+//            List<C> models;
+//            models = (List<C>) findAll.invoke(null);
+//            return models;
+//        } catch (Exception e) {
+//            // todo internal error
+//            e.printStackTrace();
+//            return null;
+//        }
+    }
+
+    protected static <C extends Model> List<C> getModels(Class<? extends Model> modelClass, String query, Object[] params) {
+        try {
+            Method where = modelClass.getMethod("where", String.class, Object[].class);
+            query = query != null ? "alive = true AND " + query : "alive = 1";
+            params = params != null ? params : new Object[0];
+            List<C> models;
+            models = (List<C>) where.invoke(null, query, params);
+            return models;
+        } catch (Exception e) {
+            // todo internal error
+            e.printStackTrace();
+            return null;
+        }
     }
 
     protected <C extends Model> Model getDirectAssociationParent(Class<C> parentClass) {
@@ -154,7 +191,7 @@ public abstract class LibraryItem {
     protected <C extends Model> void removeAssociation(Class<? extends Model> modelClass, String idField, LibraryItem otherItem, String otherIdField, String type) {
         try {
             Method findFirst = modelClass.getMethod("findFirst", String.class, Object[].class);
-            C  association;
+            C association;
             if (type != null) {
                 association = (C) findFirst.invoke(null, idField + " = '" + getId() + "' AND " + otherIdField + " = '" + otherItem.getId() + "' AND type = '" + type + "'", new Object[0]);
             } else {
@@ -368,6 +405,9 @@ public abstract class LibraryItem {
     }
 
     private void deleteModel(Model model) {
-        model.set("alive", false);
+        if (model != null) {
+            model.set("alive", 0);
+            save();
+        }
     }
 }

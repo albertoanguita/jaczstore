@@ -5,6 +5,7 @@ import jacz.store.database_old.DatabaseMediator;
 import jacz.store.util.GenreCode;
 import org.javalite.activejdbc.Model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,10 +21,29 @@ public final class Movie extends ProducedCreationItem {
         super();
     }
 
+    public Movie(Model model) {
+        super(model);
+    }
+
     @Override
     protected Model buildModel() {
         return new jacz.store.database.models.Movie();
     }
+
+    public static List<Movie> getMovies() {
+        return buildList(getModels(jacz.store.database.models.Movie.class));
+    }
+
+    static List<Movie> buildList(List<? extends Model> models) {
+        List<Movie> movies = new ArrayList<>();
+        for (Model model : models) {
+            if (model != null) {
+                movies.add(new Movie(model));
+            }
+        }
+        return movies;
+    }
+
 
     @Override
     Class<? extends Model> getPeopleAssociationModel() {

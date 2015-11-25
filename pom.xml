@@ -72,6 +72,16 @@
 
   <dependencies>
     <dependency>
+    	<groupId>junit</groupId>
+    	<artifactId>junit</artifactId>
+    	<version>4.12</version>
+    </dependency>
+    <dependency>
+    	<groupId>junit-addons</groupId>
+    	<artifactId>junit-addons</artifactId>
+    	<version>1.4</version>
+    </dependency>
+    <dependency>
       <groupId>jacz.util</groupId>
       <artifactId>util</artifactId>
       <version>0.1</version>

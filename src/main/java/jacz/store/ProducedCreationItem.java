@@ -20,6 +20,10 @@ public abstract class ProducedCreationItem extends CreationItem {
         super();
     }
 
+    public ProducedCreationItem(Model model) {
+        super(model);
+    }
+
     abstract Class<? extends Model> getCompanyAssociationModel();
 
     public List<Company> getProductionCompanies() {
