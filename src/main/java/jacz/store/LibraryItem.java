@@ -29,6 +29,9 @@ public abstract class LibraryItem {
     }
 
     LibraryItem(Model model) {
+        if (model == null) {
+            throw new NullPointerException("Model cannot be null");
+        }
         this.model = model;
     }
 
@@ -79,6 +82,14 @@ public abstract class LibraryItem {
         return model.parent(parentClass);
     }
 
+    protected void setDirectAssociationParent(LibraryItem item) {
+        item.model.add(model);
+    }
+
+    protected <C extends Model> void removeDirectAssociationParent(Class<C> parentClass) {
+        deleteModel(model.parent(parentClass));
+    }
+
     protected <C extends Model> LazyList<C> getDirectAssociationChildren(Class<C> childClass) {
         return model.getAll(childClass);
     }
@@ -87,42 +98,31 @@ public abstract class LibraryItem {
         return model.get(childClass, query, params);
     }
 
-    protected <C extends Model> void deleteDirectAssociationChildren(Class<C> childClass) {
+    protected <C extends Model> void removeDirectAssociationChildren(Class<C> childClass) {
         List<C> children = getDirectAssociationChildren(childClass);
         for (C child : children) {
-            child.delete();
+            deleteModel(child);
+//            child.delete();
         }
     }
 
     protected <C extends Model> void setDirectAssociationChildren(Class<C> childrenClass, List<? extends LibraryItem> items) {
-        deleteDirectAssociationChildren(childrenClass);
+        removeDirectAssociationChildren(childrenClass);
         for (LibraryItem item : items) {
             addDirectAssociationChild(item);
         }
     }
 
     protected <C extends Model> void setDirectAssociationChildren(Class<C> childrenClass, LibraryItem... items) {
-        deleteDirectAssociationChildren(childrenClass);
+        removeDirectAssociationChildren(childrenClass);
         for (LibraryItem item : items) {
             addDirectAssociationChild(item);
         }
     }
 
     protected void addDirectAssociationChild(LibraryItem item) {
-        item.model.add(model);
+        model.add(item.model);
     }
-
-//    protected <C extends Model> Model getDirectAssociation(Class<? extends Model> ownedClass) {
-//        return model.parent(ownedClass);
-//    }
-//
-//    protected void setDirectAssociation(LibraryItem item) {
-//        item.model.add(model);
-//    }
-//
-//    protected <C extends Model> LazyList<C> getAssociation(Class<C> clazz) {
-//        return model.getAll(clazz);
-//    }
 
     protected <C extends Model> LazyList<C> getAssociation(Class<C> clazz) {
         return model.getAll(clazz);
@@ -139,10 +139,11 @@ public abstract class LibraryItem {
             if (type != null) {
                 associations = (List<C>) where.invoke(null, idField + " = '" + getId() + "' AND type = '" + type + "'", new Object[0]);
             } else {
-                associations = (List<C>) where.invoke(null, idField + " = '" + getId() + "'");
+                associations = (List<C>) where.invoke(null, idField + " = '" + getId() + "'", new Object[0]);
             }
             for (C association : associations) {
-                association.delete();
+//                association.delete();
+                deleteModel(association);
             }
         } catch (Exception e) {
             // todo internal error
@@ -159,32 +160,33 @@ public abstract class LibraryItem {
             } else {
                 association = (C) findFirst.invoke(null, idField + " = '" + getId() + "' AND " + otherIdField + " = '" + otherItem.getId() + "'", new Object[0]);
             }
-            association.delete();
+//            association.delete();
+            deleteModel(association);
         } catch (Exception e) {
             // todo internal error
             e.printStackTrace();
         }
     }
 
-    protected <C extends Model> void setAssociations(Class<? extends Model> modelClass, String idField, String type, List<? extends LibraryItem> items) {
+    protected <C extends Model> void setAssociations(Class<? extends Model> modelClass, String idField, String childIdField, String type, List<? extends LibraryItem> items) {
         removeAssociations(modelClass, idField, type);
         for (LibraryItem item : items) {
-            addAssociation(modelClass, idField, type, item);
+            addAssociation(modelClass, idField, childIdField, type, item);
         }
     }
 
-    protected <C extends Model> void setAssociations(Class<? extends Model> modelClass, String idField, String type, LibraryItem... items) {
+    protected <C extends Model> void setAssociations(Class<? extends Model> modelClass, String idField, String childIdField, String type, LibraryItem... items) {
         removeAssociations(modelClass, idField, type);
         for (LibraryItem item : items) {
-            addAssociation(modelClass, idField, type, item);
+            addAssociation(modelClass, idField, childIdField, type, item);
         }
     }
 
-    protected <C extends Model> void addAssociation(Class<? extends Model> modelClass, String idField, String type, LibraryItem item) {
+    protected <C extends Model> void addAssociation(Class<? extends Model> modelClass, String idField, String childIdField, String type, LibraryItem item) {
         try {
             Model associativeModel = modelClass.newInstance();
             associativeModel.set(idField, getId());
-            associativeModel.set("person_id", item.getId());
+            associativeModel.set(childIdField, item.getId());
             if (type != null) {
                 associativeModel.set("type", type);
             }
@@ -204,6 +206,17 @@ public abstract class LibraryItem {
         return countries;
     }
 
+    protected void removeCountries() {
+        set("countries", null);
+    }
+
+    protected boolean removeCountry(CountryCode country) {
+        List<CountryCode> countries = getCountries();
+        boolean removed = countries.remove(country);
+        setCountries(countries);
+        return removed;
+    }
+
     protected void setCountries(List<CountryCode> countries) {
         List<String> countryList = new ArrayList<>();
         for (CountryCode countryCode : countries) {
@@ -212,12 +225,43 @@ public abstract class LibraryItem {
         set("countries", serializeList(countryList));
     }
 
+    protected boolean addCountry(CountryCode country) {
+        List<CountryCode> countries = getCountries();
+        boolean notContains = !countries.contains(country);
+        if (notContains) {
+            countries.add(country);
+        }
+        setCountries(countries);
+        return notContains;
+    }
+
     protected List<String> getExternalURLs() {
         return deserializeList(getString("externalURLs"));
     }
 
+    protected void removeExternalURLs() {
+        set("externalURLs", null);
+    }
+
+    protected boolean removeExternalURL(String externalURL) {
+        List<String> externalURLs = getExternalURLs();
+        boolean removed = externalURLs.remove(externalURL);
+        setExternalURLs(externalURLs);
+        return removed;
+    }
+
     protected void setExternalURLs(List<String> externalURLs) {
         set("externalURLs", serializeList(externalURLs));
+    }
+
+    protected boolean addExternalURL(String externalURL) {
+        List<String> externalURLs = getExternalURLs();
+        boolean notContains = !externalURLs.contains(externalURL);
+        if (notContains) {
+            externalURLs.add(externalURL);
+        }
+        setExternalURLs(externalURLs);
+        return notContains;
     }
 
     protected List<GenreCode> getGenres() {
@@ -229,12 +273,33 @@ public abstract class LibraryItem {
         return genres;
     }
 
+    protected void removeGenres() {
+        set("genres", null);
+    }
+
+    protected boolean removeGenre(GenreCode genre) {
+        List<GenreCode> genres = getGenres();
+        boolean removed = genres.remove(genre);
+        setGenres(genres);
+        return removed;
+    }
+
     protected void setGenres(List<GenreCode> genres) {
         List<String> genreList = new ArrayList<>();
         for (GenreCode genreCode : genres) {
             genreList.add(genreCode.name());
         }
         set("genres", serializeList(genreList));
+    }
+
+    protected boolean addGenre(GenreCode genre) {
+        List<GenreCode> genres = getGenres();
+        boolean notContains = !genres.contains(genre);
+        if (notContains) {
+            genres.add(genre);
+        }
+        setGenres(genres);
+        return notContains;
     }
 
     protected List<LanguageCode> getLanguages() {
@@ -246,12 +311,33 @@ public abstract class LibraryItem {
         return languages;
     }
 
+    protected void removeLanguages() {
+        set("languages", null);
+    }
+
+    protected boolean removeLanguages(LanguageCode language) {
+        List<LanguageCode> languages = getLanguages();
+        boolean removed = languages.remove(language);
+        setLanguages(languages);
+        return removed;
+    }
+
     protected void setLanguages(List<LanguageCode> languages) {
         List<String> languageList = new ArrayList<>();
         for (LanguageCode languageCode : languages) {
             languageList.add(languageCode.name());
         }
         set("languages", serializeList(languageList));
+    }
+
+    protected boolean addLanguage(LanguageCode language) {
+        List<LanguageCode> languages = getLanguages();
+        boolean notContains = !languages.contains(language);
+        if (notContains) {
+            languages.add(language);
+        }
+        setLanguages(languages);
+        return notContains;
     }
 
     private String serializeList(List<String> list) {
@@ -267,6 +353,7 @@ public abstract class LibraryItem {
     }
 
     private List<String> deserializeList(String value) {
+        value = value == null ? "" : value;
         StringTokenizer tokenizer = new StringTokenizer(value, LIST_SEPARATOR);
         List<String> list = new ArrayList<>();
         while (tokenizer.hasMoreTokens()) {
@@ -276,8 +363,11 @@ public abstract class LibraryItem {
     }
 
     public void delete() {
-        model.deleteCascadeShallow();
+        deleteModel(model);
+//        model.deleteCascadeShallow();
     }
 
-
+    private void deleteModel(Model model) {
+        model.set("alive", false);
+    }
 }

@@ -22,7 +22,9 @@ public final class Company extends NamedLibraryItem {
     static List<Company> buildList(List<? extends Model> models) {
         List<Company> companies = new ArrayList<>();
         for (Model model : models) {
-            companies.add(new Company(model));
+            if (model != null) {
+                companies.add(new Company(model));
+            }
         }
         return companies;
     }
@@ -30,5 +32,13 @@ public final class Company extends NamedLibraryItem {
     @Override
     protected Model buildModel() {
         return new jacz.store.database.models.Company();
+    }
+
+    @Override
+    public void delete() {
+        super.delete();
+        // todo delete associations
+        removeAssociations(jacz.store.database.models.MoviesCompanies.class, "company_id", null);
+        removeAssociations(jacz.store.database.models.TVSeriesCompanies.class, "company_id", null);
     }
 }

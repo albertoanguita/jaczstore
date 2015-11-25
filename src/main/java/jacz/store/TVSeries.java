@@ -1,8 +1,5 @@
 package jacz.store;
 
-import com.neovisionaries.i18n.CountryCode;
-import jacz.store.database_old.DatabaseMediator;
-import jacz.store.util.GenreCode;
 import org.javalite.activejdbc.Model;
 
 import java.util.*;
@@ -89,8 +86,8 @@ public final class TVSeries extends ProducedCreationItem {
         return Chapter.buildList(getDirectAssociationChildren(jacz.store.database.models.Chapter.class, "season = ?", season));
     }
 
-    public void deleteChapters() {
-        deleteDirectAssociationChildren(jacz.store.database.models.Chapter.class);
+    public void removeChapters() {
+        removeDirectAssociationChildren(jacz.store.database.models.Chapter.class);
     }
 
     public void setChapters(List<Chapter> chapters) {
@@ -103,5 +100,11 @@ public final class TVSeries extends ProducedCreationItem {
 
     public void addChapter(Chapter chapter) {
         addDirectAssociationChild(chapter);
+    }
+
+    @Override
+    public void delete() {
+        super.delete();
+        removeChapters();
     }
 }

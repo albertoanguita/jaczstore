@@ -67,8 +67,38 @@ public abstract class CreationItem extends LibraryItem {
     }
 
     @Override
+    public void removeCountries() {
+        super.removeCountries();
+    }
+
+    @Override
+    public boolean removeCountry(CountryCode country) {
+        return super.removeCountry(country);
+    }
+
+    @Override
+    public void removeExternalURLs() {
+        super.removeExternalURLs();
+    }
+
+    @Override
+    public boolean addCountry(CountryCode country) {
+        return super.addCountry(country);
+    }
+
+    @Override
+    public boolean removeExternalURL(String externalURL) {
+        return super.removeExternalURL(externalURL);
+    }
+
+    @Override
     public void setCountries(List<CountryCode> countries) {
         super.setCountries(countries);
+    }
+
+    @Override
+    public boolean addExternalURL(String externalURL) {
+        return super.addExternalURL(externalURL);
     }
 
     @Override
@@ -95,15 +125,15 @@ public abstract class CreationItem extends LibraryItem {
     }
 
     protected void setCreatorsDirectors(List<Person> persons) {
-        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.CREATOR.name(), persons);
+        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PERSON_TYPE.CREATOR.name(), persons);
     }
 
     protected void setCreatorsDirectors(Person... persons) {
-        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.CREATOR.name(), persons);
+        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PERSON_TYPE.CREATOR.name(), persons);
     }
 
     protected <C extends Model> void addCreatorDirector(Person person) {
-        addAssociation(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.CREATOR.name(), person);
+        addAssociation(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PERSON_TYPE.CREATOR.name(), person);
     }
 
     public List<Person> getActors() {
@@ -120,14 +150,21 @@ public abstract class CreationItem extends LibraryItem {
     }
 
     public void setActors(List<Person> persons) {
-        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.ACTOR.name(), persons);
+        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PERSON_TYPE.ACTOR.name(), persons);
     }
 
     public void setActors(Person... persons) {
-        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.ACTOR.name(), persons);
+        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PERSON_TYPE.ACTOR.name(), persons);
     }
 
     public <C extends Model> void addActor(Person person) {
-        addAssociation(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.ACTOR.name(), person);
+        addAssociation(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PERSON_TYPE.ACTOR.name(), person);
+    }
+
+    @Override
+    public void delete() {
+        super.delete();
+        removeCreatorsDirectors();
+        removeActors();
     }
 }

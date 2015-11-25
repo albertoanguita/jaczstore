@@ -36,15 +36,15 @@ public abstract class ProducedCreationItem extends CreationItem {
     }
 
     public void setProductionCompanies(List<Person> persons) {
-        setAssociations(getCompanyAssociationModel(), getAssociationIdField(), null, persons);
+        setAssociations(getCompanyAssociationModel(), getAssociationIdField(), "company_id", null, persons);
     }
 
     public void setProductionCompanies(Person... persons) {
-        setAssociations(getCompanyAssociationModel(), getAssociationIdField(), null, persons);
+        setAssociations(getCompanyAssociationModel(), getAssociationIdField(), "company_id", null, persons);
     }
 
     public <C extends Model> void addProductionCompany(Person person) {
-        addAssociation(getCompanyAssociationModel(), getAssociationIdField(), null, person);
+        addAssociation(getCompanyAssociationModel(), getAssociationIdField(), "company_id", null, person);
     }
 
     @Override
@@ -53,15 +53,42 @@ public abstract class ProducedCreationItem extends CreationItem {
     }
 
     @Override
+    public void removeGenres() {
+        super.removeGenres();
+    }
+
+    @Override
+    public boolean removeGenre(GenreCode genre) {
+        return super.removeGenre(genre);
+    }
+
+    @Override
     public void setGenres(List<GenreCode> genres) {
         super.setGenres(genres);
     }
 
+    @Override
+    public boolean addGenre(GenreCode genre) {
+        return super.addGenre(genre);
+    }
+
     public ImageFile getImage() {
-        return new ImageFile(getDirectAssociationParent(jacz.store.database.models.ImageFile.class));
+        Model model = getDirectAssociationParent(jacz.store.database.models.ImageFile.class);
+        return model != null ? new ImageFile(model) : null;
     }
 
     public void setImage(ImageFile image) {
-        setDirectAssociationChildren(jacz.store.database.models.ImageFile.class, image);
+        setDirectAssociationParent(image);
+    }
+
+    public void removeImage() {
+        removeDirectAssociationParent(jacz.store.database.models.ImageFile.class);
+    }
+
+    @Override
+    public void delete() {
+        super.delete();
+        removeProductionCompanies();
+        removeImage();
     }
 }

@@ -1,8 +1,8 @@
 package jacz.store;
 
-import com.neovisionaries.i18n.CountryCode;
-import jacz.store.database_old.DatabaseMediator;
+import jacz.store.database.models.*;
 import org.javalite.activejdbc.Model;
+import org.javalite.activejdbc.annotations.BelongsTo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,9 @@ public final class Chapter extends CreationItem {
     static List<Chapter> buildList(List<? extends Model> models) {
         List<Chapter> chapters = new ArrayList<>();
         for (Model model : models) {
-            chapters.add(new Chapter(model));
+            if (model != null) {
+                chapters.add(new Chapter(model));
+            }
         }
         return chapters;
     }
@@ -78,23 +80,25 @@ public final class Chapter extends CreationItem {
         removeAssociations(jacz.store.database.models.MoviesVideoFiles.class, getAssociationIdField(), null);
     }
 
+    public <C extends Model> void removeVideoFile(VideoFile videoFile) {
+        removeAssociation(getVideoFileAssociationModel(), getAssociationIdField(), videoFile, "video_file_id", null);
+    }
+
     public void setVideoFiles(List<VideoFile> videoFiles) {
-        setAssociations(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFiles);
+        setAssociations(getVideoFileAssociationModel(), getAssociationIdField(), "video_file_id", null, videoFiles);
     }
 
     public void setVideoFiles(VideoFile... videoFiles) {
-        setAssociations(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFiles);
+        setAssociations(getVideoFileAssociationModel(), getAssociationIdField(), "video_file_id", null, videoFiles);
     }
 
-//    public <C extends Model> void addVideoFiles(List<VideoFile> videoFiles) {
-//        addAssociation(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFiles);
-//    }
-//
-//    public <C extends Model> void addVideoFiles(VideoFile... videoFiles) {
-//        addAssociations(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFiles);
-//    }
-
     public <C extends Model> void addVideoFile(VideoFile videoFile) {
-        addAssociation(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFile);
+        addAssociation(getVideoFileAssociationModel(), getAssociationIdField(), "video_file_id", null, videoFile);
+    }
+
+    @Override
+    public void delete() {
+        super.delete();
+        removeVideoFiles();
     }
 }

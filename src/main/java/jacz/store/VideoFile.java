@@ -39,7 +39,9 @@ public final class VideoFile extends File {
     static List<VideoFile> buildList(List<? extends Model> models) {
         List<VideoFile> videoFiles = new ArrayList<>();
         for (Model model : models) {
-            videoFiles.add(new VideoFile(model));
+            if (model != null) {
+                videoFiles.add(new VideoFile(model));
+            }
         }
         return videoFiles;
     }
@@ -74,16 +76,50 @@ public final class VideoFile extends File {
     }
 
     @Override
+    public void removeLanguages() {
+        super.removeLanguages();
+    }
+
+    @Override
+    public boolean removeLanguages(LanguageCode language) {
+        return super.removeLanguages(language);
+    }
+
+    @Override
     public void setLanguages(List<LanguageCode> languages) {
         super.setLanguages(languages);
     }
 
+    @Override
+    public boolean addLanguage(LanguageCode language) {
+        return super.addLanguage(language);
+    }
+
     public List<SubtitleFile> getSubtitleFiles() {
-        // todo
-        return null;
+        return SubtitleFile.buildList(getDirectAssociationChildren(jacz.store.database.models.SubtitleFile.class));
+    }
+
+    public void removeSubtitleFiles() {
+        removeDirectAssociationChildren(jacz.store.database.models.SubtitleFile.class);
     }
 
     public void setSubtitleFiles(List<SubtitleFile> subtitleFiles) {
-        // todo
+        setDirectAssociationChildren(jacz.store.database.models.SubtitleFile.class, subtitleFiles);
+    }
+
+    public void setSubtitleFiles(SubtitleFile... subtitleFiles) {
+        setDirectAssociationChildren(jacz.store.database.models.SubtitleFile.class, subtitleFiles);
+    }
+
+    public void addSubtitleFile(SubtitleFile subtitleFile) {
+        addDirectAssociationChild(subtitleFile);
+    }
+
+    @Override
+    public void delete() {
+        super.delete();
+        removeSubtitleFiles();
+        removeAssociations(jacz.store.database.models.MoviesVideoFiles.class, "video_file_id", null);
+        removeAssociations(jacz.store.database.models.ChaptersVideoFiles.class, "video_file_id", null);
     }
 }

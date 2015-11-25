@@ -85,16 +85,25 @@ public final class Movie extends ProducedCreationItem {
         removeAssociations(jacz.store.database.models.MoviesVideoFiles.class, getAssociationIdField(), null);
     }
 
+    public <C extends Model> void removeVideoFile(VideoFile videoFile) {
+        removeAssociation(getVideoFileAssociationModel(), getAssociationIdField(), videoFile, "video_file_id", null);
+    }
+
     public void setVideoFiles(List<VideoFile> videoFiles) {
-        setAssociations(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFiles);
+        setAssociations(getVideoFileAssociationModel(), getAssociationIdField(), "video_file_id", null, videoFiles);
     }
 
     public void setVideoFiles(VideoFile... videoFiles) {
-        setAssociations(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFiles);
+        setAssociations(getVideoFileAssociationModel(), getAssociationIdField(), "video_file_id", null, videoFiles);
     }
 
     public <C extends Model> void addVideoFile(VideoFile videoFile) {
-        addAssociation(getVideoFileAssociationModel(), getAssociationIdField(), null, videoFile);
+        addAssociation(getVideoFileAssociationModel(), getAssociationIdField(), "video_file_id", null, videoFile);
     }
 
+    @Override
+    public void delete() {
+        super.delete();
+        removeVideoFiles();
+    }
 }
