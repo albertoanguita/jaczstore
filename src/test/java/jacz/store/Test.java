@@ -152,4 +152,8 @@ public class Test {
 //        languages.add(LanguageCode.en);
 //        ListAssert.assertEquals(languages, movie1.getLanguages());
     }
+
+    @org.junit.Test
+    public void testTVSeries() throws SQLException, ClassNotFoundException {
+    }
 }
