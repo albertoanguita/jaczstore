@@ -34,6 +34,11 @@ public final class Movie extends ProducedCreationItem {
         return buildList(getModels(jacz.store.database.models.Movie.class));
     }
 
+    public static Movie getMovieById(int id) {
+        Model model = getModelById(jacz.store.database.models.Movie.class, id);
+        return model != null ? new Movie(model) : null;
+    }
+
     static List<Movie> buildList(List<? extends Model> models) {
         List<Movie> movies = new ArrayList<>();
         for (Model model : models) {
@@ -97,7 +102,7 @@ public final class Movie extends ProducedCreationItem {
     }
 
     public List<VideoFile> getVideoFiles() {
-        List<jacz.store.database.models.VideoFile> modelVideoFiles = getAssociation(jacz.store.database.models.VideoFile.class);
+        List<jacz.store.database.models.VideoFile> modelVideoFiles = getAssociation(jacz.store.database.models.VideoFile.class, jacz.store.database.models.MoviesVideoFiles.class);
         return VideoFile.buildList(modelVideoFiles);
     }
 

@@ -112,7 +112,7 @@ public abstract class CreationItem extends LibraryItem {
     }
 
     protected List<Person> getCreatorsDirectors() {
-        List<jacz.store.database.models.Person> modelPersons = getAssociation(jacz.store.database.models.Person.class, "type = ? ", DatabaseMediator.PERSON_TYPE.CREATOR.name());
+        List<jacz.store.database.models.Person> modelPersons = getAssociation(jacz.store.database.models.Person.class, getPeopleAssociationModel(), "type = ? ", DatabaseMediator.PERSON_TYPE.CREATOR.name());
         return Person.buildList(modelPersons);
     }
 
@@ -136,8 +136,8 @@ public abstract class CreationItem extends LibraryItem {
         addAssociation(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PERSON_TYPE.CREATOR.name(), person);
     }
 
-    public List<Person> getActors() {
-        List<jacz.store.database.models.Person> modelPersons = getAssociation(jacz.store.database.models.Person.class, "type = ? ", DatabaseMediator.PERSON_TYPE.ACTOR.name());
+    protected List<Person> getActors() {
+        List<jacz.store.database.models.Person> modelPersons = getAssociation(jacz.store.database.models.Person.class, getPeopleAssociationModel(), "type = ? ", DatabaseMediator.PERSON_TYPE.ACTOR.name());
         return Person.buildList(modelPersons);
     }
 

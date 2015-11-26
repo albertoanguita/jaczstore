@@ -2,10 +2,12 @@ package jacz.store;
 
 import com.neovisionaries.i18n.CountryCode;
 import com.neovisionaries.i18n.LanguageCode;
+import jacz.store.database.models.MoviesPeople;
 import jacz.store.util.GenreCode;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,22 +90,12 @@ public abstract class LibraryItem {
 
     protected static <C extends Model> List<C> getModels(Class<? extends Model> modelClass) {
         return getModels(modelClass, null, null);
-//        try {
-//            Method findAll = modelClass.getMethod("findAll");
-//            List<C> models;
-//            models = (List<C>) findAll.invoke(null);
-//            return models;
-//        } catch (Exception e) {
-//            // todo internal error
-//            e.printStackTrace();
-//            return null;
-//        }
     }
 
     protected static <C extends Model> List<C> getModels(Class<? extends Model> modelClass, String query, Object[] params) {
         try {
             Method where = modelClass.getMethod("where", String.class, Object[].class);
-            query = query != null ? "alive = true AND " + query : "alive = 1";
+            query = query != null ? "alive = 1 AND " + query : "alive = 1";
             params = params != null ? params : new Object[0];
             List<C> models;
             models = (List<C>) where.invoke(null, query, params);
@@ -113,6 +105,12 @@ public abstract class LibraryItem {
             e.printStackTrace();
             return null;
         }
+    }
+
+    protected static <C extends Model> C getModelById(Class<? extends Model> modelClass, int id) {
+        Object[] params = {id};
+        List<C> models = getModels(modelClass, "id = ?", params);
+        return models.isEmpty() ? null : models.get(0);
     }
 
     protected <C extends Model> Model getDirectAssociationParent(Class<C> parentClass) {
@@ -161,12 +159,23 @@ public abstract class LibraryItem {
         model.add(item.model);
     }
 
-    protected <C extends Model> LazyList<C> getAssociation(Class<C> clazz) {
-        return model.getAll(clazz);
+    protected <C extends Model, D extends Model> LazyList<C> getAssociation(Class<C> clazz, Class<D> associationClass) {
+        return getAssociation(clazz, associationClass, null);
+//        return model.get(clazz, "alive = 1");
     }
 
-    protected <C extends Model> LazyList<C> getAssociation(Class<C> clazz, String query, Object... params) {
-        return model.get(clazz, query, params);
+    protected <C extends Model, D extends Model> LazyList<C> getAssociation(Class<C> clazz, Class<D> associationClass, String query, Object... params) {
+        try {
+            Method getTableName = associationClass.getMethod("getTableName");
+            String tableName = (String) getTableName.invoke(null);
+            query = query != null ? tableName + ".alive = 1 AND " + query : tableName + ".alive = 1";
+//            query = query != null ? "alive = 1 AND " + query : "alive = 1";
+            return model.get(clazz, query, params);
+        } catch (Exception e) {
+            // todo internal error
+            e.printStackTrace();
+            return null;
+        }
     }
 
     protected <C extends Model> void removeAssociations(Class<? extends Model> modelClass, String idField, String type) {
@@ -222,6 +231,7 @@ public abstract class LibraryItem {
     protected <C extends Model> void addAssociation(Class<? extends Model> modelClass, String idField, String childIdField, String type, LibraryItem item) {
         try {
             Model associativeModel = modelClass.newInstance();
+            associativeModel.set("alive", 1);
             associativeModel.set(idField, getId());
             associativeModel.set(childIdField, item.getId());
             if (type != null) {
@@ -407,7 +417,7 @@ public abstract class LibraryItem {
     private void deleteModel(Model model) {
         if (model != null) {
             model.set("alive", 0);
-            save();
+            model.saveIt();
         }
     }
 }

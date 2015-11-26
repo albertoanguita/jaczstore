@@ -27,7 +27,7 @@ public abstract class ProducedCreationItem extends CreationItem {
     abstract Class<? extends Model> getCompanyAssociationModel();
 
     public List<Company> getProductionCompanies() {
-        List<jacz.store.database.models.Company> modelCompanies = getAssociation(jacz.store.database.models.Company.class);
+        List<jacz.store.database.models.Company> modelCompanies = getAssociation(jacz.store.database.models.Company.class, getCompanyAssociationModel());
         return Company.buildList(modelCompanies);
     }
 
@@ -47,8 +47,8 @@ public abstract class ProducedCreationItem extends CreationItem {
         setAssociations(getCompanyAssociationModel(), getAssociationIdField(), "company_id", null, persons);
     }
 
-    public <C extends Model> void addProductionCompany(Person person) {
-        addAssociation(getCompanyAssociationModel(), getAssociationIdField(), "company_id", null, person);
+    public <C extends Model> void addProductionCompany(Company company) {
+        addAssociation(getCompanyAssociationModel(), getAssociationIdField(), "company_id", null, company);
     }
 
     @Override
@@ -87,6 +87,7 @@ public abstract class ProducedCreationItem extends CreationItem {
 
     public void removeImage() {
         removeDirectAssociationParent(jacz.store.database.models.ImageFile.class);
+        set("image_file_id", -1);
     }
 
     @Override

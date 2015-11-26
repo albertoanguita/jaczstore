@@ -70,7 +70,80 @@ public class Test {
         Assert.assertEquals("image", movie1.getImage().getHash());
 
         imageFile.delete();
+        movie1 = Movie.getMovieById(1);
         Assert.assertEquals(null, movie1.getImage());
+
+        Person arnold = new Person();
+        arnold.setName("Arnold");
+        Person silvester = new Person();
+        silvester.setName("Silvester");
+        Person christian = new Person();
+        christian.setName("Christian");
+        Person george = new Person();
+        george.setName("George");
+
+        Movie movie = new Movie();
+        movie.setTitle("Predator");
+
+        movie.addDirector(arnold);
+        movie.addDirector(silvester);
+        movie.addActor(christian);
+        movie.addActor(george);
+        List<Person> actors = movie.getActors();
+        List<Person> directors = movie.getDirectors();
+        Assert.assertEquals(2, actors.size());
+        Assert.assertEquals(2, directors.size());
+        Assert.assertEquals("Christian", actors.get(0).getName());
+        Assert.assertEquals("George", actors.get(1).getName());
+        Assert.assertEquals("Arnold", directors.get(0).getName());
+        Assert.assertEquals("Silvester", directors.get(1).getName());
+        movie.removeDirector(arnold);
+        movie.removeActor(christian);
+        actors = movie.getActors();
+        directors = movie.getDirectors();
+        Assert.assertEquals(1, actors.size());
+        Assert.assertEquals(1, directors.size());
+        Assert.assertEquals("George", actors.get(0).getName());
+        Assert.assertEquals("Silvester", directors.get(0).getName());
+        movie.removeDirectors();
+        movie.removeActors();
+        Assert.assertEquals(0, movie.getDirectors().size());
+        Assert.assertEquals(0, movie.getActors().size());
+
+        Company hbo = new Company();
+        hbo.setName("HBO");
+        Company pixar = new Company();
+        pixar.setName("Pixar");
+        movie.addProductionCompany(hbo);
+        movie.addProductionCompany(pixar);
+        List<Company> companies = movie.getProductionCompanies();
+        Assert.assertEquals(2, companies.size());
+        Assert.assertEquals("HBO", companies.get(0).getName());
+        Assert.assertEquals("Pixar", companies.get(1).getName());
+        movie.removeProductionCompany(hbo);
+        companies = movie.getProductionCompanies();
+        Assert.assertEquals(1, companies.size());
+        Assert.assertEquals("Pixar", companies.get(0).getName());
+        movie.removeProductionCompanies();
+        Assert.assertEquals(0, movie.getProductionCompanies().size());
+
+        VideoFile videoFile1 = new VideoFile();
+        videoFile1.setName("video1");
+        VideoFile videoFile2 = new VideoFile();
+        videoFile2.setName("video2");
+        movie.addVideoFile(videoFile1);
+        movie.addVideoFile(videoFile2);
+        List<VideoFile> videoFiles = movie.getVideoFiles();
+        Assert.assertEquals(2, videoFiles.size());
+        Assert.assertEquals("video1", videoFiles.get(0).getName());
+        Assert.assertEquals("video2", videoFiles.get(1).getName());
+        movie.removeVideoFile(videoFile1);
+        videoFiles = movie.getVideoFiles();
+        Assert.assertEquals(1, videoFiles.size());
+        Assert.assertEquals("video2", videoFiles.get(0).getName());
+        movie.removeVideoFiles();
+        Assert.assertEquals(0, movie.getVideoFiles().size());
+
 
 //        movie1.addLanguage(LanguageCode.es);
 //        movie1.addLanguage(LanguageCode.en);

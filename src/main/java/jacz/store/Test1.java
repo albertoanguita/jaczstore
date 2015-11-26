@@ -63,6 +63,13 @@ public class Test1 {
         movie.addActor(christian);
         movie.addActor(george);
 
+//        ImageFile image = new ImageFile();
+//        image.setHash("hash");
+//        movie.setImage(image);
+//        System.out.println(movie.getImage().getHash());
+//        image.delete();
+//        ImageFile getImage = movie.getImage();
+
         List<Movie> movies = Movie.getMovies();
         movie.delete();
 
