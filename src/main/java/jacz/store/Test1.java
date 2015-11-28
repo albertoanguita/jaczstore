@@ -4,7 +4,6 @@ import jacz.store.database.DatabaseMediator;
 import org.javalite.activejdbc.Base;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -63,90 +62,94 @@ public class Test1 {
         movie.addActor(christian);
         movie.addActor(george);
 
-//        ImageFile image = new ImageFile();
-//        image.setHash("hash");
-//        movie.setImage(image);
-//        System.out.println(movie.getImage().getHash());
-//        image.delete();
-//        ImageFile getImage = movie.getImage();
+        ImageFile image = new ImageFile();
+        image.setHash("hash");
+        movie.setImage(image);
+        System.out.println(movie.getImage().getHash());
+        image.delete();
+        ImageFile getImage = movie.getImage();
 
         List<Movie> movies = Movie.getMovies();
         movie.delete();
 
-        for (Person person : movie.getCreatorsDirectors()) {
-            System.out.println(person.getName());
-        }
-        for (Person person : movie.getActors()) {
-            System.out.println(person.getName());
-        }
-        System.out.println("---");
-
-        movie.removeDirector(arnold);
-        movie.removeActor(christian);
-        for (Person person : movie.getCreatorsDirectors()) {
-            System.out.println(person.getName());
-        }
-        for (Person person : movie.getActors()) {
-            System.out.println(person.getName());
-        }
-        System.out.println("---");
-
-        movie.removeCreatorsDirectors();
-        movie.removeActors();
-        for (Person person : movie.getCreatorsDirectors()) {
-            System.out.println(person.getName());
-        }
-        for (Person person : movie.getActors()) {
-            System.out.println(person.getName());
-        }
-        System.out.println("---");
-
-        VideoFile videoFile1 = new VideoFile();
-        videoFile1.setName("video1");
-        VideoFile videoFile2 = new VideoFile();
-        videoFile2.setName("video2");
-        movie.addVideoFile(videoFile1);
-        movie.addVideoFile(videoFile2);
-        for (VideoFile videoFile : movie.getVideoFiles()) {
-            System.out.println(videoFile.getName());
-        }
-        System.out.println("---");
-
-        movie.removeVideoFile(videoFile1);
-        for (VideoFile videoFile : movie.getVideoFiles()) {
-            System.out.println(videoFile.getName());
-        }
-        System.out.println("---");
-
-        movie.removeVideoFiles();
-        for (VideoFile videoFile : movie.getVideoFiles()) {
-            System.out.println(videoFile.getName());
-        }
-        System.out.println("---");
-
-        ImageFile imageFile = new ImageFile();
-        imageFile.setHash("image1");
-        movie.setImage(imageFile);
-        System.out.println(movie.getImage().getHash());
-        movie.removeImage();
-        System.out.println(movie.getImage());
-        ImageFile imageFile1 = new ImageFile();
-        imageFile1.setHash("image2");
-        movie.setImage(imageFile1);
-        System.out.println(movie.getImage().getHash());
-        System.out.println(movie.getImage());
 
 
-        List<String> externalURLs = new ArrayList<>();
-        externalURLs.add("url1");
-        externalURLs.add("url2");
-        movie.setExternalURLs(externalURLs);
-        System.out.println(movie.getExternalURLs());
-        movie.addExternalURL("url3");
-        System.out.println(movie.getExternalURLs());
-        movie.removeExternalURL("url1");
-        System.out.println(movie.getExternalURLs());
-        movie.removeExternalURLs();
-        System.out.println(movie.getExternalURLs());
+        System.out.println("END");
+
+//        for (Person person : movie.getCreatorsDirectors()) {
+//            System.out.println(person.getName());
+//        }
+//        for (Person person : movie.getActors()) {
+//            System.out.println(person.getName());
+//        }
+//        System.out.println("---");
+//
+//        movie.removeDirector(arnold);
+//        movie.removeActor(christian);
+//        for (Person person : movie.getCreatorsDirectors()) {
+//            System.out.println(person.getName());
+//        }
+//        for (Person person : movie.getActors()) {
+//            System.out.println(person.getName());
+//        }
+//        System.out.println("---");
+//
+//        movie.removeCreatorsDirectors();
+//        movie.removeActors();
+//        for (Person person : movie.getCreatorsDirectors()) {
+//            System.out.println(person.getName());
+//        }
+//        for (Person person : movie.getActors()) {
+//            System.out.println(person.getName());
+//        }
+//        System.out.println("---");
+//
+//        VideoFile videoFile1 = new VideoFile();
+//        videoFile1.setName("video1");
+//        VideoFile videoFile2 = new VideoFile();
+//        videoFile2.setName("video2");
+//        movie.addVideoFile(videoFile1);
+//        movie.addVideoFile(videoFile2);
+//        for (VideoFile videoFile : movie.getVideoFiles()) {
+//            System.out.println(videoFile.getName());
+//        }
+//        System.out.println("---");
+//
+//        movie.removeVideoFile(videoFile1);
+//        for (VideoFile videoFile : movie.getVideoFiles()) {
+//            System.out.println(videoFile.getName());
+//        }
+//        System.out.println("---");
+//
+//        movie.removeVideoFiles();
+//        for (VideoFile videoFile : movie.getVideoFiles()) {
+//            System.out.println(videoFile.getName());
+//        }
+//        System.out.println("---");
+//
+//        ImageFile imageFile = new ImageFile();
+//        imageFile.setHash("image1");
+//        movie.setImage(imageFile);
+//        System.out.println(movie.getImage().getHash());
+//        movie.removeImage();
+//        System.out.println(movie.getImage());
+//        ImageFile imageFile1 = new ImageFile();
+//        imageFile1.setHash("image2");
+//        movie.setImage(imageFile1);
+//        System.out.println(movie.getImage().getHash());
+//        System.out.println(movie.getImage());
+//
+//
+//        List<String> externalURLs = new ArrayList<>();
+//        externalURLs.add("url1");
+//        externalURLs.add("url2");
+//        movie.setExternalURLs(externalURLs);
+//        System.out.println(movie.getExternalURLs());
+//        movie.addExternalURL("url3");
+//        System.out.println(movie.getExternalURLs());
+//        movie.removeExternalURL("url1");
+//        System.out.println(movie.getExternalURLs());
+//        movie.removeExternalURLs();
+//        System.out.println(movie.getExternalURLs());
     }
 }

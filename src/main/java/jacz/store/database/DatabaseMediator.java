@@ -16,22 +16,23 @@ public class DatabaseMediator {
         // create a database connection
         Connection connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 
-        connection.createStatement().executeUpdate("DROP TABLE metadata");
-        connection.createStatement().executeUpdate("DROP TABLE movies");
-        connection.createStatement().executeUpdate("DROP TABLE tv_series");
-        connection.createStatement().executeUpdate("DROP TABLE chapters");
-        connection.createStatement().executeUpdate("DROP TABLE people");
-        connection.createStatement().executeUpdate("DROP TABLE companies");
-        connection.createStatement().executeUpdate("DROP TABLE video_files");
-        connection.createStatement().executeUpdate("DROP TABLE subtitle_files");
-        connection.createStatement().executeUpdate("DROP TABLE image_files");
-        connection.createStatement().executeUpdate("DROP TABLE movies_people");
-        connection.createStatement().executeUpdate("DROP TABLE tv_series_people");
-        connection.createStatement().executeUpdate("DROP TABLE chapters_people");
-        connection.createStatement().executeUpdate("DROP TABLE movies_companies");
-        connection.createStatement().executeUpdate("DROP TABLE tv_series_companies");
-        connection.createStatement().executeUpdate("DROP TABLE movies_video_files");
-        connection.createStatement().executeUpdate("DROP TABLE chapters_video_files");
+        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS metadata");
+        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS deleted_items");
+        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS movies");
+        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS tv_series");
+        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS chapters");
+        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS people");
+        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS companies");
+        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS video_files");
+        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS subtitle_files");
+        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS image_files");
+        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS movies_people");
+        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS tv_series_people");
+        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS chapters_people");
+        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS movies_companies");
+        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS tv_series_companies");
+        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS movies_video_files");
+        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS chapters_video_files");
     }
 
     private static void createDatabase(String path) throws SQLException, ClassNotFoundException {
@@ -48,6 +49,14 @@ public class DatabaseMediator {
                         "lastAccess    DATE, " +
                         "lastUpdate    DATE, " +
                         "lastTimestamp INTEGER " +
+                        ")"
+        );
+        connection.createStatement().executeUpdate(
+                "CREATE TABLE deleted_items (" +
+                        "id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                        "timestamp  INTEGER, " +
+                        "item_id    INTEGER, " +
+                        "item_table TEXT " +
                         ")"
         );
         connection.createStatement().executeUpdate(

@@ -126,11 +126,11 @@ public abstract class LibraryItem {
     }
 
     protected <C extends Model> LazyList<C> getDirectAssociationChildren(Class<C> childClass) {
-        return model.getAll(childClass);
+        return model.get(childClass, "alive = 1");
     }
 
     protected <C extends Model> LazyList<C> getDirectAssociationChildren(Class<C> childClass, String query, Object... params) {
-        return model.get(childClass, query, params);
+        return model.get(childClass, "alive = 1 AND " + query, params);
     }
 
     protected <C extends Model> void removeDirectAssociationChildren(Class<C> childClass) {
@@ -416,8 +416,9 @@ public abstract class LibraryItem {
 
     private void deleteModel(Model model) {
         if (model != null) {
-            model.set("alive", 0);
-            model.saveIt();
+//            model.set("alive", 0);
+//            model.saveIt();
+            model.deleteCascadeShallow();
         }
     }
 }

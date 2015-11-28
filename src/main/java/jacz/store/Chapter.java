@@ -1,8 +1,6 @@
 package jacz.store;
 
-import jacz.store.database.models.*;
 import org.javalite.activejdbc.Model;
-import org.javalite.activejdbc.annotations.BelongsTo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +27,15 @@ public final class Chapter extends CreationItem {
     @Override
     protected Model buildModel() {
         return new jacz.store.database.models.Chapter();
+    }
+
+    public static List<Chapter> getChapters() {
+        return buildList(getModels(jacz.store.database.models.Chapter.class));
+    }
+
+    public static Chapter getChapterById(int id) {
+        Model model = getModelById(jacz.store.database.models.Chapter.class, id);
+        return model != null ? new Chapter(model) : null;
     }
 
     static List<Chapter> buildList(List<? extends Model> models) {
@@ -63,7 +70,7 @@ public final class Chapter extends CreationItem {
         set("season", season);
     }
 
-    public int getMinutes() {
+    public Integer getMinutes() {
         return getInteger("minutes");
     }
 
@@ -71,13 +78,38 @@ public final class Chapter extends CreationItem {
         set("minutes", minutes);
     }
 
+    public List<Person> getDirectors() {
+        return getCreatorsDirectors();
+    }
+
+    public <C extends Model> void removeDirectors() {
+        removeCreatorsDirectors();
+    }
+
+    public <C extends Model> void removeDirector(Person person) {
+        removeCreatorDirector(person);
+    }
+
+    public void setDirectors(List<Person> persons) {
+        setCreatorsDirectors(persons);
+    }
+
+    public void setDirectors(Person... persons) {
+        setCreatorsDirectors(persons);
+    }
+
+    public <C extends Model> void addDirector(Person person) {
+        addCreatorDirector(person);
+    }
+
+
     public List<VideoFile> getVideoFiles() {
         List<jacz.store.database.models.VideoFile> modelVideoFiles = getAssociation(jacz.store.database.models.VideoFile.class, jacz.store.database.models.ChaptersVideoFiles.class);
         return VideoFile.buildList(modelVideoFiles);
     }
 
     public <C extends Model> void removeVideoFiles() {
-        removeAssociations(jacz.store.database.models.MoviesVideoFiles.class, getAssociationIdField(), null);
+        removeAssociations(jacz.store.database.models.ChaptersVideoFiles.class, getAssociationIdField(), null);
     }
 
     public <C extends Model> void removeVideoFile(VideoFile videoFile) {
@@ -100,5 +132,10 @@ public final class Chapter extends CreationItem {
     public void delete() {
         super.delete();
         removeVideoFiles();
+//        Model model = getDirectAssociationParent(jacz.store.database.models.TVSeries.class);
+//        if (model != null) {
+//            TVSeries tvSeries = new TVSeries(model);
+//            tvSeries.set("image_file_id", -1);
+//        }
     }
 }

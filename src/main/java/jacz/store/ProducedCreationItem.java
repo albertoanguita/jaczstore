@@ -93,7 +93,7 @@ public abstract class ProducedCreationItem extends CreationItem {
     @Override
     public void delete() {
         super.delete();
-        removeProductionCompanies();
-        removeImage();
+//        removeProductionCompanies();
+//        removeImage();
     }
 }

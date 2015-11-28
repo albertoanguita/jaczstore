@@ -27,9 +27,13 @@ public class ImageFile extends File {
     @Override
     public void delete() {
         super.delete();
-        List<Movie> movies = Movie.buildList(getDirectAssociationChildren(jacz.store.database.models.Movie.class));
-        for (Movie movie : movies) {
-            movie.set("image_file_id", -1);
-        }
+//        List<Movie> movies = Movie.buildList(getDirectAssociationChildren(jacz.store.database.models.Movie.class));
+//        for (Movie movie : movies) {
+//            movie.set("image_file_id", -1);
+//        }
+//        List<TVSeries> tvSeries = TVSeries.buildList(getDirectAssociationChildren(jacz.store.database.models.TVSeries.class));
+//        for (TVSeries oneTVSeries : tvSeries) {
+//            oneTVSeries.set("image_file_id", -1);
+//        }
     }
 }

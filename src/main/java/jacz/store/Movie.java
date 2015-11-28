@@ -129,6 +129,6 @@ public final class Movie extends ProducedCreationItem {
     @Override
     public void delete() {
         super.delete();
-        removeVideoFiles();
+//        removeVideoFiles();
     }
 }

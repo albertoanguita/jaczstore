@@ -15,9 +15,32 @@ public final class TVSeries extends ProducedCreationItem {
         super();
     }
 
+    public TVSeries(Model model) {
+        super(model);
+    }
+
     @Override
     protected Model buildModel() {
         return new jacz.store.database.models.TVSeries();
+    }
+
+    public static List<TVSeries> getTVSeries() {
+        return buildList(getModels(jacz.store.database.models.TVSeries.class));
+    }
+
+    public static TVSeries getTVSeriesById(int id) {
+        Model model = getModelById(jacz.store.database.models.TVSeries.class, id);
+        return model != null ? new TVSeries(model) : null;
+    }
+
+    static List<TVSeries> buildList(List<? extends Model> models) {
+        List<TVSeries> tvSeries = new ArrayList<>();
+        for (Model model : models) {
+            if (model != null) {
+                tvSeries.add(new TVSeries(model));
+            }
+        }
+        return tvSeries;
     }
 
     @Override
@@ -43,6 +66,10 @@ public final class TVSeries extends ProducedCreationItem {
         super.removeCreatorsDirectors();
     }
 
+    public <C extends Model> void removeCreator(Person person) {
+        removeCreatorDirector(person);
+    }
+
     public void setCreators(List<Person> persons) {
         super.setCreatorsDirectors(persons);
     }
@@ -51,17 +78,9 @@ public final class TVSeries extends ProducedCreationItem {
         super.setCreatorsDirectors(persons);
     }
 
-//    public <C extends Model> void addCreators(List<Person> persons) {
-//        super.addCreatorDirectors(persons);
-//    }
-//
-//    public <C extends Model> void addCreators(Person... persons) {
-//        super.addCreatorDirectors(persons);
-//    }
-
-    public <C extends Model> void addCreators(Person person) {
-        super.addCreatorDirector(person);
-    }
+    public <C extends Model> void addCreator(Person person) {
+            addCreatorDirector(person);
+        }
 
     public List<String> getSeasons() {
         List<Chapter> chapters = getChapters();

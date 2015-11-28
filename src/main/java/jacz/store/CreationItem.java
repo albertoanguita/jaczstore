@@ -164,7 +164,7 @@ public abstract class CreationItem extends LibraryItem {
     @Override
     public void delete() {
         super.delete();
-        removeCreatorsDirectors();
-        removeActors();
+//        removeCreatorsDirectors();
+//        removeActors();
     }
 }

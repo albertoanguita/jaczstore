@@ -8,4 +8,9 @@ import org.javalite.activejdbc.annotations.Table;
  */
 @Table("video_files")
 public class VideoFile extends Model {
+
+    @Override
+    public void beforeDelete() {
+        System.out.println("VideoFile deleted!!!");
+    }
 }
