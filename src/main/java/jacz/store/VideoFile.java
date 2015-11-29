@@ -11,17 +11,17 @@ import java.util.List;
 /**
  * Created by Alberto on 12/09/2015.
  */
-public final class VideoFile extends File {
+public final class VideoFile extends FileWithLanguages {
 
-    private String name;
-
-    private Integer minutes;
-
-    private QualityCode quality;
-
-    private List<LanguageCode> languages;
-
-    private List<SubtitleFile> subtitleFiles;
+//    private String name;
+//
+//    private Integer minutes;
+//
+//    private QualityCode quality;
+//
+//    private List<LanguageCode> languages;
+//
+//    private List<SubtitleFile> subtitleFiles;
 
     public VideoFile() {
         super();
@@ -60,31 +60,6 @@ public final class VideoFile extends File {
 
     public void setQuality(QualityCode quality) {
         set("qualityCode", quality.name());
-    }
-
-    @Override
-    public List<LanguageCode> getLanguages() {
-        return super.getLanguages();
-    }
-
-    @Override
-    public void removeLanguages() {
-        super.removeLanguages();
-    }
-
-    @Override
-    public boolean removeLanguages(LanguageCode language) {
-        return super.removeLanguages(language);
-    }
-
-    @Override
-    public void setLanguages(List<LanguageCode> languages) {
-        super.setLanguages(languages);
-    }
-
-    @Override
-    public boolean addLanguage(LanguageCode language) {
-        return super.addLanguage(language);
     }
 
     public List<SubtitleFile> getSubtitleFiles() {

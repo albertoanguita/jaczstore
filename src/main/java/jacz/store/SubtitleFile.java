@@ -10,9 +10,9 @@ import java.util.List;
 /**
  * Created by Alberto on 12/09/2015.
  */
-public final class SubtitleFile extends File {
+public final class SubtitleFile extends FileWithLanguages {
 
-    private LanguageCode language;
+//    private LanguageCode language;
 
     public SubtitleFile() {
         super();
@@ -35,14 +35,5 @@ public final class SubtitleFile extends File {
             }
         }
         return subtitleFiles;
-    }
-
-    public LanguageCode getLanguage() {
-        // todo
-        return null;
-    }
-
-    public void setLanguage(LanguageCode language) {
-        // todo
     }
 }

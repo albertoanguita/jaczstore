@@ -61,54 +61,44 @@ public abstract class CreationItem extends LibraryItem {
         set("year", year);
     }
 
-    @Override
     public List<CountryCode> getCountries() {
-        return super.getCountries();
+        return getEnums("countries", CountryCode.class);
     }
 
-    @Override
     public void removeCountries() {
-        super.removeCountries();
+        removeList("countries");
     }
 
-    @Override
     public boolean removeCountry(CountryCode country) {
-        return super.removeCountry(country);
+        return removeEnum("countries", CountryCode.class, country, "getAlpha2");
     }
 
-    @Override
     public void setCountries(List<CountryCode> countries) {
-        super.setCountries(countries);
+        setEnums("countries", CountryCode.class, countries, "getAlpha2");
     }
 
-    @Override
     public boolean addCountry(CountryCode country) {
-        return super.addCountry(country);
+        return addEnum("countries", CountryCode.class, country, "getAlpha2");
     }
 
-    @Override
     public List<String> getExternalURLs() {
-        return super.getExternalURLs();
+        return getStringList("externalURLs");
     }
 
-    @Override
     public void removeExternalURLs() {
-        super.removeExternalURLs();
+        removeStringList("externalURLs");
     }
 
-    @Override
     public boolean removeExternalURL(String externalURL) {
-        return super.removeExternalURL(externalURL);
+        return removeStringValue("externalURLs", externalURL);
     }
 
-    @Override
     public void setExternalURLs(List<String> externalURLs) {
-        super.setExternalURLs(externalURLs);
+        setStringList("externalURLs", externalURLs);
     }
 
-    @Override
     public boolean addExternalURL(String externalURL) {
-        return super.addExternalURL(externalURL);
+        return addStringValue("externalURLs", externalURL);
     }
 
     protected List<Person> getCreatorsDirectors() {

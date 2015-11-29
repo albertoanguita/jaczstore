@@ -1,9 +1,5 @@
 package jacz.store;
 
-import com.neovisionaries.i18n.CountryCode;
-import com.neovisionaries.i18n.LanguageCode;
-import jacz.store.database.models.MoviesPeople;
-import jacz.store.util.GenreCode;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
@@ -268,146 +264,91 @@ public abstract class LibraryItem {
         }
     }
 
-    protected List<CountryCode> getCountries() {
-        String countryList = getString("countries");
-        List<CountryCode> countries = new ArrayList<>();
-        for (String countryCode : deserializeList(countryList)) {
-            countries.add(CountryCode.valueOf(countryCode));
-        }
-        return countries;
+    protected List<String> getStringList(String field) {
+        return deserializeList(getString(field));
     }
 
-    protected void removeCountries() {
-        set("countries", null);
+    protected void removeStringList(String field) {
+        removeList(field);
     }
 
-    protected boolean removeCountry(CountryCode country) {
-        List<CountryCode> countries = getCountries();
-        boolean removed = countries.remove(country);
-        setCountries(countries);
+    protected boolean removeStringValue(String field, String value) {
+        List<String> stringList = getStringList(field);
+        boolean removed = stringList.remove(value);
+        setStringList(field, stringList);
         return removed;
     }
 
-    protected void setCountries(List<CountryCode> countries) {
-        List<String> countryList = new ArrayList<>();
-        for (CountryCode countryCode : countries) {
-            countryList.add(countryCode.getAlpha2());
-        }
-        set("countries", serializeList(countryList));
+    protected void setStringList(String field, List<String> stringList) {
+        set(field, serializeList(stringList));
     }
 
-    protected boolean addCountry(CountryCode country) {
-        List<CountryCode> countries = getCountries();
-        boolean notContains = !countries.contains(country);
+    protected boolean addStringValue(String field, String value) {
+        List<String> stringList = getStringList(field);
+        boolean notContains = !stringList.contains(value);
         if (notContains) {
-            countries.add(country);
+            stringList.add(value);
         }
-        setCountries(countries);
+        setStringList(field, stringList);
         return notContains;
     }
 
-    protected List<String> getExternalURLs() {
-        return deserializeList(getString("externalURLs"));
+    protected <E> List<E> getEnums(String field, Class<E> enum_) {
+        try {
+            Method valueOf = enum_.getMethod("valueOf", String.class);
+            String strList = getString(field);
+            List<E> enumValues = new ArrayList<>();
+            for (String str : deserializeList(strList)) {
+                enumValues.add((E) valueOf.invoke(null, str));
+            }
+            return enumValues;
+        } catch (IllegalAccessException e) {
+            // todo
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    protected void removeExternalURLs() {
-        set("externalURLs", null);
+    protected void removeList(String field) {
+        set(field, null);
     }
 
-    protected boolean removeExternalURL(String externalURL) {
-        List<String> externalURLs = getExternalURLs();
-        boolean removed = externalURLs.remove(externalURL);
-        setExternalURLs(externalURLs);
+    protected <E> boolean removeEnum(String field, Class<E> enum_, E value, String getNameMethod) {
+        List<E> enums = getEnums(field, enum_);
+        boolean removed = enums.remove(value);
+        setEnums(field, enum_, enums, getNameMethod);
         return removed;
     }
 
-    protected void setExternalURLs(List<String> externalURLs) {
-        set("externalURLs", serializeList(externalURLs));
+    protected <E> void setEnums(String field, Class<E> enum_, List<E> values, String getNameMethod) {
+        try {
+            Method getName = enum_.getMethod(getNameMethod);
+            List<String> strList = new ArrayList<>();
+            for (E value : values) {
+                strList.add((String) getName.invoke(value));
+            }
+            set(field, serializeList(strList));
+        } catch (NoSuchMethodException e) {
+            // todo
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
-    protected boolean addExternalURL(String externalURL) {
-        List<String> externalURLs = getExternalURLs();
-        boolean notContains = !externalURLs.contains(externalURL);
+    protected <E> boolean addEnum(String field, Class<E> enum_, E value, String getNameMethod) {
+        List<E> values = getEnums(field, enum_);
+        boolean notContains = !values.contains(value);
         if (notContains) {
-            externalURLs.add(externalURL);
+            values.add(value);
         }
-        setExternalURLs(externalURLs);
-        return notContains;
-    }
-
-    protected List<GenreCode> getGenres() {
-        String genreList = getString("genres");
-        List<GenreCode> genres = new ArrayList<>();
-        for (String genreCode : deserializeList(genreList)) {
-            genres.add(GenreCode.valueOf(genreCode));
-        }
-        return genres;
-    }
-
-    protected void removeGenres() {
-        set("genres", null);
-    }
-
-    protected boolean removeGenre(GenreCode genre) {
-        List<GenreCode> genres = getGenres();
-        boolean removed = genres.remove(genre);
-        setGenres(genres);
-        return removed;
-    }
-
-    protected void setGenres(List<GenreCode> genres) {
-        List<String> genreList = new ArrayList<>();
-        for (GenreCode genreCode : genres) {
-            genreList.add(genreCode.name());
-        }
-        set("genres", serializeList(genreList));
-    }
-
-    protected boolean addGenre(GenreCode genre) {
-        List<GenreCode> genres = getGenres();
-        boolean notContains = !genres.contains(genre);
-        if (notContains) {
-            genres.add(genre);
-        }
-        setGenres(genres);
-        return notContains;
-    }
-
-    protected List<LanguageCode> getLanguages() {
-        String languageList = getString("languages");
-        List<LanguageCode> languages = new ArrayList<>();
-        for (String languageCode : deserializeList(languageList)) {
-            languages.add(LanguageCode.valueOf(languageCode));
-        }
-        return languages;
-    }
-
-    protected void removeLanguages() {
-        set("languages", null);
-    }
-
-    protected boolean removeLanguages(LanguageCode language) {
-        List<LanguageCode> languages = getLanguages();
-        boolean removed = languages.remove(language);
-        setLanguages(languages);
-        return removed;
-    }
-
-    protected void setLanguages(List<LanguageCode> languages) {
-        List<String> languageList = new ArrayList<>();
-        for (LanguageCode languageCode : languages) {
-            languageList.add(languageCode.name());
-        }
-        set("languages", serializeList(languageList));
-    }
-
-    protected boolean addLanguage(LanguageCode language) {
-        List<LanguageCode> languages = getLanguages();
-        boolean notContains = !languages.contains(language);
-        if (notContains) {
-            languages.add(language);
-        }
-        setLanguages(languages);
+        setEnums(field, enum_, values, getNameMethod);
         return notContains;
     }
 
@@ -436,12 +377,4 @@ public abstract class LibraryItem {
     public void delete() {
         model.delete();
     }
-
-//    private void deleteModel(Model model) {
-//        if (model != null) {
-////            model.set("alive", 0);
-////            model.saveIt();
-//            model.deleteCascadeShallow();
-//        }
-//    }
 }

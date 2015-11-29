@@ -51,29 +51,24 @@ public abstract class ProducedCreationItem extends CreationItem {
         addAssociation(getCompanyAssociationModel(), getAssociationIdField(), "company_id", null, company);
     }
 
-    @Override
-    public List<GenreCode> getGenres() {
-        return super.getGenres();
+    protected List<GenreCode> getGenres() {
+        return getEnums("genres", GenreCode.class);
     }
 
-    @Override
-    public void removeGenres() {
-        super.removeGenres();
+    protected void removeGenres() {
+        removeList("genres");
     }
 
-    @Override
-    public boolean removeGenre(GenreCode genre) {
-        return super.removeGenre(genre);
+    protected boolean removeGenre(GenreCode genre) {
+        return removeEnum("genres", GenreCode.class, genre, "name");
     }
 
-    @Override
-    public void setGenres(List<GenreCode> genres) {
-        super.setGenres(genres);
+    protected void setGenres(List<GenreCode> genres) {
+        setEnums("genres", GenreCode.class, genres, "name");
     }
 
-    @Override
-    public boolean addGenre(GenreCode genre) {
-        return super.addGenre(genre);
+    protected boolean addGenre(GenreCode genre) {
+        return addEnum("genres", GenreCode.class, genre, "name");
     }
 
     public ImageFile getImage() {

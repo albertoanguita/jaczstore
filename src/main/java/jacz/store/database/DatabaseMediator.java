@@ -33,6 +33,7 @@ public class DatabaseMediator {
         connection.createStatement().executeUpdate("DROP TABLE IF EXISTS tv_series_companies");
         connection.createStatement().executeUpdate("DROP TABLE IF EXISTS movies_video_files");
         connection.createStatement().executeUpdate("DROP TABLE IF EXISTS chapters_video_files");
+        connection.close();
     }
 
     private static void createDatabase(String path) throws SQLException, ClassNotFoundException {
@@ -207,7 +208,7 @@ public class DatabaseMediator {
                         "video_file_id INTEGER NOT NULL REFERENCES video_files(id)" +
                         ")"
         );
-
+        connection.close();
     }
 
 
