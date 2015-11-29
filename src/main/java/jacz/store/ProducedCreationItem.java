@@ -87,13 +87,6 @@ public abstract class ProducedCreationItem extends CreationItem {
 
     public void removeImage() {
         removeDirectAssociationParent(jacz.store.database.models.ImageFile.class);
-        set("image_file_id", -1);
-    }
-
-    @Override
-    public void delete() {
-        super.delete();
-//        removeProductionCompanies();
-//        removeImage();
+        set("image_file_id", null);
     }
 }

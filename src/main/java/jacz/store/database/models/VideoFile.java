@@ -11,6 +11,11 @@ public class VideoFile extends Model {
 
     @Override
     public void beforeDelete() {
-        System.out.println("VideoFile deleted!!!");
+        // delete association records
+        MoviesVideoFiles.deleteRecords("video_file_id", getId());
+        ChaptersVideoFiles.deleteRecords("video_file_id", getId());
+        // delete subtitle files
+        SubtitleFile.deleteRecords(this);
+        DeletedItem.addDeletedItem(this, getTableName());
     }
 }

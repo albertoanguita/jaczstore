@@ -77,8 +77,8 @@ public abstract class CreationItem extends LibraryItem {
     }
 
     @Override
-    public void removeExternalURLs() {
-        super.removeExternalURLs();
+    public void setCountries(List<CountryCode> countries) {
+        super.setCountries(countries);
     }
 
     @Override
@@ -87,28 +87,28 @@ public abstract class CreationItem extends LibraryItem {
     }
 
     @Override
-    public boolean removeExternalURL(String externalURL) {
-        return super.removeExternalURL(externalURL);
-    }
-
-    @Override
-    public void setCountries(List<CountryCode> countries) {
-        super.setCountries(countries);
-    }
-
-    @Override
-    public boolean addExternalURL(String externalURL) {
-        return super.addExternalURL(externalURL);
-    }
-
-    @Override
     public List<String> getExternalURLs() {
         return super.getExternalURLs();
     }
 
     @Override
+    public void removeExternalURLs() {
+        super.removeExternalURLs();
+    }
+
+    @Override
+    public boolean removeExternalURL(String externalURL) {
+        return super.removeExternalURL(externalURL);
+    }
+
+    @Override
     public void setExternalURLs(List<String> externalURLs) {
         super.setExternalURLs(externalURLs);
+    }
+
+    @Override
+    public boolean addExternalURL(String externalURL) {
+        return super.addExternalURL(externalURL);
     }
 
     protected List<Person> getCreatorsDirectors() {
@@ -159,12 +159,5 @@ public abstract class CreationItem extends LibraryItem {
 
     public <C extends Model> void addActor(Person person) {
         addAssociation(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PERSON_TYPE.ACTOR.name(), person);
-    }
-
-    @Override
-    public void delete() {
-        super.delete();
-//        removeCreatorsDirectors();
-//        removeActors();
     }
 }

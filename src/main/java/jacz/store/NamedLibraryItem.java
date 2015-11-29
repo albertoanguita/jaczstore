@@ -1,7 +1,5 @@
 package jacz.store;
 
-import jacz.store.database.models.*;
-import jacz.store.database_old.DatabaseMediator;
 import org.javalite.activejdbc.Model;
 
 import java.util.List;
@@ -13,7 +11,7 @@ public abstract class NamedLibraryItem extends LibraryItem {
 
 //    private String name;
 
-    private List<String> aliases;
+//    private List<String> aliases;
 
     public NamedLibraryItem() {
         super();
@@ -29,5 +27,34 @@ public abstract class NamedLibraryItem extends LibraryItem {
 
     public void setName(String name) {
         set("name", name);
+    }
+
+    public List<String> getAliases() {
+        return deserializeList(getString("aliases"));
+    }
+
+    public void removeAliases() {
+        set("aliases", null);
+    }
+
+    public boolean removeAlias(String alias) {
+        List<String> Aliases = getAliases();
+        boolean removed = Aliases.remove(alias);
+        setAliases(Aliases);
+        return removed;
+    }
+
+    public void setAliases(List<String> aliases) {
+        set("aliases", serializeList(aliases));
+    }
+
+    public boolean addAlias(String alias) {
+        List<String> aliases = getAliases();
+        boolean notContains = !aliases.contains(alias);
+        if (notContains) {
+            aliases.add(alias);
+        }
+        setAliases(aliases);
+        return notContains;
     }
 }

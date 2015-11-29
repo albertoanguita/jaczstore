@@ -1,8 +1,5 @@
 package jacz.store;
 
-import com.neovisionaries.i18n.CountryCode;
-import jacz.store.database_old.DatabaseMediator;
-import jacz.store.util.GenreCode;
 import org.javalite.activejdbc.Model;
 
 import java.util.ArrayList;
@@ -124,11 +121,5 @@ public final class Movie extends ProducedCreationItem {
 
     public <C extends Model> void addVideoFile(VideoFile videoFile) {
         addAssociation(getVideoFileAssociationModel(), getAssociationIdField(), "video_file_id", null, videoFile);
-    }
-
-    @Override
-    public void delete() {
-        super.delete();
-//        removeVideoFiles();
     }
 }

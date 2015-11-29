@@ -8,4 +8,18 @@ import org.javalite.activejdbc.annotations.Table;
  */
 @Table("image_files")
 public class ImageFile extends Model {
+
+    @Override
+    public void beforeDelete() {
+        Movie.deleteImageLink(this);
+        TVSeries.deleteImageLink(this);
+        DeletedItem.addDeletedItem(this, getTableName());
+    }
+
+    static void deleteRecord(Model fromModel) {
+        ImageFile imageFile = fromModel.parent(ImageFile.class);
+        if (imageFile != null) {
+            imageFile.delete();
+        }
+    }
 }

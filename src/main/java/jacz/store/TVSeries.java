@@ -120,10 +120,4 @@ public final class TVSeries extends ProducedCreationItem {
     public void addChapter(Chapter chapter) {
         addDirectAssociationChild(chapter);
     }
-
-    @Override
-    public void delete() {
-        super.delete();
-        removeChapters();
-    }
 }

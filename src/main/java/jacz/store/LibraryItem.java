@@ -10,6 +10,7 @@ import org.javalite.activejdbc.Model;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -26,7 +27,6 @@ public abstract class LibraryItem {
 
     public LibraryItem() {
         this.model = buildModel();
-        set("alive", 1, false);
         updateTimestamp();
         save();
     }
@@ -39,6 +39,15 @@ public abstract class LibraryItem {
     }
 
     protected abstract Model buildModel();
+
+    static boolean contains(Collection<? extends LibraryItem> items, Model model) {
+        for (LibraryItem item : items) {
+            if (item.getId().equals(model.getInteger("id"))) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public Integer getId() {
         return (Integer) model.getId();
@@ -65,15 +74,8 @@ public abstract class LibraryItem {
     }
 
     protected void set(String field, Object value) {
-        set(field, value, true);
-    }
-
-    protected void set(String field, Object value, boolean updateTimestamp) {
-//        set(field, value, true);
         model.set(field, value);
-        if (updateTimestamp) {
-            updateTimestamp();
-        }
+        updateTimestamp();
         save();
     }
 
@@ -89,13 +91,35 @@ public abstract class LibraryItem {
     }
 
     protected static <C extends Model> List<C> getModels(Class<? extends Model> modelClass) {
-        return getModels(modelClass, null, null);
+        try {
+            Method findAll = modelClass.getMethod("findAll");
+            List<C> models;
+            models = (List<C>) findAll.invoke(null);
+            return models;
+        } catch (Exception e) {
+            // todo internal error
+            e.printStackTrace();
+            return null;
+        }
     }
 
     protected static <C extends Model> List<C> getModels(Class<? extends Model> modelClass, String query, Object[] params) {
         try {
             Method where = modelClass.getMethod("where", String.class, Object[].class);
-            query = query != null ? "alive = 1 AND " + query : "alive = 1";
+            params = params != null ? params : new Object[0];
+            List<C> models;
+            models = (List<C>) where.invoke(null, query, params);
+            return models;
+        } catch (Exception e) {
+            // todo internal error
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    protected static <C extends Model> List<C> getModels(Class<? extends Model> modelClass, Class<? extends Model> includeModeClass, String query, Object[] params) {
+        try {
+            Method where = modelClass.getMethod("where", String.class, Object[].class);
             params = params != null ? params : new Object[0];
             List<C> models;
             models = (List<C>) where.invoke(null, query, params);
@@ -122,22 +146,21 @@ public abstract class LibraryItem {
     }
 
     protected <C extends Model> void removeDirectAssociationParent(Class<C> parentClass) {
-        deleteModel(model.parent(parentClass));
+        model.parent(parentClass).delete();
     }
 
     protected <C extends Model> LazyList<C> getDirectAssociationChildren(Class<C> childClass) {
-        return model.get(childClass, "alive = 1");
+        return model.getAll(childClass);
     }
 
     protected <C extends Model> LazyList<C> getDirectAssociationChildren(Class<C> childClass, String query, Object... params) {
-        return model.get(childClass, "alive = 1 AND " + query, params);
+        return model.get(childClass, query, params);
     }
 
     protected <C extends Model> void removeDirectAssociationChildren(Class<C> childClass) {
         List<C> children = getDirectAssociationChildren(childClass);
         for (C child : children) {
-            deleteModel(child);
-//            child.delete();
+            child.delete();
         }
     }
 
@@ -166,11 +189,15 @@ public abstract class LibraryItem {
 
     protected <C extends Model, D extends Model> LazyList<C> getAssociation(Class<C> clazz, Class<D> associationClass, String query, Object... params) {
         try {
-            Method getTableName = associationClass.getMethod("getTableName");
-            String tableName = (String) getTableName.invoke(null);
-            query = query != null ? tableName + ".alive = 1 AND " + query : tableName + ".alive = 1";
+//            Method getTableName = associationClass.getMethod("getTableName");
+//            String tableName = (String) getTableName.invoke(null);
+//            query = query != null ? ".alive = 1 AND " + query : ".alive = 1";
 //            query = query != null ? "alive = 1 AND " + query : "alive = 1";
-            return model.get(clazz, query, params);
+            if (query != null) {
+                return model.get(clazz, query, params);
+            } else {
+                return model.getAll(clazz);
+            }
         } catch (Exception e) {
             // todo internal error
             e.printStackTrace();
@@ -188,8 +215,7 @@ public abstract class LibraryItem {
                 associations = (List<C>) where.invoke(null, idField + " = '" + getId() + "'", new Object[0]);
             }
             for (C association : associations) {
-//                association.delete();
-                deleteModel(association);
+                association.delete();
             }
         } catch (Exception e) {
             // todo internal error
@@ -206,8 +232,7 @@ public abstract class LibraryItem {
             } else {
                 association = (C) findFirst.invoke(null, idField + " = '" + getId() + "' AND " + otherIdField + " = '" + otherItem.getId() + "'", new Object[0]);
             }
-//            association.delete();
-            deleteModel(association);
+            association.delete();
         } catch (Exception e) {
             // todo internal error
             e.printStackTrace();
@@ -231,7 +256,6 @@ public abstract class LibraryItem {
     protected <C extends Model> void addAssociation(Class<? extends Model> modelClass, String idField, String childIdField, String type, LibraryItem item) {
         try {
             Model associativeModel = modelClass.newInstance();
-            associativeModel.set("alive", 1);
             associativeModel.set(idField, getId());
             associativeModel.set(childIdField, item.getId());
             if (type != null) {
@@ -387,7 +411,7 @@ public abstract class LibraryItem {
         return notContains;
     }
 
-    private String serializeList(List<String> list) {
+    protected String serializeList(List<String> list) {
         if (list.isEmpty()) {
             return "";
         } else {
@@ -399,7 +423,7 @@ public abstract class LibraryItem {
         }
     }
 
-    private List<String> deserializeList(String value) {
+    protected List<String> deserializeList(String value) {
         value = value == null ? "" : value;
         StringTokenizer tokenizer = new StringTokenizer(value, LIST_SEPARATOR);
         List<String> list = new ArrayList<>();
@@ -410,15 +434,14 @@ public abstract class LibraryItem {
     }
 
     public void delete() {
-        deleteModel(model);
-//        model.deleteCascadeShallow();
+        model.delete();
     }
 
-    private void deleteModel(Model model) {
-        if (model != null) {
-//            model.set("alive", 0);
-//            model.saveIt();
-            model.deleteCascadeShallow();
-        }
-    }
+//    private void deleteModel(Model model) {
+//        if (model != null) {
+////            model.set("alive", 0);
+////            model.saveIt();
+//            model.deleteCascadeShallow();
+//        }
+//    }
 }

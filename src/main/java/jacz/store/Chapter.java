@@ -127,15 +127,4 @@ public final class Chapter extends CreationItem {
     public <C extends Model> void addVideoFile(VideoFile videoFile) {
         addAssociation(getVideoFileAssociationModel(), getAssociationIdField(), "video_file_id", null, videoFile);
     }
-
-    @Override
-    public void delete() {
-        super.delete();
-        removeVideoFiles();
-//        Model model = getDirectAssociationParent(jacz.store.database.models.TVSeries.class);
-//        if (model != null) {
-//            TVSeries tvSeries = new TVSeries(model);
-//            tvSeries.set("image_file_id", -1);
-//        }
-    }
 }

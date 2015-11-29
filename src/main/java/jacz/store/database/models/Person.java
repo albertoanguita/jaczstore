@@ -9,6 +9,10 @@ public class Person extends Model {
 
     @Override
     public void beforeDelete() {
-        System.out.println("Person deleted!!!");
+        // delete people association records
+        MoviesPeople.deleteRecords("person_id", getId());
+        TVSeriesPeople.deleteRecords("person_id", getId());
+        ChaptersPeople.deleteRecords("person_id", getId());
+        DeletedItem.addDeletedItem(this, getTableName());
     }
 }

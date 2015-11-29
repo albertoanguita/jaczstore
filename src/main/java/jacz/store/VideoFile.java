@@ -114,12 +114,4 @@ public final class VideoFile extends File {
     public void addSubtitleFile(SubtitleFile subtitleFile) {
         addDirectAssociationChild(subtitleFile);
     }
-
-    @Override
-    public void delete() {
-        super.delete();
-        removeSubtitleFiles();
-        removeAssociations(jacz.store.database.models.MoviesVideoFiles.class, "video_file_id", null);
-        removeAssociations(jacz.store.database.models.ChaptersVideoFiles.class, "video_file_id", null);
-    }
 }

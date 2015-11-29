@@ -45,10 +45,4 @@ public final class SubtitleFile extends File {
     public void setLanguage(LanguageCode language) {
         // todo
     }
-
-    @Override
-    public void delete() {
-        super.delete();
-        // remove
-    }
 }

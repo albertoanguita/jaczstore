@@ -54,15 +54,14 @@ public class DatabaseMediator {
         connection.createStatement().executeUpdate(
                 "CREATE TABLE deleted_items (" +
                         "id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp  INTEGER, " +
+                        "item_table TEXT, " +
                         "item_id    INTEGER, " +
-                        "item_table TEXT " +
+                        "timestamp  INTEGER " +
                         ")"
         );
         connection.createStatement().executeUpdate(
                 "CREATE TABLE movies (" +
                         "id             INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "alive          BOOLEAN, " +
                         "timestamp      INTEGER, " +
                         "title          TEXT, " +
                         "originalTitle  TEXT, " +
@@ -77,7 +76,6 @@ public class DatabaseMediator {
         connection.createStatement().executeUpdate(
                 "CREATE TABLE tv_series (" +
                         "id             INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "alive          BOOLEAN, " +
                         "timestamp      INTEGER, " +
                         "title          TEXT, " +
                         "originalTitle  TEXT, " +
@@ -91,7 +89,6 @@ public class DatabaseMediator {
         connection.createStatement().executeUpdate(
                 "CREATE TABLE chapters (" +
                         "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "alive         BOOLEAN, " +
                         "timestamp     INTEGER, " +
                         "title         TEXT, " +
                         "originalTitle TEXT, " +
@@ -106,7 +103,6 @@ public class DatabaseMediator {
         connection.createStatement().executeUpdate(
                 "CREATE TABLE people (" +
                         "id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "alive     BOOLEAN, " +
                         "timestamp INTEGER, " +
                         "name      TEXT, " +
                         "aliases   TEXT " +
@@ -115,7 +111,6 @@ public class DatabaseMediator {
         connection.createStatement().executeUpdate(
                 "CREATE TABLE companies (" +
                         "id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "alive     BOOLEAN, " +
                         "timestamp INTEGER, " +
                         "name      TEXT, " +
                         "aliases   TEXT " +
@@ -124,7 +119,6 @@ public class DatabaseMediator {
         connection.createStatement().executeUpdate(
                 "CREATE TABLE video_files (" +
                         "id          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "alive       BOOLEAN, " +
                         "timestamp   INTEGER, " +
                         "hash        TEXT, " +
                         "length      INTEGER, " +
@@ -137,7 +131,6 @@ public class DatabaseMediator {
         connection.createStatement().executeUpdate(
                 "CREATE TABLE subtitle_files (" +
                         "id             INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "alive          BOOLEAN, " +
                         "timestamp      INTEGER, " +
                         "hash           TEXT, " +
                         "length         INTEGER, " +
@@ -148,7 +141,6 @@ public class DatabaseMediator {
         connection.createStatement().executeUpdate(
                 "CREATE TABLE image_files (" +
                         "id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "alive     BOOLEAN, " +
                         "timestamp INTEGER, " +
                         "hash      TEXT, " +
                         "length    INTEGER " +
@@ -157,7 +149,6 @@ public class DatabaseMediator {
         connection.createStatement().executeUpdate(
                 "CREATE TABLE movies_people (\n" +
                         "id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "alive     BOOLEAN, " +
                         "timestamp INTEGER, " +
                         "movie_id  INTEGER NOT NULL REFERENCES movies(id), " +
                         "person_id INTEGER NOT NULL REFERENCES people(id), " +
@@ -167,7 +158,6 @@ public class DatabaseMediator {
         connection.createStatement().executeUpdate(
                 "CREATE TABLE tv_series_people (\n" +
                         "id           INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "alive        BOOLEAN, " +
                         "timestamp    INTEGER, " +
                         "tv_series_id INTEGER NOT NULL REFERENCES movies(id), " +
                         "person_id    INTEGER NOT NULL REFERENCES people(id), " +
@@ -177,7 +167,6 @@ public class DatabaseMediator {
         connection.createStatement().executeUpdate(
                 "CREATE TABLE chapters_people (\n" +
                         "id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "alive      BOOLEAN, " +
                         "timestamp  INTEGER, " +
                         "chapter_id INTEGER NOT NULL REFERENCES movies(id), " +
                         "person_id  INTEGER NOT NULL REFERENCES people(id), " +
@@ -187,7 +176,6 @@ public class DatabaseMediator {
         connection.createStatement().executeUpdate(
                 "CREATE TABLE movies_companies (\n" +
                         "id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "alive      BOOLEAN, " +
                         "timestamp  INTEGER, " +
                         "movie_id   INTEGER NOT NULL REFERENCES movies(id), " +
                         "company_id INTEGER NOT NULL REFERENCES people(id)" +
@@ -196,7 +184,6 @@ public class DatabaseMediator {
         connection.createStatement().executeUpdate(
                 "CREATE TABLE tv_series_companies (\n" +
                         "id           INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "alive        BOOLEAN, " +
                         "timestamp    INTEGER, " +
                         "tv_series_id INTEGER NOT NULL REFERENCES movies(id), " +
                         "company_id   INTEGER NOT NULL REFERENCES people(id)" +
@@ -205,7 +192,6 @@ public class DatabaseMediator {
         connection.createStatement().executeUpdate(
                 "CREATE TABLE movies_video_files (\n" +
                         "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "alive         BOOLEAN, " +
                         "timestamp     INTEGER, " +
                         "movie_id      INTEGER NOT NULL REFERENCES movies(id), " +
                         "video_file_id INTEGER NOT NULL REFERENCES video_files(id)" +
@@ -214,7 +200,6 @@ public class DatabaseMediator {
         connection.createStatement().executeUpdate(
                 "CREATE TABLE chapters_video_files (\n" +
                         "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "alive         BOOLEAN, " +
                         "timestamp     INTEGER, " +
                         "chapter_id    INTEGER NOT NULL REFERENCES chapters(id), " +
                         "video_file_id INTEGER NOT NULL REFERENCES video_files(id)" +
