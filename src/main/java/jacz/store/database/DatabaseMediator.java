@@ -134,8 +134,9 @@ public class DatabaseMediator {
                         "timestamp      INTEGER, " +
                         "hash           TEXT, " +
                         "length         INTEGER, " +
-                        "video_files_id INTEGER REFERENCES video_files(id), " +
-                        "language       TEXT " +
+                        "name           TEXT, " +
+                        "video_file_id  INTEGER REFERENCES video_files(id), " +
+                        "languages      TEXT " +
                         ")"
         );
         connection.createStatement().executeUpdate(
@@ -143,7 +144,8 @@ public class DatabaseMediator {
                         "id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "timestamp INTEGER, " +
                         "hash      TEXT, " +
-                        "length    INTEGER " +
+                        "length    INTEGER, " +
+                        "name      TEXT " +
                         ")"
         );
         connection.createStatement().executeUpdate(

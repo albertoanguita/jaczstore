@@ -46,14 +46,6 @@ public final class VideoFile extends File {
         return videoFiles;
     }
 
-    public String getName() {
-        return getString("name");
-    }
-
-    public void setName(String name) {
-        set("name", name);
-    }
-
     public Integer getMinutes() {
         return getInteger("minutes");
     }

@@ -35,4 +35,12 @@ public abstract class File extends LibraryItem {
     public void setLength(Long length) {
         set("length", length);
     }
+
+    public String getName() {
+        return getString("name");
+    }
+
+    public void setName(String name) {
+        set("name", name);
+    }
 }

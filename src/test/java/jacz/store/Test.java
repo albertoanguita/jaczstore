@@ -1,8 +1,11 @@
 package jacz.store;
 
 import com.neovisionaries.i18n.CountryCode;
+import com.neovisionaries.i18n.LanguageCode;
 import jacz.store.database.DatabaseMediator;
+import jacz.store.database.models.*;
 import jacz.store.util.GenreCode;
+import jacz.store.util.QualityCode;
 import junitx.framework.ListAssert;
 import org.javalite.activejdbc.Base;
 import org.junit.Assert;
@@ -146,12 +149,6 @@ public class Test {
         Assert.assertEquals(0, movie.getVideoFiles().size());
 
         Base.close();
-//        movie1.addLanguage(LanguageCode.es);
-//        movie1.addLanguage(LanguageCode.en);
-//        List<LanguageCode> languages = new ArrayList<>();
-//        languages.add(LanguageCode.es);
-//        languages.add(LanguageCode.en);
-//        ListAssert.assertEquals(languages, movie1.getLanguages());
     }
 
     @org.junit.Test
@@ -546,6 +543,90 @@ public class Test {
         aliases.add("Pixar Inc.");
         Assert.assertEquals("Pixar", pixar.getName());
         ListAssert.assertEquals(aliases, pixar.getAliases());
+
+        Base.close();
+    }
+
+    @org.junit.Test
+    public void testImageFiles() throws SQLException, ClassNotFoundException {
+        DatabaseMediator.dropAndCreate();
+        Base.open("org.sqlite.JDBC", "jdbc:sqlite:store.db", "", "");
+
+        ImageFile imageFile = new ImageFile();
+        imageFile.setHash("hash");
+        imageFile.setLength(150L);
+        imageFile.setName("name");
+        Assert.assertEquals("hash", imageFile.getHash());
+        Assert.assertEquals(new Long(150L), imageFile.getLength());
+        Assert.assertEquals("name", imageFile.getName());
+
+        Base.close();
+    }
+
+    @org.junit.Test
+    public void testVideoFiles() throws SQLException, ClassNotFoundException {
+        DatabaseMediator.dropAndCreate();
+        Base.open("org.sqlite.JDBC", "jdbc:sqlite:store.db", "", "");
+
+        VideoFile videoFile = new VideoFile();
+        videoFile.setHash("hash");
+        videoFile.setLength(150L);
+        videoFile.setName("video1");
+        videoFile.setMinutes(120);
+        videoFile.setQuality(QualityCode.HD);
+        videoFile.addLanguage(LanguageCode.es);
+        videoFile.addLanguage(LanguageCode.en);
+        videoFile.addLanguage(LanguageCode.ru);
+        List<LanguageCode> languages = new ArrayList<>();
+        languages.add(LanguageCode.es);
+        languages.add(LanguageCode.en);
+        languages.add(LanguageCode.ru);
+        Assert.assertEquals("hash", videoFile.getHash());
+        Assert.assertEquals(new Long(150L), videoFile.getLength());
+        Assert.assertEquals("video1", videoFile.getName());
+        Assert.assertEquals(new Integer(120), videoFile.getMinutes());
+        Assert.assertEquals(QualityCode.HD, videoFile.getQuality());
+        ListAssert.assertEquals(languages, videoFile.getLanguages());
+
+        SubtitleFile subtitleFile1 = new SubtitleFile();
+        subtitleFile1.setName("sub1");
+        SubtitleFile subtitleFile2 = new SubtitleFile();
+        subtitleFile2.setName("sub2");
+        videoFile.addSubtitleFile(subtitleFile1);
+        videoFile.addSubtitleFile(subtitleFile2);
+
+        Assert.assertEquals(2, videoFile.getSubtitleFiles().size());
+        Assert.assertEquals("sub1", videoFile.getSubtitleFiles().get(0).getName());
+        Assert.assertEquals("sub2", videoFile.getSubtitleFiles().get(1).getName());
+
+        subtitleFile1.delete();
+
+        Assert.assertEquals(1, videoFile.getSubtitleFiles().size());
+        Assert.assertEquals("sub2", videoFile.getSubtitleFiles().get(0).getName());
+
+        Base.close();
+    }
+
+    @org.junit.Test
+    public void testSubtitleFiles() throws SQLException, ClassNotFoundException {
+        DatabaseMediator.dropAndCreate();
+        Base.open("org.sqlite.JDBC", "jdbc:sqlite:store.db", "", "");
+
+        SubtitleFile subtitleFile = new SubtitleFile();
+        subtitleFile.setHash("hash");
+        subtitleFile.setLength(150L);
+        subtitleFile.setName("name");
+        subtitleFile.addLanguage(LanguageCode.es);
+        subtitleFile.addLanguage(LanguageCode.en);
+        subtitleFile.addLanguage(LanguageCode.ru);
+        List<LanguageCode> languages = new ArrayList<>();
+        languages.add(LanguageCode.es);
+        languages.add(LanguageCode.en);
+        languages.add(LanguageCode.ru);
+        Assert.assertEquals("hash", subtitleFile.getHash());
+        Assert.assertEquals(new Long(150L), subtitleFile.getLength());
+        Assert.assertEquals("name", subtitleFile.getName());
+        ListAssert.assertEquals(languages, subtitleFile.getLanguages());
 
         Base.close();
     }
