@@ -21,7 +21,7 @@ public class Test {
     @org.junit.Test
     public void testMovies() throws SQLException, ClassNotFoundException {
         synchronized (Test.class) {
-            DatabaseMediator.dropAndCreate();
+            DatabaseMediator.dropAndCreate("v1", "a");
             Base.open("org.sqlite.JDBC", "jdbc:sqlite:store.db", "", "");
 
             Movie movie1 = new Movie();
@@ -155,9 +155,8 @@ public class Test {
     @org.junit.Test
     public void testTVSeries() throws SQLException, ClassNotFoundException {
         synchronized (Test.class) {
-            DatabaseMediator.dropAndCreate();
+            DatabaseMediator.dropAndCreate("v1", "a");
             Base.open("org.sqlite.JDBC", "jdbc:sqlite:store.db", "", "");
-
 
             TVSeries tvSeries1 = new TVSeries();
             TVSeries tvSeries2 = new TVSeries();
@@ -290,7 +289,7 @@ public class Test {
     @org.junit.Test
     public void testChapters() throws SQLException, ClassNotFoundException {
         synchronized (Test.class) {
-            DatabaseMediator.dropAndCreate();
+            DatabaseMediator.dropAndCreate("v1", "a");
             Base.open("org.sqlite.JDBC", "jdbc:sqlite:store.db", "", "");
 
             Chapter chapter1 = new Chapter();
@@ -401,7 +400,7 @@ public class Test {
     @org.junit.Test
     public void testPeople() throws SQLException, ClassNotFoundException {
         synchronized (Test.class) {
-            DatabaseMediator.dropAndCreate();
+            DatabaseMediator.dropAndCreate("v1", "a");
             Base.open("org.sqlite.JDBC", "jdbc:sqlite:store.db", "", "");
 
             Person arnold = new Person();
@@ -510,7 +509,7 @@ public class Test {
     @org.junit.Test
     public void testCompanies() throws SQLException, ClassNotFoundException {
         synchronized (Test.class) {
-            DatabaseMediator.dropAndCreate();
+            DatabaseMediator.dropAndCreate("v1", "a");
             Base.open("org.sqlite.JDBC", "jdbc:sqlite:store.db", "", "");
 
             Company hbo = new Company();
@@ -559,7 +558,7 @@ public class Test {
     @org.junit.Test
     public void testImageFiles() throws SQLException, ClassNotFoundException {
         synchronized (Test.class) {
-            DatabaseMediator.dropAndCreate();
+            DatabaseMediator.dropAndCreate("v1", "a");
             Base.open("org.sqlite.JDBC", "jdbc:sqlite:store.db", "", "");
 
             ImageFile imageFile = new ImageFile();
@@ -577,7 +576,7 @@ public class Test {
     @org.junit.Test
     public void testVideoFiles() throws SQLException, ClassNotFoundException {
         synchronized (Test.class) {
-            DatabaseMediator.dropAndCreate();
+            DatabaseMediator.dropAndCreate("v1", "a");
             Base.open("org.sqlite.JDBC", "jdbc:sqlite:store.db", "", "");
 
             VideoFile videoFile = new VideoFile();
@@ -623,7 +622,7 @@ public class Test {
     @org.junit.Test
     public void testSubtitleFiles() throws SQLException, ClassNotFoundException {
         synchronized (Test.class) {
-            DatabaseMediator.dropAndCreate();
+            DatabaseMediator.dropAndCreate("v1", "a");
             Base.open("org.sqlite.JDBC", "jdbc:sqlite:store.db", "", "");
 
             SubtitleFile subtitleFile = new SubtitleFile();

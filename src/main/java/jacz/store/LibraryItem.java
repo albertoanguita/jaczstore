@@ -1,5 +1,6 @@
 package jacz.store;
 
+import jacz.store.database.DatabaseMediator;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- * Created by Alberto on 12/09/2015.
+ * Generic library item
  */
 public abstract class LibraryItem {
 
@@ -19,7 +20,7 @@ public abstract class LibraryItem {
 
     private Model model;
 
-    private int timestamp;
+//    private int timestamp;
 
     public LibraryItem() {
         this.model = buildModel();
@@ -61,12 +62,12 @@ public abstract class LibraryItem {
         return model.getLong(field);
     }
 
-    public int getTimestamp() {
-        return timestamp;
+    public long getTimestamp() {
+        return getLong("timestamp");
     }
 
     public void updateTimestamp() {
-        // todo
+        model.set("timestamp", DatabaseMediator.getNewTimestamp());
     }
 
     protected void set(String field, Object value) {

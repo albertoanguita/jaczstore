@@ -1,8 +1,12 @@
 package jacz.store.database;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
+import jacz.store.database.models.Metadata;
+import org.javalite.activejdbc.Base;
+
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * General operations on the store database
@@ -11,84 +15,80 @@ public class DatabaseMediator {
 
     public enum PERSON_TYPE {CREATOR, ACTOR}
 
-    private static void dropDatabase(String path) throws SQLException, ClassNotFoundException {
-        Class.forName("org.sqlite.JDBC");
-        // create a database connection
-        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("Y/M/d-HH:mm:ss:SSS");
 
-        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS metadata");
-        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS deleted_items");
-        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS movies");
-        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS tv_series");
-        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS chapters");
-        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS people");
-        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS companies");
-        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS video_files");
-        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS subtitle_files");
-        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS image_files");
-        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS movies_people");
-        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS tv_series_people");
-        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS chapters_people");
-        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS movies_companies");
-        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS tv_series_companies");
-        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS movies_video_files");
-        connection.createStatement().executeUpdate("DROP TABLE IF EXISTS chapters_video_files");
-        connection.close();
+
+
+    private static void dropDatabase(String path) throws SQLException, ClassNotFoundException {
+        Base.open("org.sqlite.JDBC", "jdbc:sqlite:" + path, "", "");
+
+        Base.exec("DROP TABLE IF EXISTS metadata");
+        Base.exec("DROP TABLE IF EXISTS deleted_items");
+        Base.exec("DROP TABLE IF EXISTS movies");
+        Base.exec("DROP TABLE IF EXISTS tv_series");
+        Base.exec("DROP TABLE IF EXISTS chapters");
+        Base.exec("DROP TABLE IF EXISTS people");
+        Base.exec("DROP TABLE IF EXISTS companies");
+        Base.exec("DROP TABLE IF EXISTS video_files");
+        Base.exec("DROP TABLE IF EXISTS subtitle_files");
+        Base.exec("DROP TABLE IF EXISTS image_files");
+        Base.exec("DROP TABLE IF EXISTS movies_people");
+        Base.exec("DROP TABLE IF EXISTS tv_series_people");
+        Base.exec("DROP TABLE IF EXISTS chapters_people");
+        Base.exec("DROP TABLE IF EXISTS movies_companies");
+        Base.exec("DROP TABLE IF EXISTS tv_series_companies");
+        Base.exec("DROP TABLE IF EXISTS movies_video_files");
+        Base.exec("DROP TABLE IF EXISTS chapters_video_files");
+
+        Base.close();
     }
 
-    private static void createDatabase(String path) throws SQLException, ClassNotFoundException {
-        Class.forName("org.sqlite.JDBC");
-        // create a database connection
-        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+    private static void createDatabase(String path, String version, String identifier) throws SQLException, ClassNotFoundException {
+        Base.open("org.sqlite.JDBC", "jdbc:sqlite:" + path, "", "");
 
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE metadata (" +
+        Base.exec("CREATE TABLE metadata (" +
                         "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "version       TEXT, " +
                         "identifier    TEXT, " +
-                        "creationDate  DATE, " +
-                        "lastAccess    DATE, " +
-                        "lastUpdate    DATE, " +
-                        "lastTimestamp INTEGER " +
+                        "creationDate  TEXT, " +
+                        "lastAccess    TEXT, " +
+                        "lastUpdate    TEXT, " +
+                        "nextTimestamp INTEGER " +
                         ")"
         );
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE deleted_items (" +
+        Base.exec("CREATE TABLE deleted_items (" +
                         "id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "item_table TEXT, " +
                         "item_id    INTEGER, " +
                         "timestamp  INTEGER " +
                         ")"
         );
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE movies (" +
-                        "id             INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp      INTEGER, " +
-                        "title          TEXT, " +
-                        "originalTitle  TEXT, " +
-                        "year           INTEGER, " +
-                        "countries      TEXT, " +
-                        "externalURLs   TEXT, " +
-                        "genres         TEXT, " +
+        Base.exec("CREATE TABLE movies (" +
+                        "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                        "timestamp     INTEGER, " +
+                        "title         TEXT, " +
+                        "originalTitle TEXT, " +
+                        "year          INTEGER, " +
+                        "countries     TEXT, " +
+                        "externalURLs  TEXT, " +
+                        "genres        TEXT, " +
                         "image_file_id INTEGER REFERENCES image_files(id), " +
-                        "minutes        INTEGER " +
+                        "minutes       INTEGER " +
                         ")"
         );
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE tv_series (" +
-                        "id             INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp      INTEGER, " +
-                        "title          TEXT, " +
-                        "originalTitle  TEXT, " +
-                        "year           INTEGER, " +
-                        "countries      TEXT, " +
-                        "externalURLs   TEXT, " +
-                        "genres         TEXT, " +
+        Base.exec("CREATE TABLE tv_series (" +
+                        "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                        "timestamp     INTEGER, " +
+                        "title         TEXT, " +
+                        "originalTitle TEXT, " +
+                        "year          INTEGER, " +
+                        "countries     TEXT, " +
+                        "externalURLs  TEXT, " +
+                        "genres        TEXT, " +
                         "image_file_id INTEGER REFERENCES image_files(id) " +
                         ")"
         );
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE chapters (" +
+        Base.exec("CREATE TABLE chapters (" +
                         "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "timestamp     INTEGER, " +
                         "title         TEXT, " +
@@ -101,24 +101,21 @@ public class DatabaseMediator {
                         "minutes       INTEGER " +
                         ")"
         );
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE people (" +
+        Base.exec("CREATE TABLE people (" +
                         "id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "timestamp INTEGER, " +
                         "name      TEXT, " +
                         "aliases   TEXT " +
                         ")"
         );
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE companies (" +
+        Base.exec("CREATE TABLE companies (" +
                         "id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "timestamp INTEGER, " +
                         "name      TEXT, " +
                         "aliases   TEXT " +
                         ")"
         );
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE video_files (" +
+        Base.exec("CREATE TABLE video_files (" +
                         "id          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "timestamp   INTEGER, " +
                         "hash        TEXT, " +
@@ -129,19 +126,17 @@ public class DatabaseMediator {
                         "languages   TEXT " +
                         ")"
         );
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE subtitle_files (" +
-                        "id             INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp      INTEGER, " +
-                        "hash           TEXT, " +
-                        "length         INTEGER, " +
-                        "name           TEXT, " +
-                        "video_file_id  INTEGER REFERENCES video_files(id), " +
-                        "languages      TEXT " +
+        Base.exec("CREATE TABLE subtitle_files (" +
+                        "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                        "timestamp     INTEGER, " +
+                        "hash          TEXT, " +
+                        "length        INTEGER, " +
+                        "name          TEXT, " +
+                        "video_file_id INTEGER REFERENCES video_files(id), " +
+                        "languages     TEXT " +
                         ")"
         );
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE image_files (" +
+        Base.exec("CREATE TABLE image_files (" +
                         "id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "timestamp INTEGER, " +
                         "hash      TEXT, " +
@@ -149,8 +144,7 @@ public class DatabaseMediator {
                         "name      TEXT " +
                         ")"
         );
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE movies_people (\n" +
+        Base.exec("CREATE TABLE movies_people (\n" +
                         "id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "timestamp INTEGER, " +
                         "movie_id  INTEGER NOT NULL REFERENCES movies(id), " +
@@ -158,8 +152,7 @@ public class DatabaseMediator {
                         "type      TEXT" +
                         ")"
         );
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE tv_series_people (\n" +
+        Base.exec("CREATE TABLE tv_series_people (\n" +
                         "id           INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "timestamp    INTEGER, " +
                         "tv_series_id INTEGER NOT NULL REFERENCES movies(id), " +
@@ -167,8 +160,7 @@ public class DatabaseMediator {
                         "type         TEXT" +
                         ")"
         );
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE chapters_people (\n" +
+        Base.exec("CREATE TABLE chapters_people (\n" +
                         "id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "timestamp  INTEGER, " +
                         "chapter_id INTEGER NOT NULL REFERENCES movies(id), " +
@@ -176,48 +168,61 @@ public class DatabaseMediator {
                         "type       TEXT" +
                         ")"
         );
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE movies_companies (\n" +
+        Base.exec("CREATE TABLE movies_companies (\n" +
                         "id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "timestamp  INTEGER, " +
                         "movie_id   INTEGER NOT NULL REFERENCES movies(id), " +
                         "company_id INTEGER NOT NULL REFERENCES people(id)" +
                         ")"
         );
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE tv_series_companies (\n" +
+        Base.exec("CREATE TABLE tv_series_companies (\n" +
                         "id           INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "timestamp    INTEGER, " +
                         "tv_series_id INTEGER NOT NULL REFERENCES movies(id), " +
                         "company_id   INTEGER NOT NULL REFERENCES people(id)" +
                         ")"
         );
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE movies_video_files (\n" +
+        Base.exec("CREATE TABLE movies_video_files (\n" +
                         "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "timestamp     INTEGER, " +
                         "movie_id      INTEGER NOT NULL REFERENCES movies(id), " +
                         "video_file_id INTEGER NOT NULL REFERENCES video_files(id)" +
                         ")"
         );
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE chapters_video_files (\n" +
+        Base.exec("CREATE TABLE chapters_video_files (\n" +
                         "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "timestamp     INTEGER, " +
                         "chapter_id    INTEGER NOT NULL REFERENCES chapters(id), " +
                         "video_file_id INTEGER NOT NULL REFERENCES video_files(id)" +
                         ")"
         );
-        connection.close();
+        String nowString = dateFormat.format(new Date());
+        new Metadata()
+                .set("version", version)
+                .set("identifier", identifier)
+                .set("creationDate", nowString)
+                .set("lastAccess", nowString)
+                .set("lastUpdate", nowString)
+                .set("nextTimestamp", 1L)
+                .saveIt();
+
+        Base.close();
+    }
+
+    public static synchronized long getNewTimestamp() {
+        Metadata metadata = (Metadata) Metadata.findAll().get(0);
+        long newTimestamp = metadata.getLong("nextTimestamp");
+        metadata.setLong("nextTimestamp", newTimestamp + 1).saveIt();
+        return newTimestamp;
     }
 
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        dropAndCreate();
+        dropAndCreate("v1", "a");
     }
 
-    public static void dropAndCreate() throws SQLException, ClassNotFoundException {
+    public static void dropAndCreate(String version, String identifier) throws SQLException, ClassNotFoundException {
         dropDatabase("store.db");
-        createDatabase("store.db");
+        createDatabase("store.db", version, identifier);
     }
 }
