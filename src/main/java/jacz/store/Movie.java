@@ -99,7 +99,7 @@ public final class Movie extends ProducedCreationItem {
     }
 
     public List<VideoFile> getVideoFiles() {
-        List<jacz.store.database.models.VideoFile> modelVideoFiles = getAssociation(jacz.store.database.models.VideoFile.class, jacz.store.database.models.MoviesVideoFiles.class);
+        List<jacz.store.database.models.VideoFile> modelVideoFiles = getAssociation(jacz.store.database.models.VideoFile.class);
         return VideoFile.buildList(modelVideoFiles);
     }
 
@@ -122,4 +122,6 @@ public final class Movie extends ProducedCreationItem {
     public <C extends Model> void addVideoFile(VideoFile videoFile) {
         addAssociation(getVideoFileAssociationModel(), getAssociationIdField(), "video_file_id", null, videoFile);
     }
+
+
 }

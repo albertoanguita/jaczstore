@@ -87,4 +87,20 @@ public final class VideoFile extends FileWithLanguages {
     public void addSubtitleFile(SubtitleFile subtitleFile) {
         addDirectAssociationChild(subtitleFile);
     }
+
+    @Override
+    public void merge(LibraryItem anotherItem) {
+        super.merge(anotherItem);
+        VideoFile anotherVideoFile = (VideoFile) anotherItem;
+        if (getLength() == null && anotherVideoFile.getMinutes() != null) {
+            setMinutes(anotherVideoFile.getMinutes());
+        }
+        if (getResolution() == null && anotherVideoFile.getResolution() != null) {
+            setResolution(anotherVideoFile.getResolution());
+        }
+        if (getQuality() == null && anotherVideoFile.getQuality() != null) {
+            setQuality(anotherVideoFile.getQuality());
+        }
+        // todo subtitles?
+    }
 }

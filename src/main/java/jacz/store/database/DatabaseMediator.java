@@ -4,7 +4,6 @@ import jacz.store.database.models.Metadata;
 import org.javalite.activejdbc.Base;
 
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 

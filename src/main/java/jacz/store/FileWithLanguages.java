@@ -37,4 +37,11 @@ public abstract class FileWithLanguages extends File {
     protected boolean addLanguage(LanguageCode language) {
         return addEnum("languages", LanguageCode.class, language, "name");
     }
+
+    @Override
+    public void merge(LibraryItem anotherItem) {
+        super.merge(anotherItem);
+        FileWithLanguages anotherFileWithLanguages = (FileWithLanguages) anotherItem;
+        addEnums("languages", LanguageCode.class, anotherFileWithLanguages.getLanguages(), "name");
+    }
 }

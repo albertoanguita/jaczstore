@@ -1,6 +1,7 @@
 package jacz.store;
 
 import jacz.store.database.DatabaseMediator;
+import jacz.store.old2.common.IdentifierMap;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
@@ -81,12 +82,12 @@ public abstract class LibraryItem {
         save();
     }
 
-//    protected void set(String field, Object value, boolean save) {
-//        model.set(field, value);
-//        if (save) {
-//            save();
-//        }
-//    }
+    public float match(LibraryItem anotherItem) {
+        // no fields of this class indicate equality
+        return 0f;
+    }
+
+    public abstract void merge(LibraryItem anotherItem);
 
     protected void save() {
         model.saveIt();
@@ -106,20 +107,6 @@ public abstract class LibraryItem {
     }
 
     protected static <C extends Model> List<C> getModels(Class<? extends Model> modelClass, String query, Object[] params) {
-        try {
-            Method where = modelClass.getMethod("where", String.class, Object[].class);
-            params = params != null ? params : new Object[0];
-            List<C> models;
-            models = (List<C>) where.invoke(null, query, params);
-            return models;
-        } catch (Exception e) {
-            // todo internal error
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    protected static <C extends Model> List<C> getModels(Class<? extends Model> modelClass, Class<? extends Model> includeModeClass, String query, Object[] params) {
         try {
             Method where = modelClass.getMethod("where", String.class, Object[].class);
             params = params != null ? params : new Object[0];
@@ -184,17 +171,12 @@ public abstract class LibraryItem {
         model.add(item.model);
     }
 
-    protected <C extends Model, D extends Model> LazyList<C> getAssociation(Class<C> clazz, Class<D> associationClass) {
-        return getAssociation(clazz, associationClass, null);
-//        return model.get(clazz, "alive = 1");
+    protected <C extends Model> LazyList<C> getAssociation(Class<C> clazz) {
+        return getAssociation(clazz, null);
     }
 
-    protected <C extends Model, D extends Model> LazyList<C> getAssociation(Class<C> clazz, Class<D> associationClass, String query, Object... params) {
+    protected <C extends Model> LazyList<C> getAssociation(Class<C> clazz, String query, Object... params) {
         try {
-//            Method getTableName = associationClass.getMethod("getTableName");
-//            String tableName = (String) getTableName.invoke(null);
-//            query = query != null ? ".alive = 1 AND " + query : ".alive = 1";
-//            query = query != null ? "alive = 1 AND " + query : "alive = 1";
             if (query != null) {
                 return model.get(clazz, query, params);
             } else {
@@ -346,6 +328,20 @@ public abstract class LibraryItem {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    protected <E> boolean addEnums(String field, Class<E> enum_, List<E> newValues, String getNameMethod) {
+        List<E> values = getEnums(field, enum_);
+        boolean modified = false;
+        for (E newValue : newValues) {
+            boolean notContains = !values.contains(newValue);
+            if (notContains) {
+                values.add(newValue);
+                modified = true;
+            }
+        }
+        setEnums(field, enum_, values, getNameMethod);
+        return modified;
     }
 
     protected <E> boolean addEnum(String field, Class<E> enum_, E value, String getNameMethod) {
