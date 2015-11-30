@@ -5,7 +5,8 @@ package jacz.store.util;
  */
 public enum QualityCode {
 
-    LD,
+    LOW,
     SD,
-    HD
+    HD,
+    UHD
 }

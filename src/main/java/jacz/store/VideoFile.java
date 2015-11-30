@@ -1,7 +1,5 @@
 package jacz.store;
 
-import com.neovisionaries.i18n.LanguageCode;
-import jacz.store.database_old.DatabaseMediator;
 import jacz.store.util.QualityCode;
 import org.javalite.activejdbc.Model;
 
@@ -52,6 +50,14 @@ public final class VideoFile extends FileWithLanguages {
 
     public void setMinutes(Integer minutes) {
         set("minutes", minutes);
+    }
+
+    public Integer getResolution() {
+        return getInteger("resolution");
+    }
+
+    public void setResolution(Integer resolution) {
+        set("resolution", resolution);
     }
 
     public QualityCode getQuality() {

@@ -122,6 +122,7 @@ public class DatabaseMediator {
                         "length      INTEGER, " +
                         "name        TEXT, " +
                         "minutes     INTEGER, " +
+                        "resolution  INTEGER, " +
                         "qualityCode TEXT, " +
                         "languages   TEXT " +
                         ")"
@@ -209,13 +210,26 @@ public class DatabaseMediator {
         Base.close();
     }
 
+    public static void updateLastAccessTime() {
+        Metadata metadata = getMetadata();
+        metadata.set("lastAccess", dateFormat.format(new Date())).saveIt();
+    }
+
+    public static void updateLastUpdateTime() {
+        Metadata metadata = getMetadata();
+        metadata.set("lastUpdate", dateFormat.format(new Date())).saveIt();
+    }
+
     public static synchronized long getNewTimestamp() {
-        Metadata metadata = (Metadata) Metadata.findAll().get(0);
+        Metadata metadata = getMetadata();
         long newTimestamp = metadata.getLong("nextTimestamp");
         metadata.setLong("nextTimestamp", newTimestamp + 1).saveIt();
         return newTimestamp;
     }
 
+    private static Metadata getMetadata() {
+        return (Metadata) Metadata.findAll().get(0);
+    }
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         dropAndCreate("v1", "a");

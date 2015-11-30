@@ -47,18 +47,22 @@ public abstract class LibraryItem {
     }
 
     public Integer getId() {
+        DatabaseMediator.updateLastAccessTime();
         return (Integer) model.getId();
     }
 
     public String getString(String field) {
+        DatabaseMediator.updateLastAccessTime();
         return model.getString(field);
     }
 
     public Integer getInteger(String field) {
+        DatabaseMediator.updateLastAccessTime();
         return model.getInteger(field);
     }
 
     public Long getLong(String field) {
+        DatabaseMediator.updateLastAccessTime();
         return model.getLong(field);
     }
 
@@ -72,6 +76,7 @@ public abstract class LibraryItem {
 
     protected void set(String field, Object value) {
         model.set(field, value);
+        DatabaseMediator.updateLastUpdateTime();
         updateTimestamp();
         save();
     }

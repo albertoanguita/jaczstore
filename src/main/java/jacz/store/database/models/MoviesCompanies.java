@@ -1,5 +1,6 @@
 package jacz.store.database.models;
 
+import jacz.store.database.DatabaseMediator;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.annotations.Table;
 
@@ -10,6 +11,12 @@ import java.util.List;
  */
 @Table("movies_companies")
 public class MoviesCompanies extends Model {
+
+    @Override
+    protected void afterCreate() {
+        super.afterCreate();
+        set("timestamp", DatabaseMediator.getNewTimestamp()).saveIt();
+    }
 
     @Override
     public void beforeDelete() {
