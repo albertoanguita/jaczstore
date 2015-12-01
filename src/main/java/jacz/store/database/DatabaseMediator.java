@@ -3,7 +3,6 @@ package jacz.store.database;
 import jacz.store.database.models.Metadata;
 import org.javalite.activejdbc.Base;
 
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -18,7 +17,7 @@ public class DatabaseMediator {
 
 
 
-    private static void dropDatabase(String path) throws SQLException, ClassNotFoundException {
+    private static void dropDatabase(String path) {
         Base.open("org.sqlite.JDBC", "jdbc:sqlite:" + path, "", "");
 
         Base.exec("DROP TABLE IF EXISTS metadata");
@@ -42,7 +41,7 @@ public class DatabaseMediator {
         Base.close();
     }
 
-    private static void createDatabase(String path, String version, String identifier) throws SQLException, ClassNotFoundException {
+    private static void createDatabase(String path, String version, String identifier) {
         Base.open("org.sqlite.JDBC", "jdbc:sqlite:" + path, "", "");
 
         Base.exec("CREATE TABLE metadata (" +
@@ -230,12 +229,12 @@ public class DatabaseMediator {
         return (Metadata) Metadata.findAll().get(0);
     }
 
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        dropAndCreate("v1", "a");
+    public static void main(String[] args) {
+        dropAndCreate("store.db", "v1", "a");
     }
 
-    public static void dropAndCreate(String version, String identifier) throws SQLException, ClassNotFoundException {
-        dropDatabase("store.db");
-        createDatabase("store.db", version, identifier);
+    public static void dropAndCreate(String path, String version, String identifier) {
+        dropDatabase(path);
+        createDatabase(path, version, identifier);
     }
 }

@@ -39,12 +39,12 @@ public final class Company extends NamedLibraryItem {
     }
 
     public List<Movie> getMovies() {
-        List<jacz.store.database.models.Movie> modelMovies = getAssociation(jacz.store.database.models.Movie.class, jacz.store.database.models.MoviesPeople.class);
+        List<jacz.store.database.models.Movie> modelMovies = getAssociation(jacz.store.database.models.Movie.class);
         return Movie.buildList(modelMovies);
     }
 
     public List<TVSeries> getTVSeries() {
-        List<jacz.store.database.models.TVSeries> modelTVSeries = getAssociation(jacz.store.database.models.TVSeries.class, jacz.store.database.models.TVSeriesPeople.class);
+        List<jacz.store.database.models.TVSeries> modelTVSeries = getAssociation(jacz.store.database.models.TVSeries.class);
         return TVSeries.buildList(modelTVSeries);
     }
 

@@ -87,7 +87,8 @@ public abstract class LibraryItem {
         return 0f;
     }
 
-    public abstract void merge(LibraryItem anotherItem);
+    // todo make abstract
+    public void merge(LibraryItem anotherItem) {}
 
     protected void save() {
         model.saveIt();

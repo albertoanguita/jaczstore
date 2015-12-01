@@ -27,7 +27,7 @@ public abstract class ProducedCreationItem extends CreationItem {
     abstract Class<? extends Model> getCompanyAssociationModel();
 
     public List<Company> getProductionCompanies() {
-        List<jacz.store.database.models.Company> modelCompanies = getAssociation(jacz.store.database.models.Company.class, getCompanyAssociationModel());
+        List<jacz.store.database.models.Company> modelCompanies = getAssociation(jacz.store.database.models.Company.class);
         return Company.buildList(modelCompanies);
     }
 

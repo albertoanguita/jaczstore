@@ -104,7 +104,7 @@ public final class Chapter extends CreationItem {
 
 
     public List<VideoFile> getVideoFiles() {
-        List<jacz.store.database.models.VideoFile> modelVideoFiles = getAssociation(jacz.store.database.models.VideoFile.class, jacz.store.database.models.ChaptersVideoFiles.class);
+        List<jacz.store.database.models.VideoFile> modelVideoFiles = getAssociation(jacz.store.database.models.VideoFile.class);
         return VideoFile.buildList(modelVideoFiles);
     }
 

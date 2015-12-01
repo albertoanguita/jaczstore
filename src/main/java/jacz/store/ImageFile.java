@@ -1,10 +1,6 @@
 package jacz.store;
 
-import jacz.store.database.models.*;
-import jacz.store.database_old.DatabaseMediator;
 import org.javalite.activejdbc.Model;
-
-import java.util.List;
 
 /**
  * Created by Alberto on 16/11/2015.
