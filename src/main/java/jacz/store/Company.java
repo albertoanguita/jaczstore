@@ -35,7 +35,7 @@ public final class Company extends NamedLibraryItem {
             }
             return companies;
         } finally {
-            disconnect();
+            disconnect(dbPath);
         }
     }
 

@@ -34,7 +34,7 @@ public final class Person extends NamedLibraryItem {
             }
             return persons;
         } finally {
-            disconnect();
+            disconnect(dbPath);
         }
     }
 
@@ -47,7 +47,7 @@ public final class Person extends NamedLibraryItem {
                 }
             }
         } finally {
-            disconnect();
+            disconnect(dbPath);
         }
     }
 

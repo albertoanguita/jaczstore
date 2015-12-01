@@ -47,7 +47,7 @@ public final class Movie extends ProducedCreationItem {
             }
             return movies;
         } finally {
-            disconnect();
+            disconnect(dbPath);
         }
     }
 

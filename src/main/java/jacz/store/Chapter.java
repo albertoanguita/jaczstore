@@ -49,7 +49,7 @@ public final class Chapter extends CreationItem {
             }
             return chapters;
         } finally {
-            disconnect();
+            disconnect(dbPath);
         }
     }
 

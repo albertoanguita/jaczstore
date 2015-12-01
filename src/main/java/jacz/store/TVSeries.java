@@ -44,7 +44,7 @@ public final class TVSeries extends ProducedCreationItem {
             }
             return tvSeries;
         } finally {
-            disconnect();
+            disconnect(dbPath);
         }
     }
 

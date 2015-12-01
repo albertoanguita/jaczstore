@@ -45,7 +45,7 @@ public final class VideoFile extends FileWithLanguages {
             }
             return videoFiles;
         } finally {
-            disconnect();
+            disconnect(dbPath);
         }
     }
 

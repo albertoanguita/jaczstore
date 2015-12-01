@@ -38,7 +38,7 @@ public final class SubtitleFile extends FileWithLanguages {
             }
             return subtitleFiles;
         } finally {
-            disconnect();
+            disconnect(dbPath);
         }
     }
 }
