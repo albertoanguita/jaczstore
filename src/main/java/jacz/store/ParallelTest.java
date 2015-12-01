@@ -18,37 +18,38 @@ public class ParallelTest {
         DatabaseMediator.dropAndCreate("parallel2.db", "v1", "aaa");
 
         final Logger logger = LoggerFactory.getLogger(ParallelTest.class);
-        Base.open("org.sqlite.JDBC", "jdbc:sqlite:parallel1.db", "", "");
+//        Base.open("org.sqlite.JDBC", "jdbc:sqlite:parallel1.db", "", "");
 
-        Movie movie1 = new Movie();
+        Movie movie1 = new Movie("parallel1.db");
         movie1.setTitle("Predator");
         System.out.println(movie1.getTitle());
-        Movie movie11 = Movie.getMovieById(1);
+        Movie movie11 = Movie.getMovieById("parallel1.db", 1);
 
-        Base.close();
+//        Base.close();
+//
+//        Base.open("org.sqlite.JDBC", "jdbc:sqlite:parallel2.db", "", "");
 
-        Base.open("org.sqlite.JDBC", "jdbc:sqlite:parallel2.db", "", "");
-
-        Movie movie2 = new Movie();
+        Movie movie2 = new Movie("parallel2.db");
         movie2.setTitle("Alien");
         System.out.println(movie2.getTitle());
 //        List<jacz.store.database.models.Movie> movies = jacz.store.database.models.Movie.findAll();
 
-        Base.close();
+//        Base.close();
 
-        Base.open("org.sqlite.JDBC", "jdbc:sqlite:parallel1.db", "", "");
+//        Base.open("org.sqlite.JDBC", "jdbc:sqlite:parallel1.db", "", "");
         System.out.println(movie11.getTitle());
 //        Base.close();
 //        Base.open("org.sqlite.JDBC", "jdbc:sqlite:parallel2.db", "", "");
 //        Movie movie21 = new Movie(movies.get(0));
         System.out.println(movie2.getTitle());
         movie2.setTitle("Alien 2");
-        Base.close();
-
-        Base.open("org.sqlite.JDBC", "jdbc:sqlite:parallel1.db", "", "");
-        movie1 = Movie.getMovieById(1);
+//        Base.close();
+//
+//        Base.open("org.sqlite.JDBC", "jdbc:sqlite:parallel1.db", "", "");
+        movie1 = Movie.getMovieById("parallel1.db", 1);
         System.out.println(movie1.getTitle());
-        Base.close();
+        System.out.println(movie2.getTitle());
+//        Base.close();
 //        System.out.println(movie2.getTitle());
 //        ParallelTaskExecutor.executeTask(new ParallelTask() {
 //            @Override

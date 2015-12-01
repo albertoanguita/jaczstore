@@ -16,19 +16,19 @@ public abstract class ProducedCreationItem extends CreationItem {
 
 //    private ImageFile imageFile;
 
-    public ProducedCreationItem() {
-        super();
+    public ProducedCreationItem(String dbPath) {
+        super(dbPath);
     }
 
-    public ProducedCreationItem(Model model) {
-        super(model);
+    public ProducedCreationItem(Model model, String dbPath) {
+        super(model, dbPath);
     }
 
     abstract Class<? extends Model> getCompanyAssociationModel();
 
     public List<Company> getProductionCompanies() {
         List<jacz.store.database.models.Company> modelCompanies = getAssociation(jacz.store.database.models.Company.class);
-        return Company.buildList(modelCompanies);
+        return Company.buildList(dbPath, modelCompanies);
     }
 
     public <C extends Model> void removeProductionCompanies() {
@@ -72,8 +72,8 @@ public abstract class ProducedCreationItem extends CreationItem {
     }
 
     public ImageFile getImage() {
-        Model model = getDirectAssociationParent(jacz.store.database.models.ImageFile.class);
-        return model != null ? new ImageFile(model) : null;
+        Model model = getDirectAssociationParent(dbPath, jacz.store.database.models.ImageFile.class);
+        return model != null ? new ImageFile(model, dbPath) : null;
     }
 
     public void setImage(ImageFile image) {

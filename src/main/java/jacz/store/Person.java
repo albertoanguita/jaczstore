@@ -10,12 +10,12 @@ import java.util.List;
  */
 public final class Person extends NamedLibraryItem {
 
-    public Person() {
-        super();
+    public Person(String dbPath) {
+        super(dbPath);
     }
 
-    Person(Model model) {
-        super(model);
+    Person(Model model, String dbPath) {
+        super(model, dbPath);
     }
 
     @Override
@@ -23,29 +23,39 @@ public final class Person extends NamedLibraryItem {
         return new jacz.store.database.models.Person();
     }
 
-    static List<Person> buildList(List<? extends Model> models) {
-        List<Person> persons = new ArrayList<>();
-        for (Model model : models) {
-            if (model != null) {
-                persons.add(new Person(model));
+    static List<Person> buildList(String dbPath, List<? extends Model> models) {
+        connect(dbPath);
+        try {
+            List<Person> persons = new ArrayList<>();
+            for (Model model : models) {
+                if (model != null) {
+                    persons.add(new Person(model, dbPath));
+                }
             }
-        }
-        return persons;
-    }
-
-    static void appendList(List<Person> persons, List<? extends Model> models) {
-        for (Model model : models) {
-            if (model != null && !contains(persons, model)) {
-                persons.add(new Person(model));
-            }
+            return persons;
+        } finally {
+            disconnect();
         }
     }
 
-    public static List<Person> getPeople() {
-        return buildList(getModels(jacz.store.database.models.Person.class));
+    static void appendList(String dbPath, List<Person> persons, List<? extends Model> models) {
+        connect(dbPath);
+        try {
+            for (Model model : models) {
+                if (model != null && !contains(persons, model)) {
+                    persons.add(new Person(model, dbPath));
+                }
+            }
+        } finally {
+            disconnect();
+        }
     }
 
-    public static List<Person> getActors() {
+    public static List<Person> getPeople(String dbPath) {
+        return buildList(dbPath, getModels(dbPath, jacz.store.database.models.Person.class));
+    }
+
+    public static List<Person> getActors(String dbPath) {
         List<Model> moviesActors = jacz.store.database.models.Person.findBySQL(
                 "SELECT * FROM people " +
                         "INNER JOIN movies_people " +
@@ -64,13 +74,13 @@ public final class Person extends NamedLibraryItem {
                         "ON people.id = chapters_people.person_id " +
                         "WHERE chapters_people.type = ?",
                 jacz.store.database.DatabaseMediator.PERSON_TYPE.ACTOR.name());
-        List<Person> actors = buildList(moviesActors);
-        appendList(actors, tvSeriesActors);
-        appendList(actors, chaptersActors);
+        List<Person> actors = buildList(dbPath, moviesActors);
+        appendList(dbPath, actors, tvSeriesActors);
+        appendList(dbPath, actors, chaptersActors);
         return actors;
     }
 
-    public static List<Person> getDirectors() {
+    public static List<Person> getDirectors(String dbPath) {
         List<Model> movieDirectors = jacz.store.database.models.Person.findBySQL(
                 "SELECT * FROM people " +
                         "INNER JOIN movies_people " +
@@ -83,48 +93,48 @@ public final class Person extends NamedLibraryItem {
                         "ON people.id = chapters_people.person_id " +
                         "WHERE chapters_people.type = ?",
                 jacz.store.database.DatabaseMediator.PERSON_TYPE.CREATOR.name());
-        List<Person> actors = buildList(movieDirectors);
-        appendList(actors, chaptersDirectors);
+        List<Person> actors = buildList(dbPath, movieDirectors);
+        appendList(dbPath, actors, chaptersDirectors);
         return actors;
     }
 
-    public static List<Person> getCreators() {
+    public static List<Person> getCreators(String dbPath) {
         List<Model> creators = jacz.store.database.models.Person.findBySQL(
                 "SELECT * FROM people " +
                         "INNER JOIN tv_series_people " +
                         "ON people.id = tv_series_people.person_id " +
                         "WHERE tv_series_people.type = ?",
                 jacz.store.database.DatabaseMediator.PERSON_TYPE.CREATOR.name());
-        return buildList(creators);
+        return buildList(dbPath, creators);
     }
 
-    public List<Movie> getMoviesAsActor() {
+    public List<Movie> getMoviesAsActor(String dbPath) {
         List<jacz.store.database.models.Movie> modelMovies = getAssociation(jacz.store.database.models.Movie.class, "type = ? ", jacz.store.database.DatabaseMediator.PERSON_TYPE.ACTOR.name());
-        return Movie.buildList(modelMovies);
+        return Movie.buildList(dbPath, modelMovies);
     }
 
-    public List<Movie> getMoviesAsDirector() {
+    public List<Movie> getMoviesAsDirector(String dbPath) {
         List<jacz.store.database.models.Movie> modelMovies = getAssociation(jacz.store.database.models.Movie.class, "type = ? ", jacz.store.database.DatabaseMediator.PERSON_TYPE.CREATOR.name());
-        return Movie.buildList(modelMovies);
+        return Movie.buildList(dbPath, modelMovies);
     }
 
-    public List<TVSeries> getTVSeriesAsActor() {
+    public List<TVSeries> getTVSeriesAsActor(String dbPath) {
         List<jacz.store.database.models.TVSeries> modelTVSeries = getAssociation(jacz.store.database.models.TVSeries.class, "type = ? ", jacz.store.database.DatabaseMediator.PERSON_TYPE.ACTOR.name());
-        return TVSeries.buildList(modelTVSeries);
+        return TVSeries.buildList(dbPath, modelTVSeries);
     }
 
-    public List<TVSeries> getTVSeriesAsCreator() {
+    public List<TVSeries> getTVSeriesAsCreator(String dbPath) {
         List<jacz.store.database.models.TVSeries> modelTVSeries = getAssociation(jacz.store.database.models.TVSeries.class, "type = ? ", jacz.store.database.DatabaseMediator.PERSON_TYPE.CREATOR.name());
-        return TVSeries.buildList(modelTVSeries);
+        return TVSeries.buildList(dbPath, modelTVSeries);
     }
 
-    public List<Chapter> getChaptersAsActor() {
+    public List<Chapter> getChaptersAsActor(String dbPath) {
         List<jacz.store.database.models.Chapter> modelChapters = getAssociation(jacz.store.database.models.Chapter.class, "type = ? ", jacz.store.database.DatabaseMediator.PERSON_TYPE.ACTOR.name());
-        return Chapter.buildList(modelChapters);
+        return Chapter.buildList(dbPath, modelChapters);
     }
 
-    public List<Chapter> getChaptersAsDirector() {
+    public List<Chapter> getChaptersAsDirector(String dbPath) {
         List<jacz.store.database.models.Chapter> modelChapters = getAssociation(jacz.store.database.models.Chapter.class, "type = ? ", jacz.store.database.DatabaseMediator.PERSON_TYPE.CREATOR.name());
-        return Chapter.buildList(modelChapters);
+        return Chapter.buildList(dbPath, modelChapters);
     }
 }

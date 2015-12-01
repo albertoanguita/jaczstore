@@ -25,12 +25,12 @@ public abstract class CreationItem extends LibraryItem {
 
 //    private List<String> externalURLs;
 
-    public CreationItem() {
-        super();
+    public CreationItem(String dbPath) {
+        super(dbPath);
     }
 
-    public CreationItem(Model model) {
-        super(model);
+    public CreationItem(Model model, String dbPath) {
+        super(model, dbPath);
     }
 
     abstract Class<? extends Model> getPeopleAssociationModel();
@@ -103,7 +103,7 @@ public abstract class CreationItem extends LibraryItem {
 
     protected List<Person> getCreatorsDirectors() {
         List<jacz.store.database.models.Person> modelPersons = getAssociation(jacz.store.database.models.Person.class, "type = ? ", DatabaseMediator.PERSON_TYPE.CREATOR.name());
-        return Person.buildList(modelPersons);
+        return Person.buildList(dbPath, modelPersons);
     }
 
     protected <C extends Model> void removeCreatorsDirectors() {
@@ -128,7 +128,7 @@ public abstract class CreationItem extends LibraryItem {
 
     protected List<Person> getActors() {
         List<jacz.store.database.models.Person> modelPersons = getAssociation(jacz.store.database.models.Person.class, "type = ? ", DatabaseMediator.PERSON_TYPE.ACTOR.name());
-        return Person.buildList(modelPersons);
+        return Person.buildList(dbPath, modelPersons);
     }
 
     public <C extends Model> void removeActors() {

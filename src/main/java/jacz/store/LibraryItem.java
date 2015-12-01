@@ -1,16 +1,14 @@
 package jacz.store;
 
 import jacz.store.database.DatabaseMediator;
-import jacz.store.old2.common.IdentifierMap;
+import jacz.store.database.models.*;
+import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * Generic library item
@@ -21,19 +19,29 @@ public abstract class LibraryItem {
 
     private Model model;
 
+    protected final String dbPath;
+
+    private static String connectedDatabase;
+
+    private static int connectionCount = 0;
+
 //    private int timestamp;
 
-    public LibraryItem() {
+    public LibraryItem(String dbPath) {
+        connect(dbPath);
         this.model = buildModel();
+        this.dbPath = dbPath;
         updateTimestamp();
         save();
+        disconnect();
     }
 
-    LibraryItem(Model model) {
+    LibraryItem(Model model, String dbPath) {
         if (model == null) {
             throw new NullPointerException("Model cannot be null");
         }
         this.model = model;
+        this.dbPath = dbPath;
     }
 
     protected abstract Model buildModel();
@@ -48,38 +56,49 @@ public abstract class LibraryItem {
     }
 
     public Integer getId() {
-        DatabaseMediator.updateLastAccessTime();
+        updateLastAccessTime();
         return (Integer) model.getId();
     }
 
     public String getString(String field) {
-        DatabaseMediator.updateLastAccessTime();
+        updateLastAccessTime();
         return model.getString(field);
     }
 
     public Integer getInteger(String field) {
-        DatabaseMediator.updateLastAccessTime();
+        updateLastAccessTime();
         return model.getInteger(field);
     }
 
     public Long getLong(String field) {
-        DatabaseMediator.updateLastAccessTime();
+        updateLastAccessTime();
         return model.getLong(field);
     }
+
+    public void updateLastAccessTime() {
+        connect(dbPath);
+        DatabaseMediator.updateLastAccessTime();
+        disconnect();
+    }
+
 
     public long getTimestamp() {
         return getLong("timestamp");
     }
 
     public void updateTimestamp() {
+        connect(dbPath);
         model.set("timestamp", DatabaseMediator.getNewTimestamp());
+        disconnect();
     }
 
     protected void set(String field, Object value) {
+        connect(dbPath);
         model.set(field, value);
         DatabaseMediator.updateLastUpdateTime();
         updateTimestamp();
         save();
+        disconnect();
     }
 
     public float match(LibraryItem anotherItem) {
@@ -88,13 +107,17 @@ public abstract class LibraryItem {
     }
 
     // todo make abstract
-    public void merge(LibraryItem anotherItem) {}
-
-    protected void save() {
-        model.saveIt();
+    public void merge(LibraryItem anotherItem) {
     }
 
-    protected static <C extends Model> List<C> getModels(Class<? extends Model> modelClass) {
+    protected void save() {
+        connect(dbPath);
+        model.saveIt();
+        disconnect();
+    }
+
+    protected static <C extends Model> List<C> getModels(String dbPath, Class<? extends Model> modelClass) {
+        connect(dbPath);
         try {
             Method findAll = modelClass.getMethod("findAll");
             List<C> models;
@@ -104,10 +127,13 @@ public abstract class LibraryItem {
             // todo internal error
             e.printStackTrace();
             return null;
+        } finally {
+            disconnect();
         }
     }
 
-    protected static <C extends Model> List<C> getModels(Class<? extends Model> modelClass, String query, Object[] params) {
+    protected static <C extends Model> List<C> getModels(String dbPath, Class<? extends Model> modelClass, String query, Object[] params) {
+        connect(dbPath);
         try {
             Method where = modelClass.getMethod("where", String.class, Object[].class);
             params = params != null ? params : new Object[0];
@@ -118,65 +144,116 @@ public abstract class LibraryItem {
             // todo internal error
             e.printStackTrace();
             return null;
+        } finally {
+            disconnect();
         }
     }
 
-    protected static <C extends Model> C getModelById(Class<? extends Model> modelClass, int id) {
-        Object[] params = {id};
-        List<C> models = getModels(modelClass, "id = ?", params);
-        return models.isEmpty() ? null : models.get(0);
+    protected static <C extends Model> C getModelById(String dbPath, Class<? extends Model> modelClass, int id) {
+        connect(dbPath);
+        try {
+            Object[] params = {id};
+            List<C> models = getModels(dbPath, modelClass, "id = ?", params);
+            return models.isEmpty() ? null : models.get(0);
+        } finally {
+            disconnect();
+        }
     }
 
-    protected <C extends Model> Model getDirectAssociationParent(Class<C> parentClass) {
-        return model.parent(parentClass);
+    protected <C extends Model> Model getDirectAssociationParent(String dbPath, Class<C> parentClass) {
+        connect(dbPath);
+        try {
+            return model.parent(parentClass);
+        } finally {
+            disconnect();
+        }
     }
 
     protected void setDirectAssociationParent(LibraryItem item) {
+        connect(dbPath);
         item.model.add(model);
+        save();
+        disconnect();
     }
 
     protected <C extends Model> void removeDirectAssociationParent(Class<C> parentClass) {
+        connect(dbPath);
         model.parent(parentClass).delete();
+        save();
+        disconnect();
     }
 
     protected <C extends Model> LazyList<C> getDirectAssociationChildren(Class<C> childClass) {
-        return model.getAll(childClass);
+        connect(dbPath);
+        try {
+            return model.getAll(childClass);
+        } finally {
+            disconnect();
+        }
     }
 
     protected <C extends Model> LazyList<C> getDirectAssociationChildren(Class<C> childClass, String query, Object... params) {
-        return model.get(childClass, query, params);
+        connect(dbPath);
+        try {
+            return model.get(childClass, query, params);
+        } finally {
+            disconnect();
+        }
     }
 
     protected <C extends Model> void removeDirectAssociationChildren(Class<C> childClass) {
-        List<C> children = getDirectAssociationChildren(childClass);
-        for (C child : children) {
-            child.delete();
+        connect(dbPath);
+        try {
+            List<C> children = getDirectAssociationChildren(childClass);
+            for (C child : children) {
+                child.delete();
+            }
+        } finally {
+            disconnect();
         }
     }
 
     protected <C extends Model> void setDirectAssociationChildren(Class<C> childrenClass, List<? extends LibraryItem> items) {
-        removeDirectAssociationChildren(childrenClass);
-        for (LibraryItem item : items) {
-            addDirectAssociationChild(item);
+        connect(dbPath);
+        try {
+            removeDirectAssociationChildren(childrenClass);
+            for (LibraryItem item : items) {
+                addDirectAssociationChild(item);
+            }
+        } finally {
+            disconnect();
         }
     }
 
     protected <C extends Model> void setDirectAssociationChildren(Class<C> childrenClass, LibraryItem... items) {
-        removeDirectAssociationChildren(childrenClass);
-        for (LibraryItem item : items) {
-            addDirectAssociationChild(item);
+        connect(dbPath);
+        try {
+            removeDirectAssociationChildren(childrenClass);
+            for (LibraryItem item : items) {
+                addDirectAssociationChild(item);
+            }
+        } finally {
+            disconnect();
         }
     }
 
     protected void addDirectAssociationChild(LibraryItem item) {
+        connect(dbPath);
         model.add(item.model);
+        disconnect();
     }
 
     protected <C extends Model> LazyList<C> getAssociation(Class<C> clazz) {
-        return getAssociation(clazz, null);
+        connect(dbPath);
+        try {
+            return getAssociation(clazz, null);
+        } finally {
+            disconnect();
+        }
     }
 
     protected <C extends Model> LazyList<C> getAssociation(Class<C> clazz, String query, Object... params) {
+        connect(dbPath);
         try {
             if (query != null) {
                 return model.get(clazz, query, params);
@@ -187,10 +264,13 @@ public abstract class LibraryItem {
             // todo internal error
             e.printStackTrace();
             return null;
+        } finally {
+            disconnect();
         }
     }
 
     protected <C extends Model> void removeAssociations(Class<? extends Model> modelClass, String idField, String type) {
+        connect(dbPath);
         try {
             Method where = modelClass.getMethod("where", String.class, Object[].class);
             List<C> associations;
@@ -205,10 +285,13 @@ public abstract class LibraryItem {
         } catch (Exception e) {
             // todo internal error
             e.printStackTrace();
+        } finally {
+            disconnect();
         }
     }
 
     protected <C extends Model> void removeAssociation(Class<? extends Model> modelClass, String idField, LibraryItem otherItem, String otherIdField, String type) {
+        connect(dbPath);
         try {
             Method findFirst = modelClass.getMethod("findFirst", String.class, Object[].class);
             C association;
@@ -221,24 +304,37 @@ public abstract class LibraryItem {
         } catch (Exception e) {
             // todo internal error
             e.printStackTrace();
+        } finally {
+            disconnect();
         }
     }
 
     protected <C extends Model> void setAssociations(Class<? extends Model> modelClass, String idField, String childIdField, String type, List<? extends LibraryItem> items) {
-        removeAssociations(modelClass, idField, type);
-        for (LibraryItem item : items) {
-            addAssociation(modelClass, idField, childIdField, type, item);
+        connect(dbPath);
+        try {
+            removeAssociations(modelClass, idField, type);
+            for (LibraryItem item : items) {
+                addAssociation(modelClass, idField, childIdField, type, item);
+            }
+        } finally {
+            disconnect();
         }
     }
 
     protected <C extends Model> void setAssociations(Class<? extends Model> modelClass, String idField, String childIdField, String type, LibraryItem... items) {
-        removeAssociations(modelClass, idField, type);
-        for (LibraryItem item : items) {
-            addAssociation(modelClass, idField, childIdField, type, item);
+        connect(dbPath);
+        try {
+            removeAssociations(modelClass, idField, type);
+            for (LibraryItem item : items) {
+                addAssociation(modelClass, idField, childIdField, type, item);
+            }
+        } finally {
+            disconnect();
         }
     }
 
     protected <C extends Model> void addAssociation(Class<? extends Model> modelClass, String idField, String childIdField, String type, LibraryItem item) {
+        connect(dbPath);
         try {
             Model associativeModel = modelClass.newInstance();
             associativeModel.set(idField, getId());
@@ -250,6 +346,8 @@ public abstract class LibraryItem {
         } catch (Exception e) {
             // todo internal error
             e.printStackTrace();
+        } finally {
+            disconnect();
         }
     }
 
@@ -378,6 +476,35 @@ public abstract class LibraryItem {
     }
 
     public void delete() {
+        connect(dbPath);
         model.delete();
+        disconnect();
+    }
+
+    protected static void connect(String dbPath) {
+        // todo use concurrency controller that checks that only one db is connected at a time
+        if (connectionCount != 0 && !connectedDatabase.equals(dbPath)) {
+            throw new IllegalStateException(
+                    "Illegal connection. " +
+                            "Currently connected to " + connectedDatabase + " (" + connectionCount + " nested connections). " +
+                            "Requesting connection to " + dbPath);
+        } else {
+            if (connectionCount == 0) {
+                connectionCount = 1;
+                connectedDatabase = dbPath;
+                Base.open("org.sqlite.JDBC", "jdbc:sqlite:" + dbPath, "", "");
+            } else {
+                connectionCount++;
+            }
+        }
+    }
+
+    protected static void disconnect() {
+        connectionCount--;
+        if (connectionCount == 0) {
+            Base.close();
+        } else if (connectionCount == -1) {
+            throw new IllegalStateException("Illegal disconnection. No connections nested");
+        }
     }
 }

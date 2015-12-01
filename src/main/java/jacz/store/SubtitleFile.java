@@ -14,12 +14,12 @@ public final class SubtitleFile extends FileWithLanguages {
 
 //    private LanguageCode language;
 
-    public SubtitleFile() {
-        super();
+    public SubtitleFile(String dbPath) {
+        super(dbPath);
     }
 
-    public SubtitleFile(Model model) {
-        super(model);
+    public SubtitleFile(Model model, String dbPath) {
+        super(model, dbPath);
     }
 
     @Override
@@ -27,13 +27,18 @@ public final class SubtitleFile extends FileWithLanguages {
         return new jacz.store.database.models.SubtitleFile();
     }
 
-    static List<SubtitleFile> buildList(List<? extends Model> models) {
-        List<SubtitleFile> subtitleFiles = new ArrayList<>();
-        for (Model model : models) {
-            if (model != null) {
-                subtitleFiles.add(new SubtitleFile(model));
+    static List<SubtitleFile> buildList(String dbPath, List<? extends Model> models) {
+        connect(dbPath);
+        try {
+            List<SubtitleFile> subtitleFiles = new ArrayList<>();
+            for (Model model : models) {
+                if (model != null) {
+                    subtitleFiles.add(new SubtitleFile(model, dbPath));
+                }
             }
+            return subtitleFiles;
+        } finally {
+            disconnect();
         }
-        return subtitleFiles;
     }
 }

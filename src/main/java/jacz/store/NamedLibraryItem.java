@@ -13,12 +13,12 @@ public abstract class NamedLibraryItem extends LibraryItem {
 
 //    private List<String> aliases;
 
-    public NamedLibraryItem() {
-        super();
+    public NamedLibraryItem(String dbPath) {
+        super(dbPath);
     }
 
-    public NamedLibraryItem(Model model) {
-        super(model);
+    public NamedLibraryItem(Model model, String dbPath) {
+        super(model, dbPath);
     }
 
     public String getName() {

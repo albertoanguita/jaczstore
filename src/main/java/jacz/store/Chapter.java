@@ -16,12 +16,12 @@ public final class Chapter extends CreationItem {
 
 //    private List<VideoFile> videoFiles;
 
-    public Chapter() {
-        super();
+    public Chapter(String dbPath) {
+        super(dbPath);
     }
 
-    public Chapter(Model model) {
-        super(model);
+    public Chapter(Model model, String dbPath) {
+        super(model, dbPath);
     }
 
     @Override
@@ -29,23 +29,28 @@ public final class Chapter extends CreationItem {
         return new jacz.store.database.models.Chapter();
     }
 
-    public static List<Chapter> getChapters() {
-        return buildList(getModels(jacz.store.database.models.Chapter.class));
+    public static List<Chapter> getChapters(String dbPath) {
+        return buildList(dbPath, getModels(dbPath, jacz.store.database.models.Chapter.class));
     }
 
-    public static Chapter getChapterById(int id) {
-        Model model = getModelById(jacz.store.database.models.Chapter.class, id);
-        return model != null ? new Chapter(model) : null;
+    public static Chapter getChapterById(String dbPath, int id) {
+        Model model = getModelById(dbPath, jacz.store.database.models.Chapter.class, id);
+        return model != null ? new Chapter(model, dbPath) : null;
     }
 
-    static List<Chapter> buildList(List<? extends Model> models) {
-        List<Chapter> chapters = new ArrayList<>();
-        for (Model model : models) {
-            if (model != null) {
-                chapters.add(new Chapter(model));
+    static List<Chapter> buildList(String dbPath, List<? extends Model> models) {
+        connect(dbPath);
+        try {
+            List<Chapter> chapters = new ArrayList<>();
+            for (Model model : models) {
+                if (model != null) {
+                    chapters.add(new Chapter(model, dbPath));
+                }
             }
+            return chapters;
+        } finally {
+            disconnect();
         }
-        return chapters;
     }
 
     @Override
@@ -105,7 +110,7 @@ public final class Chapter extends CreationItem {
 
     public List<VideoFile> getVideoFiles() {
         List<jacz.store.database.models.VideoFile> modelVideoFiles = getAssociation(jacz.store.database.models.VideoFile.class);
-        return VideoFile.buildList(modelVideoFiles);
+        return VideoFile.buildList(dbPath, modelVideoFiles);
     }
 
     public <C extends Model> void removeVideoFiles() {

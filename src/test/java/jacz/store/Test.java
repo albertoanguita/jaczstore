@@ -6,7 +6,6 @@ import jacz.store.database.DatabaseMediator;
 import jacz.store.util.GenreCode;
 import jacz.store.util.QualityCode;
 import junitx.framework.ListAssert;
-import org.javalite.activejdbc.Base;
 import org.junit.Assert;
 
 import java.util.ArrayList;
@@ -21,24 +20,23 @@ public class Test {
     public void testMovies() {
         synchronized (Test.class) {
             DatabaseMediator.dropAndCreate("store.db", "v1", "a");
-            Base.open("org.sqlite.JDBC", "jdbc:sqlite:store.db", "", "");
 
-            Movie movie1 = new Movie();
-            Movie movie2 = new Movie();
-            Movie movie3 = new Movie();
+            Movie movie1 = new Movie("store.db");
+            Movie movie2 = new Movie("store.db");
+            Movie movie3 = new Movie("store.db");
             movie1.setTitle("Predator");
             movie2.setTitle("Alien");
             movie3.setTitle("Rambo");
 
-            Assert.assertEquals(3, Movie.getMovies().size());
-            Assert.assertEquals("Predator", Movie.getMovies().get(0).getTitle());
-            Assert.assertEquals("Alien", Movie.getMovies().get(1).getTitle());
-            Assert.assertEquals("Rambo", Movie.getMovies().get(2).getTitle());
+            Assert.assertEquals(3, Movie.getMovies("store.db").size());
+            Assert.assertEquals("Predator", Movie.getMovies("store.db").get(0).getTitle());
+            Assert.assertEquals("Alien", Movie.getMovies("store.db").get(1).getTitle());
+            Assert.assertEquals("Rambo", Movie.getMovies("store.db").get(2).getTitle());
 
             movie2.delete();
-            Assert.assertEquals(2, Movie.getMovies().size());
-            Assert.assertEquals("Predator", Movie.getMovies().get(0).getTitle());
-            Assert.assertEquals("Rambo", Movie.getMovies().get(1).getTitle());
+            Assert.assertEquals(2, Movie.getMovies("store.db").size());
+            Assert.assertEquals("Predator", Movie.getMovies("store.db").get(0).getTitle());
+            Assert.assertEquals("Rambo", Movie.getMovies("store.db").get(1).getTitle());
 
             movie1.setTitle("Titanic");
             movie1.setOriginalTitle("Titanic original");
@@ -49,7 +47,7 @@ public class Test {
             movie1.addExternalURL("url2");
             movie1.addGenre(GenreCode.DOCUMENTARY);
             movie1.addGenre(GenreCode.FAMILY);
-            ImageFile imageFile = new ImageFile();
+            ImageFile imageFile = new ImageFile("store.db");
             imageFile.setHash("image");
             movie1.setImage(imageFile);
             movie1.setMinutes(150);
@@ -73,19 +71,19 @@ public class Test {
             Assert.assertEquals(new Integer(150), movie1.getMinutes());
 
             imageFile.delete();
-            movie1 = Movie.getMovieById(1);
+            movie1 = Movie.getMovieById("store.db", 1);
             Assert.assertEquals(null, movie1.getImage());
 
-            Person arnold = new Person();
+            Person arnold = new Person("store.db");
             arnold.setName("Arnold");
-            Person silvester = new Person();
+            Person silvester = new Person("store.db");
             silvester.setName("Silvester");
-            Person christian = new Person();
+            Person christian = new Person("store.db");
             christian.setName("Christian");
-            Person george = new Person();
+            Person george = new Person("store.db");
             george.setName("George");
 
-            Movie movie = new Movie();
+            Movie movie = new Movie("store.db");
             movie.setTitle("Predator");
 
             movie.addDirector(arnold);
@@ -113,9 +111,9 @@ public class Test {
             Assert.assertEquals(0, movie.getDirectors().size());
             Assert.assertEquals(0, movie.getActors().size());
 
-            Company hbo = new Company();
+            Company hbo = new Company("store.db");
             hbo.setName("HBO");
-            Company pixar = new Company();
+            Company pixar = new Company("store.db");
             pixar.setName("Pixar");
             movie.addProductionCompany(hbo);
             movie.addProductionCompany(pixar);
@@ -130,9 +128,9 @@ public class Test {
             movie.removeProductionCompanies();
             Assert.assertEquals(0, movie.getProductionCompanies().size());
 
-            VideoFile videoFile1 = new VideoFile();
+            VideoFile videoFile1 = new VideoFile("store.db");
             videoFile1.setName("video1");
-            VideoFile videoFile2 = new VideoFile();
+            VideoFile videoFile2 = new VideoFile("store.db");
             videoFile2.setName("video2");
             movie.addVideoFile(videoFile1);
             movie.addVideoFile(videoFile2);
@@ -147,7 +145,6 @@ public class Test {
 //            movie.removeVideoFiles();
 //            Assert.assertEquals(0, movie.getVideoFiles().size());
 
-            Base.close();
         }
     }
 
@@ -155,24 +152,23 @@ public class Test {
     public void testTVSeries() {
         synchronized (Test.class) {
             DatabaseMediator.dropAndCreate("store.db", "v1", "a");
-            Base.open("org.sqlite.JDBC", "jdbc:sqlite:store.db", "", "");
 
-            TVSeries tvSeries1 = new TVSeries();
-            TVSeries tvSeries2 = new TVSeries();
-            TVSeries tvSeries3 = new TVSeries();
+            TVSeries tvSeries1 = new TVSeries("store.db");
+            TVSeries tvSeries2 = new TVSeries("store.db");
+            TVSeries tvSeries3 = new TVSeries("store.db");
             tvSeries1.setTitle("Predator");
             tvSeries2.setTitle("Alien");
             tvSeries3.setTitle("Rambo");
 
-            Assert.assertEquals(3, TVSeries.getTVSeries().size());
-            Assert.assertEquals("Predator", TVSeries.getTVSeries().get(0).getTitle());
-            Assert.assertEquals("Alien", TVSeries.getTVSeries().get(1).getTitle());
-            Assert.assertEquals("Rambo", TVSeries.getTVSeries().get(2).getTitle());
+            Assert.assertEquals(3, TVSeries.getTVSeries("store.db").size());
+            Assert.assertEquals("Predator", TVSeries.getTVSeries("store.db").get(0).getTitle());
+            Assert.assertEquals("Alien", TVSeries.getTVSeries("store.db").get(1).getTitle());
+            Assert.assertEquals("Rambo", TVSeries.getTVSeries("store.db").get(2).getTitle());
 
             tvSeries2.delete();
-            Assert.assertEquals(2, TVSeries.getTVSeries().size());
-            Assert.assertEquals("Predator", TVSeries.getTVSeries().get(0).getTitle());
-            Assert.assertEquals("Rambo", TVSeries.getTVSeries().get(1).getTitle());
+            Assert.assertEquals(2, TVSeries.getTVSeries("store.db").size());
+            Assert.assertEquals("Predator", TVSeries.getTVSeries("store.db").get(0).getTitle());
+            Assert.assertEquals("Rambo", TVSeries.getTVSeries("store.db").get(1).getTitle());
 
             tvSeries1.setTitle("Titanic");
             tvSeries1.setOriginalTitle("Titanic original");
@@ -183,7 +179,7 @@ public class Test {
             tvSeries1.addExternalURL("url2");
             tvSeries1.addGenre(GenreCode.DOCUMENTARY);
             tvSeries1.addGenre(GenreCode.FAMILY);
-            ImageFile imageFile = new ImageFile();
+            ImageFile imageFile = new ImageFile("store.db");
             imageFile.setHash("image");
             tvSeries1.setImage(imageFile);
 
@@ -205,19 +201,19 @@ public class Test {
             Assert.assertEquals("image", tvSeries1.getImage().getHash());
 
             imageFile.delete();
-            tvSeries1 = TVSeries.getTVSeriesById(1);
+            tvSeries1 = TVSeries.getTVSeriesById("store.db", 1);
             Assert.assertEquals(null, tvSeries1.getImage());
 
-            Person arnold = new Person();
+            Person arnold = new Person("store.db");
             arnold.setName("Arnold");
-            Person silvester = new Person();
+            Person silvester = new Person("store.db");
             silvester.setName("Silvester");
-            Person christian = new Person();
+            Person christian = new Person("store.db");
             christian.setName("Christian");
-            Person george = new Person();
+            Person george = new Person("store.db");
             george.setName("George");
 
-            TVSeries tvSeries = new TVSeries();
+            TVSeries tvSeries = new TVSeries("store.db");
             tvSeries1.setTitle("Predator");
 
             tvSeries.addCreator(arnold);
@@ -245,9 +241,9 @@ public class Test {
             Assert.assertEquals(0, tvSeries.getCreators().size());
             Assert.assertEquals(0, tvSeries.getActors().size());
 
-            Company hbo = new Company();
+            Company hbo = new Company("store.db");
             hbo.setName("HBO");
-            Company pixar = new Company();
+            Company pixar = new Company("store.db");
             pixar.setName("Pixar");
             tvSeries.addProductionCompany(hbo);
             tvSeries.addProductionCompany(pixar);
@@ -262,10 +258,10 @@ public class Test {
             tvSeries.removeProductionCompanies();
             Assert.assertEquals(0, tvSeries.getProductionCompanies().size());
 
-            Chapter chapter1 = new Chapter();
+            Chapter chapter1 = new Chapter("store.db");
             chapter1.setTitle("ch1");
             chapter1.setSeason("s01");
-            Chapter chapter2 = new Chapter();
+            Chapter chapter2 = new Chapter("store.db");
             chapter2.setTitle("ch2");
             chapter2.setSeason("s01");
             tvSeries.setChapters(chapter1, chapter2);
@@ -280,8 +276,6 @@ public class Test {
             Assert.assertEquals("ch2", tvSeries.getChapters().get(0).getTitle());
             tvSeries.removeChapters();
             Assert.assertEquals(0, tvSeries.getChapters().size());
-
-            Base.close();
         }
     }
 
@@ -289,24 +283,23 @@ public class Test {
     public void testChapters() {
         synchronized (Test.class) {
             DatabaseMediator.dropAndCreate("store.db", "v1", "a");
-            Base.open("org.sqlite.JDBC", "jdbc:sqlite:store.db", "", "");
 
-            Chapter chapter1 = new Chapter();
-            Chapter chapter2 = new Chapter();
-            Chapter chapter3 = new Chapter();
+            Chapter chapter1 = new Chapter("store.db");
+            Chapter chapter2 = new Chapter("store.db");
+            Chapter chapter3 = new Chapter("store.db");
             chapter1.setTitle("Predator");
             chapter2.setTitle("Alien");
             chapter3.setTitle("Rambo");
 
-            Assert.assertEquals(3, Chapter.getChapters().size());
-            Assert.assertEquals("Predator", Chapter.getChapters().get(0).getTitle());
-            Assert.assertEquals("Alien", Chapter.getChapters().get(1).getTitle());
-            Assert.assertEquals("Rambo", Chapter.getChapters().get(2).getTitle());
+            Assert.assertEquals(3, Chapter.getChapters("store.db").size());
+            Assert.assertEquals("Predator", Chapter.getChapters("store.db").get(0).getTitle());
+            Assert.assertEquals("Alien", Chapter.getChapters("store.db").get(1).getTitle());
+            Assert.assertEquals("Rambo", Chapter.getChapters("store.db").get(2).getTitle());
 
             chapter2.delete();
-            Assert.assertEquals(2, Chapter.getChapters().size());
-            Assert.assertEquals("Predator", Chapter.getChapters().get(0).getTitle());
-            Assert.assertEquals("Rambo", Chapter.getChapters().get(1).getTitle());
+            Assert.assertEquals(2, Chapter.getChapters("store.db").size());
+            Assert.assertEquals("Predator", Chapter.getChapters("store.db").get(0).getTitle());
+            Assert.assertEquals("Rambo", Chapter.getChapters("store.db").get(1).getTitle());
 
             chapter1.setTitle("Titanic");
             chapter1.setOriginalTitle("Titanic original");
@@ -332,22 +325,22 @@ public class Test {
             Assert.assertEquals("01", chapter1.getSeason());
             Assert.assertEquals(new Integer(150), chapter1.getMinutes());
 
-            TVSeries tvSeries = new TVSeries();
+            TVSeries tvSeries = new TVSeries("store.db");
             tvSeries.addChapter(chapter1);
             tvSeries.addChapter(chapter3);
             tvSeries.delete();
-            Assert.assertEquals(0, Chapter.getChapters().size());
+            Assert.assertEquals(0, Chapter.getChapters("store.db").size());
 
-            Person arnold = new Person();
+            Person arnold = new Person("store.db");
             arnold.setName("Arnold");
-            Person silvester = new Person();
+            Person silvester = new Person("store.db");
             silvester.setName("Silvester");
-            Person christian = new Person();
+            Person christian = new Person("store.db");
             christian.setName("Christian");
-            Person george = new Person();
+            Person george = new Person("store.db");
             george.setName("George");
 
-            Chapter chapter = new Chapter();
+            Chapter chapter = new Chapter("store.db");
             chapter.setTitle("Predator");
 
             chapter.addDirector(arnold);
@@ -375,9 +368,9 @@ public class Test {
             Assert.assertEquals(0, chapter.getDirectors().size());
             Assert.assertEquals(0, chapter.getActors().size());
 
-            VideoFile videoFile1 = new VideoFile();
+            VideoFile videoFile1 = new VideoFile("store.db");
             videoFile1.setName("video1");
-            VideoFile videoFile2 = new VideoFile();
+            VideoFile videoFile2 = new VideoFile("store.db");
             videoFile2.setName("video2");
             chapter.addVideoFile(videoFile1);
             chapter.addVideoFile(videoFile2);
@@ -391,8 +384,6 @@ public class Test {
             Assert.assertEquals("video2", videoFiles.get(0).getName());
             chapter.removeVideoFiles();
             Assert.assertEquals(0, chapter.getVideoFiles().size());
-
-            Base.close();
         }
     }
 
@@ -400,19 +391,18 @@ public class Test {
     public void testPeople() {
         synchronized (Test.class) {
             DatabaseMediator.dropAndCreate("store.db", "v1", "a");
-            Base.open("org.sqlite.JDBC", "jdbc:sqlite:store.db", "", "");
 
-            Person arnold = new Person();
+            Person arnold = new Person("store.db");
             arnold.setName("Arnold");
             arnold.addAlias("Arnold S.");
-            Person silvester = new Person();
+            Person silvester = new Person("store.db");
             silvester.setName("Silvester");
             silvester.addAlias("Silvester S.");
-            Person christian = new Person();
+            Person christian = new Person("store.db");
             christian.setName("Christian");
             christian.addAlias("Christian B.");
             christian.addAlias("Christian Bale");
-            Person george = new Person();
+            Person george = new Person("store.db");
             george.setName("George");
             george.addAlias("George C.");
             george.addAlias("George Cl.");
@@ -441,67 +431,65 @@ public class Test {
             Assert.assertEquals("George", george.getName());
             ListAssert.assertEquals(aliases, george.getAliases());
 
-            Movie movie = new Movie();
+            Movie movie = new Movie("store.db");
             movie.setTitle("Predator");
             movie.addDirector(arnold);
             movie.addActor(silvester);
             movie.addActor(christian);
 
-            TVSeries tvSeries = new TVSeries();
+            TVSeries tvSeries = new TVSeries("store.db");
             tvSeries.setTitle("Breaking bad");
             tvSeries.addCreator(arnold);
             tvSeries.addCreator(christian);
             tvSeries.addActor(silvester);
             tvSeries.addActor(george);
 
-            Chapter chapter = new Chapter();
+            Chapter chapter = new Chapter("store.db");
             chapter.setTitle("The white walkers");
             chapter.addActor(arnold);
             chapter.addActor(christian);
             chapter.addDirector(silvester);
             chapter.addDirector(george);
 
-            Assert.assertEquals(4, Person.getPeople().size());
-            Assert.assertEquals(3, Person.getDirectors().size());
-            Assert.assertEquals(2, Person.getCreators().size());
-            Assert.assertEquals(4, Person.getActors().size());
+            Assert.assertEquals(4, Person.getPeople("store.db").size());
+            Assert.assertEquals(3, Person.getDirectors("store.db").size());
+            Assert.assertEquals(2, Person.getCreators("store.db").size());
+            Assert.assertEquals(4, Person.getActors("store.db").size());
 
-            Assert.assertEquals(0, arnold.getMoviesAsActor().size());
-            Assert.assertEquals("Predator", arnold.getMoviesAsDirector().get(0).getTitle());
-            Assert.assertEquals("Predator", silvester.getMoviesAsActor().get(0).getTitle());
-            Assert.assertEquals(0, silvester.getMoviesAsDirector().size());
-            Assert.assertEquals("Predator", christian.getMoviesAsActor().get(0).getTitle());
-            Assert.assertEquals(0, christian.getMoviesAsDirector().size());
-            Assert.assertEquals(0, george.getMoviesAsActor().size());
-            Assert.assertEquals(0, george.getMoviesAsDirector().size());
+            Assert.assertEquals(0, arnold.getMoviesAsActor("store.db").size());
+            Assert.assertEquals("Predator", arnold.getMoviesAsDirector("store.db").get(0).getTitle());
+            Assert.assertEquals("Predator", silvester.getMoviesAsActor("store.db").get(0).getTitle());
+            Assert.assertEquals(0, silvester.getMoviesAsDirector("store.db").size());
+            Assert.assertEquals("Predator", christian.getMoviesAsActor("store.db").get(0).getTitle());
+            Assert.assertEquals(0, christian.getMoviesAsDirector("store.db").size());
+            Assert.assertEquals(0, george.getMoviesAsActor("store.db").size());
+            Assert.assertEquals(0, george.getMoviesAsDirector("store.db").size());
 
-            Assert.assertEquals(0, arnold.getTVSeriesAsActor().size());
-            Assert.assertEquals("Breaking bad", arnold.getTVSeriesAsCreator().get(0).getTitle());
-            Assert.assertEquals("Breaking bad", silvester.getTVSeriesAsActor().get(0).getTitle());
-            Assert.assertEquals(0, silvester.getTVSeriesAsCreator().size());
-            Assert.assertEquals(0, christian.getTVSeriesAsActor().size());
-            Assert.assertEquals("Breaking bad", christian.getTVSeriesAsCreator().get(0).getTitle());
-            Assert.assertEquals("Breaking bad", george.getTVSeriesAsActor().get(0).getTitle());
-            Assert.assertEquals(0, george.getTVSeriesAsCreator().size());
+            Assert.assertEquals(0, arnold.getTVSeriesAsActor("store.db").size());
+            Assert.assertEquals("Breaking bad", arnold.getTVSeriesAsCreator("store.db").get(0).getTitle());
+            Assert.assertEquals("Breaking bad", silvester.getTVSeriesAsActor("store.db").get(0).getTitle());
+            Assert.assertEquals(0, silvester.getTVSeriesAsCreator("store.db").size());
+            Assert.assertEquals(0, christian.getTVSeriesAsActor("store.db").size());
+            Assert.assertEquals("Breaking bad", christian.getTVSeriesAsCreator("store.db").get(0).getTitle());
+            Assert.assertEquals("Breaking bad", george.getTVSeriesAsActor("store.db").get(0).getTitle());
+            Assert.assertEquals(0, george.getTVSeriesAsCreator("store.db").size());
 
-            Assert.assertEquals("The white walkers", arnold.getChaptersAsActor().get(0).getTitle());
-            Assert.assertEquals(0, arnold.getChaptersAsDirector().size());
-            Assert.assertEquals(0, silvester.getChaptersAsActor().size());
-            Assert.assertEquals("The white walkers", silvester.getChaptersAsDirector().get(0).getTitle());
-            Assert.assertEquals("The white walkers", christian.getChaptersAsActor().get(0).getTitle());
-            Assert.assertEquals(0, christian.getChaptersAsDirector().size());
-            Assert.assertEquals(0, george.getChaptersAsActor().size());
-            Assert.assertEquals("The white walkers", george.getChaptersAsDirector().get(0).getTitle());
+            Assert.assertEquals("The white walkers", arnold.getChaptersAsActor("store.db").get(0).getTitle());
+            Assert.assertEquals(0, arnold.getChaptersAsDirector("store.db").size());
+            Assert.assertEquals(0, silvester.getChaptersAsActor("store.db").size());
+            Assert.assertEquals("The white walkers", silvester.getChaptersAsDirector("store.db").get(0).getTitle());
+            Assert.assertEquals("The white walkers", christian.getChaptersAsActor("store.db").get(0).getTitle());
+            Assert.assertEquals(0, christian.getChaptersAsDirector("store.db").size());
+            Assert.assertEquals(0, george.getChaptersAsActor("store.db").size());
+            Assert.assertEquals("The white walkers", george.getChaptersAsDirector("store.db").get(0).getTitle());
 
             movie.delete();
             tvSeries.delete();
             chapter.delete();
 
-            Assert.assertEquals(4, Person.getPeople().size());
-            Assert.assertEquals(0, Person.getDirectors().size());
-            Assert.assertEquals(0, Person.getActors().size());
-
-            Base.close();
+            Assert.assertEquals(4, Person.getPeople("store.db").size());
+            Assert.assertEquals(0, Person.getDirectors("store.db").size());
+            Assert.assertEquals(0, Person.getActors("store.db").size());
         }
     }
 
@@ -509,35 +497,34 @@ public class Test {
     public void testCompanies() {
         synchronized (Test.class) {
             DatabaseMediator.dropAndCreate("store.db", "v1", "a");
-            Base.open("org.sqlite.JDBC", "jdbc:sqlite:store.db", "", "");
 
-            Company hbo = new Company();
+            Company hbo = new Company("store.db");
             hbo.setName("HBO");
             hbo.addAlias("H.B.O.");
-            Company pixar = new Company();
+            Company pixar = new Company("store.db");
             pixar.setName("Pixar");
             pixar.addAlias("Disney Pixar");
             pixar.addAlias("Pixar Inc.");
 
-            Movie movie = new Movie();
+            Movie movie = new Movie("store.db");
             movie.setTitle("Predator");
             movie.addProductionCompany(hbo);
 
-            TVSeries tvSeries = new TVSeries();
+            TVSeries tvSeries = new TVSeries("store.db");
             tvSeries.setTitle("Breaking bad");
             tvSeries.addProductionCompany(pixar);
 
-            Assert.assertEquals(2, Company.getCompanies().size());
-            Assert.assertEquals(1, hbo.getMovies().size());
-            Assert.assertEquals("Predator", hbo.getMovies().get(0).getTitle());
-            Assert.assertEquals(0, hbo.getTVSeries().size());
-            Assert.assertEquals(0, pixar.getMovies().size());
-            Assert.assertEquals(1, pixar.getTVSeries().size());
-            Assert.assertEquals("Breaking bad", pixar.getTVSeries().get(0).getTitle());
+            Assert.assertEquals(2, Company.getCompanies("store.db").size());
+            Assert.assertEquals(1, hbo.getMovies("store.db").size());
+            Assert.assertEquals("Predator", hbo.getMovies("store.db").get(0).getTitle());
+            Assert.assertEquals(0, hbo.getTVSeries("store.db").size());
+            Assert.assertEquals(0, pixar.getMovies("store.db").size());
+            Assert.assertEquals(1, pixar.getTVSeries("store.db").size());
+            Assert.assertEquals("Breaking bad", pixar.getTVSeries("store.db").get(0).getTitle());
 
             movie.delete();
 
-            Assert.assertEquals(2, Company.getCompanies().size());
+            Assert.assertEquals(2, Company.getCompanies("store.db").size());
 
             List<String> aliases = new ArrayList<>();
             aliases.add("H.B.O.");
@@ -549,8 +536,6 @@ public class Test {
             aliases.add("Pixar Inc.");
             Assert.assertEquals("Pixar", pixar.getName());
             ListAssert.assertEquals(aliases, pixar.getAliases());
-
-            Base.close();
         }
     }
 
@@ -558,17 +543,14 @@ public class Test {
     public void testImageFiles() {
         synchronized (Test.class) {
             DatabaseMediator.dropAndCreate("store.db", "v1", "a");
-            Base.open("org.sqlite.JDBC", "jdbc:sqlite:store.db", "", "");
 
-            ImageFile imageFile = new ImageFile();
+            ImageFile imageFile = new ImageFile("store.db");
             imageFile.setHash("hash");
             imageFile.setLength(150L);
             imageFile.setName("name");
             Assert.assertEquals("hash", imageFile.getHash());
             Assert.assertEquals(new Long(150L), imageFile.getLength());
             Assert.assertEquals("name", imageFile.getName());
-
-            Base.close();
         }
     }
 
@@ -576,9 +558,8 @@ public class Test {
     public void testVideoFiles() {
         synchronized (Test.class) {
             DatabaseMediator.dropAndCreate("store.db", "v1", "a");
-            Base.open("org.sqlite.JDBC", "jdbc:sqlite:store.db", "", "");
 
-            VideoFile videoFile = new VideoFile();
+            VideoFile videoFile = new VideoFile("store.db");
             videoFile.setHash("hash");
             videoFile.setLength(150L);
             videoFile.setName("video1");
@@ -600,9 +581,9 @@ public class Test {
             Assert.assertEquals(QualityCode.HD, videoFile.getQuality());
             ListAssert.assertEquals(languages, videoFile.getLanguages());
 
-            SubtitleFile subtitleFile1 = new SubtitleFile();
+            SubtitleFile subtitleFile1 = new SubtitleFile("store.db");
             subtitleFile1.setName("sub1");
-            SubtitleFile subtitleFile2 = new SubtitleFile();
+            SubtitleFile subtitleFile2 = new SubtitleFile("store.db");
             subtitleFile2.setName("sub2");
             videoFile.addSubtitleFile(subtitleFile1);
             videoFile.addSubtitleFile(subtitleFile2);
@@ -615,8 +596,6 @@ public class Test {
 
             Assert.assertEquals(1, videoFile.getSubtitleFiles().size());
             Assert.assertEquals("sub2", videoFile.getSubtitleFiles().get(0).getName());
-
-            Base.close();
         }
     }
 
@@ -624,9 +603,8 @@ public class Test {
     public void testSubtitleFiles() {
         synchronized (Test.class) {
             DatabaseMediator.dropAndCreate("store.db", "v1", "a");
-            Base.open("org.sqlite.JDBC", "jdbc:sqlite:store.db", "", "");
 
-            SubtitleFile subtitleFile = new SubtitleFile();
+            SubtitleFile subtitleFile = new SubtitleFile("store.db");
             subtitleFile.setHash("hash");
             subtitleFile.setLength(150L);
             subtitleFile.setName("name");
@@ -641,8 +619,6 @@ public class Test {
             Assert.assertEquals(new Long(150L), subtitleFile.getLength());
             Assert.assertEquals("name", subtitleFile.getName());
             ListAssert.assertEquals(languages, subtitleFile.getLanguages());
-
-            Base.close();
         }
     }
 }

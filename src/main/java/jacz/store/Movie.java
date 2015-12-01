@@ -14,12 +14,12 @@ public final class Movie extends ProducedCreationItem {
 
 //    private List<VideoFile> videoFiles;
 
-    public Movie() {
-        super();
+    public Movie(String dbPath) {
+        super(dbPath);
     }
 
-    public Movie(Model model) {
-        super(model);
+    public Movie(Model model, String dbPath) {
+        super(model, dbPath);
     }
 
     @Override
@@ -27,23 +27,28 @@ public final class Movie extends ProducedCreationItem {
         return new jacz.store.database.models.Movie();
     }
 
-    public static List<Movie> getMovies() {
-        return buildList(getModels(jacz.store.database.models.Movie.class));
+    public static List<Movie> getMovies(String dbPath) {
+        return buildList(dbPath, getModels(dbPath, jacz.store.database.models.Movie.class));
     }
 
-    public static Movie getMovieById(int id) {
-        Model model = getModelById(jacz.store.database.models.Movie.class, id);
-        return model != null ? new Movie(model) : null;
+    public static Movie getMovieById(String dbPath, int id) {
+        Model model = getModelById(dbPath, jacz.store.database.models.Movie.class, id);
+        return model != null ? new Movie(model, dbPath) : null;
     }
 
-    static List<Movie> buildList(List<? extends Model> models) {
-        List<Movie> movies = new ArrayList<>();
-        for (Model model : models) {
-            if (model != null) {
-                movies.add(new Movie(model));
+    static List<Movie> buildList(String dbPath, List<? extends Model> models) {
+        connect(dbPath);
+        try {
+            List<Movie> movies = new ArrayList<>();
+            for (Model model : models) {
+                if (model != null) {
+                    movies.add(new Movie(model, dbPath));
+                }
             }
+            return movies;
+        } finally {
+            disconnect();
         }
-        return movies;
     }
 
 
@@ -100,7 +105,7 @@ public final class Movie extends ProducedCreationItem {
 
     public List<VideoFile> getVideoFiles() {
         List<jacz.store.database.models.VideoFile> modelVideoFiles = getAssociation(jacz.store.database.models.VideoFile.class);
-        return VideoFile.buildList(modelVideoFiles);
+        return VideoFile.buildList(dbPath, modelVideoFiles);
     }
 
     public <C extends Model> void removeVideoFiles() {

@@ -21,12 +21,12 @@ public final class VideoFile extends FileWithLanguages {
 //
 //    private List<SubtitleFile> subtitleFiles;
 
-    public VideoFile() {
-        super();
+    public VideoFile(String dbPath) {
+        super(dbPath);
     }
 
-    VideoFile(Model model) {
-        super(model);
+    VideoFile(Model model, String dbPath) {
+        super(model, dbPath);
     }
 
     @Override
@@ -34,14 +34,19 @@ public final class VideoFile extends FileWithLanguages {
         return new jacz.store.database.models.VideoFile();
     }
 
-    static List<VideoFile> buildList(List<? extends Model> models) {
-        List<VideoFile> videoFiles = new ArrayList<>();
-        for (Model model : models) {
-            if (model != null) {
-                videoFiles.add(new VideoFile(model));
+    static List<VideoFile> buildList(String dbPath, List<? extends Model> models) {
+        connect(dbPath);
+        try {
+            List<VideoFile> videoFiles = new ArrayList<>();
+            for (Model model : models) {
+                if (model != null) {
+                    videoFiles.add(new VideoFile(model, dbPath));
+                }
             }
+            return videoFiles;
+        } finally {
+            disconnect();
         }
-        return videoFiles;
     }
 
     public Integer getMinutes() {
@@ -69,7 +74,7 @@ public final class VideoFile extends FileWithLanguages {
     }
 
     public List<SubtitleFile> getSubtitleFiles() {
-        return SubtitleFile.buildList(getDirectAssociationChildren(jacz.store.database.models.SubtitleFile.class));
+        return SubtitleFile.buildList(dbPath, getDirectAssociationChildren(jacz.store.database.models.SubtitleFile.class));
     }
 
     public void removeSubtitleFiles() {

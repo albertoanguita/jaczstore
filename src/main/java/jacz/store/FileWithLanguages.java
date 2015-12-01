@@ -10,12 +10,12 @@ import java.util.List;
  */
 public abstract class FileWithLanguages extends File {
 
-    public FileWithLanguages() {
-        super();
+    public FileWithLanguages(String dbPath) {
+        super(dbPath);
     }
 
-    public FileWithLanguages(Model model) {
-        super(model);
+    public FileWithLanguages(Model model, String dbPath) {
+        super(model, dbPath);
     }
 
     protected List<LanguageCode> getLanguages() {

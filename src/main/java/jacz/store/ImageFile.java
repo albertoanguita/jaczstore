@@ -7,12 +7,12 @@ import org.javalite.activejdbc.Model;
  */
 public class ImageFile extends File {
 
-    public ImageFile() {
-        super();
+    public ImageFile(String dbPath) {
+        super(dbPath);
     }
 
-    ImageFile(Model model) {
-        super(model);
+    ImageFile(Model model, String dbPath) {
+        super(model, dbPath);
     }
 
     @Override

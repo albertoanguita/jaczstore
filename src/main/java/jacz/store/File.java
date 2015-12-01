@@ -13,12 +13,12 @@ public abstract class File extends LibraryItem {
 //
 //    private Long length;
 
-    public File() {
-        super();
+    public File(String dbPath) {
+        super(dbPath);
     }
 
-    public File(Model model) {
-        super(model);
+    public File(Model model, String dbPath) {
+        super(model, dbPath);
     }
 
     public String getHash() {

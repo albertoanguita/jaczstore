@@ -11,12 +11,12 @@ public final class TVSeries extends ProducedCreationItem {
 
 //    private List<Chapter> chapters;
 
-    public TVSeries() {
-        super();
+    public TVSeries(String dbPath) {
+        super(dbPath);
     }
 
-    public TVSeries(Model model) {
-        super(model);
+    public TVSeries(Model model, String dbPath) {
+        super(model, dbPath);
     }
 
     @Override
@@ -24,23 +24,28 @@ public final class TVSeries extends ProducedCreationItem {
         return new jacz.store.database.models.TVSeries();
     }
 
-    public static List<TVSeries> getTVSeries() {
-        return buildList(getModels(jacz.store.database.models.TVSeries.class));
+    public static List<TVSeries> getTVSeries(String dbPath) {
+        return buildList(dbPath, getModels(dbPath, jacz.store.database.models.TVSeries.class));
     }
 
-    public static TVSeries getTVSeriesById(int id) {
-        Model model = getModelById(jacz.store.database.models.TVSeries.class, id);
-        return model != null ? new TVSeries(model) : null;
+    public static TVSeries getTVSeriesById(String dbPath, int id) {
+        Model model = getModelById(dbPath, jacz.store.database.models.TVSeries.class, id);
+        return model != null ? new TVSeries(model, dbPath) : null;
     }
 
-    static List<TVSeries> buildList(List<? extends Model> models) {
-        List<TVSeries> tvSeries = new ArrayList<>();
-        for (Model model : models) {
-            if (model != null) {
-                tvSeries.add(new TVSeries(model));
+    static List<TVSeries> buildList(String dbPath, List<? extends Model> models) {
+        connect(dbPath);
+        try {
+            List<TVSeries> tvSeries = new ArrayList<>();
+            for (Model model : models) {
+                if (model != null) {
+                    tvSeries.add(new TVSeries(model, dbPath));
+                }
             }
+            return tvSeries;
+        } finally {
+            disconnect();
         }
-        return tvSeries;
     }
 
     @Override
@@ -79,8 +84,8 @@ public final class TVSeries extends ProducedCreationItem {
     }
 
     public <C extends Model> void addCreator(Person person) {
-            addCreatorDirector(person);
-        }
+        addCreatorDirector(person);
+    }
 
     public List<String> getSeasons() {
         List<Chapter> chapters = getChapters();
@@ -98,11 +103,11 @@ public final class TVSeries extends ProducedCreationItem {
     }
 
     public List<Chapter> getChapters() {
-        return Chapter.buildList(getDirectAssociationChildren(jacz.store.database.models.Chapter.class));
+        return Chapter.buildList(dbPath, getDirectAssociationChildren(jacz.store.database.models.Chapter.class));
     }
 
     public List<Chapter> getChapters(String season) {
-        return Chapter.buildList(getDirectAssociationChildren(jacz.store.database.models.Chapter.class, "season = ?", season));
+        return Chapter.buildList(dbPath, getDirectAssociationChildren(jacz.store.database.models.Chapter.class, "season = ?", season));
     }
 
     public void removeChapters() {
