@@ -1,5 +1,6 @@
 package jacz.store;
 
+import jacz.store.database.DatabaseMediator;
 import jacz.store.util.QualityCode;
 import org.javalite.activejdbc.Model;
 
@@ -35,7 +36,7 @@ public final class VideoFile extends FileWithLanguages {
     }
 
     static List<VideoFile> buildList(String dbPath, List<? extends Model> models) {
-        connect(dbPath);
+        DatabaseMediator.connect(dbPath);
         try {
             List<VideoFile> videoFiles = new ArrayList<>();
             for (Model model : models) {
@@ -45,7 +46,7 @@ public final class VideoFile extends FileWithLanguages {
             }
             return videoFiles;
         } finally {
-            disconnect(dbPath);
+            DatabaseMediator.disconnect(dbPath);
         }
     }
 

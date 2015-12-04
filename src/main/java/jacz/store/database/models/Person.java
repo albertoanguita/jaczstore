@@ -1,5 +1,6 @@
 package jacz.store.database.models;
 
+import jacz.store.database.DatabaseMediator;
 import org.javalite.activejdbc.Model;
 
 /**
@@ -9,10 +10,12 @@ public class Person extends Model {
 
     @Override
     public void beforeDelete() {
-        // delete people association records
-        MoviesPeople.deleteRecords("person_id", getId());
-        TVSeriesPeople.deleteRecords("person_id", getId());
-        ChaptersPeople.deleteRecords("person_id", getId());
-        DeletedItem.addDeletedItem(this, getTableName());
+        if (DatabaseMediator.mustAutoComplete()) {
+            // delete people association records
+            MoviesPeople.deleteRecords("person_id", getId());
+            TVSeriesPeople.deleteRecords("person_id", getId());
+            ChaptersPeople.deleteRecords("person_id", getId());
+            DeletedItem.addDeletedItem(this, getTableName());
+        }
     }
 }

@@ -1,5 +1,6 @@
 package jacz.store;
 
+import jacz.store.database.DatabaseMediator;
 import org.javalite.activejdbc.Model;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public final class Chapter extends CreationItem {
     }
 
     static List<Chapter> buildList(String dbPath, List<? extends Model> models) {
-        connect(dbPath);
+        DatabaseMediator.connect(dbPath);
         try {
             List<Chapter> chapters = new ArrayList<>();
             for (Model model : models) {
@@ -49,7 +50,7 @@ public final class Chapter extends CreationItem {
             }
             return chapters;
         } finally {
-            disconnect(dbPath);
+            DatabaseMediator.disconnect(dbPath);
         }
     }
 

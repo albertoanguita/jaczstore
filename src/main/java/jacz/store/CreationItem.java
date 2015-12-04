@@ -102,52 +102,52 @@ public abstract class CreationItem extends LibraryItem {
     }
 
     protected List<Person> getCreatorsDirectors() {
-        List<jacz.store.database.models.Person> modelPersons = getAssociation(jacz.store.database.models.Person.class, "type = ? ", DatabaseMediator.PERSON_TYPE.CREATOR.name());
+        List<jacz.store.database.models.Person> modelPersons = getAssociation(jacz.store.database.models.Person.class, "type = ? ", DatabaseMediator.PersonType.CREATOR.name());
         return Person.buildList(dbPath, modelPersons);
     }
 
     protected <C extends Model> void removeCreatorsDirectors() {
-        removeAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.CREATOR.name());
+        removeAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PersonType.CREATOR.name());
     }
 
     protected <C extends Model> void removeCreatorDirector(Person person) {
-        removeAssociation(getPeopleAssociationModel(), getAssociationIdField(), person, "person_id", DatabaseMediator.PERSON_TYPE.CREATOR.name());
+        removeAssociation(getPeopleAssociationModel(), getAssociationIdField(), person, "person_id", DatabaseMediator.PersonType.CREATOR.name());
     }
 
     protected void setCreatorsDirectors(List<Person> persons) {
-        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PERSON_TYPE.CREATOR.name(), persons);
+        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.CREATOR.name(), persons);
     }
 
     protected void setCreatorsDirectors(Person... persons) {
-        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PERSON_TYPE.CREATOR.name(), persons);
+        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.CREATOR.name(), persons);
     }
 
     protected <C extends Model> void addCreatorDirector(Person person) {
-        addAssociation(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PERSON_TYPE.CREATOR.name(), person);
+        addAssociation(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.CREATOR.name(), person);
     }
 
     protected List<Person> getActors() {
-        List<jacz.store.database.models.Person> modelPersons = getAssociation(jacz.store.database.models.Person.class, "type = ? ", DatabaseMediator.PERSON_TYPE.ACTOR.name());
+        List<jacz.store.database.models.Person> modelPersons = getAssociation(jacz.store.database.models.Person.class, "type = ? ", DatabaseMediator.PersonType.ACTOR.name());
         return Person.buildList(dbPath, modelPersons);
     }
 
     public <C extends Model> void removeActors() {
-        removeAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PERSON_TYPE.ACTOR.name());
+        removeAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PersonType.ACTOR.name());
     }
 
     public <C extends Model> void removeActor(Person person) {
-        removeAssociation(getPeopleAssociationModel(), getAssociationIdField(), person, "person_id", DatabaseMediator.PERSON_TYPE.ACTOR.name());
+        removeAssociation(getPeopleAssociationModel(), getAssociationIdField(), person, "person_id", DatabaseMediator.PersonType.ACTOR.name());
     }
 
     public void setActors(List<Person> persons) {
-        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PERSON_TYPE.ACTOR.name(), persons);
+        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.ACTOR.name(), persons);
     }
 
     public void setActors(Person... persons) {
-        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PERSON_TYPE.ACTOR.name(), persons);
+        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.ACTOR.name(), persons);
     }
 
     public <C extends Model> void addActor(Person person) {
-        addAssociation(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PERSON_TYPE.ACTOR.name(), person);
+        addAssociation(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.ACTOR.name(), person);
     }
 }

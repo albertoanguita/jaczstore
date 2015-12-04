@@ -6,8 +6,10 @@ import jacz.store.database.DatabaseMediator;
 import jacz.store.util.GenreCode;
 import jacz.store.util.QualityCode;
 import junitx.framework.ListAssert;
+import org.javalite.activejdbc.Base;
 import org.junit.Assert;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +21,15 @@ public class Test {
     @org.junit.Test
     public void testMovies() {
         DatabaseMediator.dropAndCreate("store.db", "v1", "a");
+
+        DatabaseMediator.connect("store.db");
+        try {
+            System.out.println(Base.connection().getMetaData().getURL());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        DatabaseMediator.disconnect("store.db");
+
 
         Movie movie1 = new Movie("store.db");
         Movie movie2 = new Movie("store.db");

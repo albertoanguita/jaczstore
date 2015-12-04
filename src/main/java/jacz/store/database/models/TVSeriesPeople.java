@@ -14,13 +14,17 @@ public class TVSeriesPeople extends Model {
 
     @Override
     protected void afterCreate() {
-        super.afterCreate();
-        set("timestamp", DatabaseMediator.getNewTimestamp()).saveIt();
+        if (DatabaseMediator.mustAutoComplete()) {
+            super.afterCreate();
+            set("timestamp", DatabaseMediator.getNewTimestamp()).saveIt();
+        }
     }
 
     @Override
     public void beforeDelete() {
-        DeletedItem.addDeletedItem(this, getTableName());
+        if (DatabaseMediator.mustAutoComplete()) {
+            DeletedItem.addDeletedItem(this, getTableName());
+        }
     }
 
     static void deleteRecords(String field, Object id) {

@@ -1,6 +1,6 @@
 package jacz.store.database.models;
 
-import jacz.store.*;
+import jacz.store.database.DatabaseMediator;
 import org.javalite.activejdbc.Model;
 
 import java.util.List;
@@ -12,22 +12,26 @@ public class Movie extends Model {
 
     @Override
     public void beforeDelete() {
-        // delete image
-        ImageFile.deleteRecord(this);
-        // delete people association records
-        MoviesPeople.deleteRecords("movie_id", getId());
-        // delete companies association records
-        MoviesCompanies.deleteRecords("movie_id", getId());
-        // delete video files
-        MoviesVideoFiles.deleteRecords("movie_id", getId());
-        DeletedItem.addDeletedItem(this, getTableName());
+        if (DatabaseMediator.mustAutoComplete()) {
+            // delete people association records
+            MoviesPeople.deleteRecords("movie_id", getId());
+            // delete companies association records
+            MoviesCompanies.deleteRecords("movie_id", getId());
+            // delete video files
+            MoviesVideoFiles.deleteRecords("movie_id", getId());
+            DeletedItem.addDeletedItem(this, getTableName());
+            // delete image
+            ImageFile.deleteRecord(this);
+        }
     }
 
     static void deleteImageLink(Model imageModel) {
-        List<Movie> movieModels = imageModel.getAll(Movie.class);
-        for (Movie movie : movieModels) {
-            movie.set("image_file_id", null);
-            movie.saveIt();
+        if (DatabaseMediator.mustAutoComplete()) {
+            List<Movie> movieModels = imageModel.getAll(Movie.class);
+            for (Movie movie : movieModels) {
+                movie.set("image_file_id", null);
+                movie.saveIt();
+            }
         }
     }
 }

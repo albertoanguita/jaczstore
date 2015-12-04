@@ -1,7 +1,6 @@
 package jacz.store;
 
-import com.neovisionaries.i18n.LanguageCode;
-import jacz.store.database_old.DatabaseMediator;
+import jacz.store.database.DatabaseMediator;
 import org.javalite.activejdbc.Model;
 
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ public final class SubtitleFile extends FileWithLanguages {
     }
 
     static List<SubtitleFile> buildList(String dbPath, List<? extends Model> models) {
-        connect(dbPath);
+        DatabaseMediator.connect(dbPath);
         try {
             List<SubtitleFile> subtitleFiles = new ArrayList<>();
             for (Model model : models) {
@@ -38,7 +37,7 @@ public final class SubtitleFile extends FileWithLanguages {
             }
             return subtitleFiles;
         } finally {
-            disconnect(dbPath);
+            DatabaseMediator.disconnect(dbPath);
         }
     }
 }

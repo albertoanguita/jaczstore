@@ -1,5 +1,6 @@
 package jacz.store.database.models;
 
+import jacz.store.database.DatabaseMediator;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.annotations.Table;
 
@@ -13,11 +14,13 @@ public class SubtitleFile extends Model {
 
     @Override
     public void beforeDelete() {
-        // delete people association records
-        ChaptersPeople.deleteRecords("chapter_id", getId());
-        // delete video files
-        ChaptersVideoFiles.deleteRecords("chapter_id", getId());
-        DeletedItem.addDeletedItem(this, getTableName());
+        if (DatabaseMediator.mustAutoComplete()) {
+            // delete people association records
+            ChaptersPeople.deleteRecords("chapter_id", getId());
+            // delete video files
+            ChaptersVideoFiles.deleteRecords("chapter_id", getId());
+            DeletedItem.addDeletedItem(this, getTableName());
+        }
     }
 
     static void deleteRecords(Model baseModel) {

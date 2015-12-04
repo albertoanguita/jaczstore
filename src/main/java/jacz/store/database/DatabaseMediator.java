@@ -1,19 +1,39 @@
 package jacz.store.database;
 
+import jacz.store.ConcurrentDataAccessControl;
 import jacz.store.database.models.Metadata;
 import org.javalite.activejdbc.Base;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 /**
  * General operations on the store database
  */
 public class DatabaseMediator {
 
-    public enum PERSON_TYPE {CREATOR, ACTOR}
+    public enum ItemType {
+        MOVIE,
+        TV_SERIES,
+        CHAPTER,
+        PERSON,
+        COMPANY,
+        VIDEO_FILE,
+        SUBTITLE_FILE,
+        IMAGE_FILE
+    }
+
+    public enum PersonType {CREATOR, ACTOR}
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("Y/M/d-HH:mm:ss:SSS");
+
+    private static final Pattern AUTOCOMPLETE_DB = Pattern.compile("^(.)*store.db$");
+
+    private static int connectionCount = 0;
+
+
 
 
 
@@ -208,14 +228,47 @@ public class DatabaseMediator {
         Base.close();
     }
 
-    public static void updateLastAccessTime() {
+    public static String getDatabaseIdentifier(String dbPath) {
+        connect(dbPath);
         Metadata metadata = getMetadata();
-        metadata.set("lastAccess", dateFormat.format(new Date())).saveIt();
+        disconnect(dbPath);
+        return metadata.getString("identifier");
     }
 
-    public static void updateLastUpdateTime() {
+    public static void setDatabaseIdentifier(String dbPath, String identifier) {
+        connect(dbPath);
+        Metadata metadata = getMetadata();
+        metadata.setString("identifier", identifier).saveIt();
+        disconnect(dbPath);
+    }
+
+    public static void updateLastAccessTime(String dbPath) {
+        connect(dbPath);
+        Metadata metadata = getMetadata();
+        metadata.set("lastAccess", dateFormat.format(new Date())).saveIt();
+        disconnect(dbPath);
+    }
+
+    public static void updateLastUpdateTime(String dbPath) {
+        connect(dbPath);
         Metadata metadata = getMetadata();
         metadata.set("lastUpdate", dateFormat.format(new Date())).saveIt();
+        disconnect(dbPath);
+    }
+
+    public static synchronized long getNewTimestamp(String dbPath) {
+        connect(dbPath);
+        long newTimestamp = getNewTimestamp();
+        disconnect(dbPath);
+        return newTimestamp;
+    }
+
+    public static synchronized long getLastTimestamp(String dbPath) {
+        connect(dbPath);
+        Metadata metadata = getMetadata();
+        long nextTimestamp = metadata.getLong("nextTimestamp");
+        disconnect(dbPath);
+        return nextTimestamp - 1;
     }
 
     public static synchronized long getNewTimestamp() {
@@ -236,5 +289,34 @@ public class DatabaseMediator {
     public static void dropAndCreate(String path, String version, String identifier) {
         dropDatabase(path);
         createDatabase(path, version, identifier);
+    }
+
+
+    public static void connect(String dbPath) {
+        ConcurrentDataAccessControl.getInstance().getConcurrencyController().beginActivity(dbPath);
+        synchronized (DatabaseMediator.class) {
+            if (connectionCount == 0) {
+                Base.open("org.sqlite.JDBC", "jdbc:sqlite:" + dbPath, "", "");
+            }
+            connectionCount++;
+        }
+    }
+
+    public static void disconnect(String dbPath) {
+        ConcurrentDataAccessControl.getInstance().getConcurrencyController().endActivity(dbPath);
+        synchronized (DatabaseMediator.class) {
+            connectionCount--;
+            if (connectionCount == 0) {
+                Base.close();
+            }
+        }
+    }
+
+    public static boolean mustAutoComplete() {
+        try {
+            return DatabaseMediator.AUTOCOMPLETE_DB.matcher(Base.connection().getMetaData().getURL()).matches();
+        } catch (SQLException e) {
+            return false;
+        }
     }
 }

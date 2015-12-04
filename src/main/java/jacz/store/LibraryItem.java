@@ -23,12 +23,6 @@ public abstract class LibraryItem {
 
     protected final String dbPath;
 
-    private static String connectedDatabase;
-
-    private static int connectionCount = 0;
-
-//    private int timestamp;
-
     public LibraryItem(String dbPath) {
         this.dbPath = dbPath;
         connect();
@@ -78,9 +72,7 @@ public abstract class LibraryItem {
     }
 
     public void updateLastAccessTime() {
-        connect();
-        DatabaseMediator.updateLastAccessTime();
-        disconnect();
+        DatabaseMediator.updateLastAccessTime(dbPath);
     }
 
 
@@ -90,14 +82,14 @@ public abstract class LibraryItem {
 
     public void updateTimestamp() {
         connect();
-        model.set("timestamp", DatabaseMediator.getNewTimestamp());
+        model.set("timestamp", DatabaseMediator.getNewTimestamp(dbPath));
         disconnect();
     }
 
     protected void set(String field, Object value) {
         connect();
         model.set(field, value);
-        DatabaseMediator.updateLastUpdateTime();
+        DatabaseMediator.updateLastUpdateTime(dbPath);
         updateTimestamp();
         save();
         disconnect();
@@ -119,7 +111,7 @@ public abstract class LibraryItem {
     }
 
     protected static <C extends Model> List<C> getModels(String dbPath, Class<? extends Model> modelClass) {
-        connect(dbPath);
+        DatabaseMediator.connect(dbPath);
         try {
             Method findAll = modelClass.getMethod("findAll");
             List<C> models;
@@ -130,12 +122,12 @@ public abstract class LibraryItem {
             e.printStackTrace();
             return null;
         } finally {
-            disconnect(dbPath);
+            DatabaseMediator.disconnect(dbPath);
         }
     }
 
     protected static <C extends Model> List<C> getModels(String dbPath, Class<? extends Model> modelClass, String query, Object[] params) {
-        connect(dbPath);
+        DatabaseMediator.connect(dbPath);
         try {
             Method where = modelClass.getMethod("where", String.class, Object[].class);
             params = params != null ? params : new Object[0];
@@ -147,18 +139,18 @@ public abstract class LibraryItem {
             e.printStackTrace();
             return null;
         } finally {
-            disconnect(dbPath);
+            DatabaseMediator.disconnect(dbPath);
         }
     }
 
     protected static <C extends Model> C getModelById(String dbPath, Class<? extends Model> modelClass, int id) {
-        connect(dbPath);
+        DatabaseMediator.connect(dbPath);
         try {
             Object[] params = {id};
             List<C> models = getModels(dbPath, modelClass, "id = ?", params);
             return models.isEmpty() ? null : models.get(0);
         } finally {
-            disconnect(dbPath);
+            DatabaseMediator.disconnect(dbPath);
         }
     }
 
@@ -484,30 +476,10 @@ public abstract class LibraryItem {
     }
 
     protected void connect() {
-        connect(dbPath);
+        DatabaseMediator.connect(dbPath);
     }
 
-    protected static void connect(String dbPath) {
-        ConcurrentDataAccessControl.getInstance().getConcurrencyController().beginActivity(dbPath);
-        synchronized (LibraryItem.class) {
-            if (connectionCount == 0) {
-                Base.open("org.sqlite.JDBC", "jdbc:sqlite:" + dbPath, "", "");
-            }
-            connectionCount++;
-        }
-    }
-    
     protected void disconnect() {
-        disconnect(dbPath);
-    }
-
-    protected static void disconnect(String dbPath) {
-        ConcurrentDataAccessControl.getInstance().getConcurrencyController().endActivity(dbPath);
-        synchronized (LibraryItem.class) {
-            connectionCount--;
-            if (connectionCount == 0) {
-                Base.close();
-            }
-        }
+        DatabaseMediator.disconnect(dbPath);
     }
 }

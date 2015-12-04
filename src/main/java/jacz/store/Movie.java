@@ -1,5 +1,6 @@
 package jacz.store;
 
+import jacz.store.database.DatabaseMediator;
 import org.javalite.activejdbc.Model;
 
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public final class Movie extends ProducedCreationItem {
     }
 
     static List<Movie> buildList(String dbPath, List<? extends Model> models) {
-        connect(dbPath);
+        DatabaseMediator.connect(dbPath);
         try {
             List<Movie> movies = new ArrayList<>();
             for (Model model : models) {
@@ -47,7 +48,7 @@ public final class Movie extends ProducedCreationItem {
             }
             return movies;
         } finally {
-            disconnect(dbPath);
+            DatabaseMediator.disconnect(dbPath);
         }
     }
 

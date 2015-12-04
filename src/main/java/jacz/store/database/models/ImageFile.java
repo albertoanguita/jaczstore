@@ -1,5 +1,6 @@
 package jacz.store.database.models;
 
+import jacz.store.database.DatabaseMediator;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.annotations.Table;
 
@@ -11,9 +12,11 @@ public class ImageFile extends Model {
 
     @Override
     public void beforeDelete() {
-        Movie.deleteImageLink(this);
-        TVSeries.deleteImageLink(this);
-        DeletedItem.addDeletedItem(this, getTableName());
+        if (DatabaseMediator.mustAutoComplete()) {
+            Movie.deleteImageLink(this);
+            TVSeries.deleteImageLink(this);
+            DeletedItem.addDeletedItem(this, getTableName());
+        }
     }
 
     static void deleteRecord(Model fromModel) {
