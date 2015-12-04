@@ -31,6 +31,4 @@ public interface DatabaseMediator {
     void saveVideoFile(VideoFile videoFile);
 
     void saveSubtitleFile(SubtitleFile subtitleFile);
-
-    void saveImageFile(ImageFile imageFile);
 }

@@ -64,9 +64,4 @@ public class JavaLiteSQLt3Mediator implements DatabaseMediator {
     public void saveSubtitleFile(SubtitleFile subtitleFile) {
 
     }
-
-    @Override
-    public void saveImageFile(ImageFile imageFile) {
-
-    }
 }

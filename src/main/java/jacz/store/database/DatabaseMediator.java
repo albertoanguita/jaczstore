@@ -49,7 +49,6 @@ public class DatabaseMediator {
         Base.exec("DROP TABLE IF EXISTS companies");
         Base.exec("DROP TABLE IF EXISTS video_files");
         Base.exec("DROP TABLE IF EXISTS subtitle_files");
-        Base.exec("DROP TABLE IF EXISTS image_files");
         Base.exec("DROP TABLE IF EXISTS movies_people");
         Base.exec("DROP TABLE IF EXISTS tv_series_people");
         Base.exec("DROP TABLE IF EXISTS chapters_people");
@@ -90,7 +89,7 @@ public class DatabaseMediator {
                         "countries     TEXT, " +
                         "externalURLs  TEXT, " +
                         "genres        TEXT, " +
-                        "image_file_id INTEGER REFERENCES image_files(id), " +
+                        "image_hash    TEXT, " +
                         "minutes       INTEGER " +
                         ")"
         );
@@ -103,7 +102,7 @@ public class DatabaseMediator {
                         "countries     TEXT, " +
                         "externalURLs  TEXT, " +
                         "genres        TEXT, " +
-                        "image_file_id INTEGER REFERENCES image_files(id) " +
+                        "image_hash    TEXT " +
                         ")"
         );
         Base.exec("CREATE TABLE chapters (" +
@@ -153,14 +152,6 @@ public class DatabaseMediator {
                         "name          TEXT, " +
                         "video_file_id INTEGER REFERENCES video_files(id), " +
                         "languages     TEXT " +
-                        ")"
-        );
-        Base.exec("CREATE TABLE image_files (" +
-                        "id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp INTEGER, " +
-                        "hash      TEXT, " +
-                        "length    INTEGER, " +
-                        "name      TEXT " +
                         ")"
         );
         Base.exec("CREATE TABLE movies_people (\n" +

@@ -20,18 +20,6 @@ public class Movie extends Model {
             // delete video files
             MoviesVideoFiles.deleteRecords("movie_id", getId());
             DeletedItem.addDeletedItem(this, getTableName());
-            // delete image
-            ImageFile.deleteRecord(this);
-        }
-    }
-
-    static void deleteImageLink(Model imageModel) {
-        if (DatabaseMediator.mustAutoComplete()) {
-            List<Movie> movieModels = imageModel.getAll(Movie.class);
-            for (Movie movie : movieModels) {
-                movie.set("image_file_id", null);
-                movie.saveIt();
-            }
         }
     }
 }

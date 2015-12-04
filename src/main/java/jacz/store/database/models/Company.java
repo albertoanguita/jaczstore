@@ -3,8 +3,6 @@ package jacz.store.database.models;
 import jacz.store.database.DatabaseMediator;
 import org.javalite.activejdbc.Model;
 
-import java.util.List;
-
 /**
  * Company model (table companies)
  */

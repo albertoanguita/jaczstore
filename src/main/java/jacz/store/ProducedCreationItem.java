@@ -71,17 +71,11 @@ public abstract class ProducedCreationItem extends CreationItem {
         return addEnum("genres", GenreCode.class, genre, "name");
     }
 
-    public ImageFile getImage() {
-        Model model = getDirectAssociationParent(dbPath, jacz.store.database.models.ImageFile.class);
-        return model != null ? new ImageFile(model, dbPath) : null;
+    public String getImageHash() {
+        return getString("image_hash");
     }
 
-    public void setImage(ImageFile image) {
-        setDirectAssociationParent(image);
-    }
-
-    public void removeImage() {
-        removeDirectAssociationParent(jacz.store.database.models.ImageFile.class);
-        set("image_file_id", null);
+    public void setImageHash(String imageHash) {
+        set("image_hash", imageHash);
     }
 }

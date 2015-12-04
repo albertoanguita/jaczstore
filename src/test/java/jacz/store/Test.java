@@ -57,9 +57,7 @@ public class Test {
         movie1.addExternalURL("url2");
         movie1.addGenre(GenreCode.DOCUMENTARY);
         movie1.addGenre(GenreCode.FAMILY);
-        ImageFile imageFile = new ImageFile("store.db");
-        imageFile.setHash("image");
-        movie1.setImage(imageFile);
+        movie1.setImageHash("image");
         movie1.setMinutes(150);
 
         List<CountryCode> countries = new ArrayList<>();
@@ -77,12 +75,8 @@ public class Test {
         ListAssert.assertEquals(countries, movie1.getCountries());
         ListAssert.assertEquals(externalURLs, movie1.getExternalURLs());
         ListAssert.assertEquals(genres, movie1.getGenres());
-        Assert.assertEquals("image", movie1.getImage().getHash());
+        Assert.assertEquals("image", movie1.getImageHash());
         Assert.assertEquals(new Integer(150), movie1.getMinutes());
-
-        imageFile.delete();
-        movie1 = Movie.getMovieById("store.db", 1);
-        Assert.assertEquals(null, movie1.getImage());
 
         Person arnold = new Person("store.db");
         arnold.setName("Arnold");
@@ -186,9 +180,7 @@ public class Test {
         tvSeries1.addExternalURL("url2");
         tvSeries1.addGenre(GenreCode.DOCUMENTARY);
         tvSeries1.addGenre(GenreCode.FAMILY);
-        ImageFile imageFile = new ImageFile("store.db");
-        imageFile.setHash("image");
-        tvSeries1.setImage(imageFile);
+        tvSeries1.setImageHash("image");
 
         List<CountryCode> countries = new ArrayList<>();
         countries.add(CountryCode.ES);
@@ -205,11 +197,9 @@ public class Test {
         ListAssert.assertEquals(countries, tvSeries1.getCountries());
         ListAssert.assertEquals(externalURLs, tvSeries1.getExternalURLs());
         ListAssert.assertEquals(genres, tvSeries1.getGenres());
-        Assert.assertEquals("image", tvSeries1.getImage().getHash());
+        Assert.assertEquals("image", tvSeries1.getImageHash());
 
-        imageFile.delete();
         tvSeries1 = TVSeries.getTVSeriesById("store.db", 1);
-        Assert.assertEquals(null, tvSeries1.getImage());
 
         Person arnold = new Person("store.db");
         arnold.setName("Arnold");
@@ -537,19 +527,6 @@ public class Test {
         aliases.add("Pixar Inc.");
         Assert.assertEquals("Pixar", pixar.getName());
         ListAssert.assertEquals(aliases, pixar.getAliases());
-    }
-
-    @org.junit.Test
-    public void testImageFiles() {
-        DatabaseMediator.dropAndCreate("store.db", "v1", "a");
-
-        ImageFile imageFile = new ImageFile("store.db");
-        imageFile.setHash("hash");
-        imageFile.setLength(150L);
-        imageFile.setName("name");
-        Assert.assertEquals("hash", imageFile.getHash());
-        Assert.assertEquals(new Long(150L), imageFile.getLength());
-        Assert.assertEquals("name", imageFile.getName());
     }
 
     @org.junit.Test
