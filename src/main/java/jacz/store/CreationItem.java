@@ -2,6 +2,7 @@ package jacz.store;
 
 import com.neovisionaries.i18n.CountryCode;
 import jacz.store.database.DatabaseMediator;
+import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public abstract class CreationItem extends LibraryItem {
         super(model, dbPath);
     }
 
-    abstract Class<? extends Model> getPeopleAssociationModel();
+//    abstract Class<? extends Model> getPeopleAssociationModel();
 
     abstract String getAssociationIdField();
 
@@ -102,52 +103,101 @@ public abstract class CreationItem extends LibraryItem {
     }
 
     protected List<Person> getCreatorsDirectors() {
-        List<jacz.store.database.models.Person> modelPersons = getAssociation(jacz.store.database.models.Person.class, "type = ? ", DatabaseMediator.PersonType.CREATOR.name());
-        return Person.buildList(dbPath, modelPersons);
+        LazyList<jacz.store.database.models.Person> models = getReferencedElements(jacz.store.database.models.Person.class, "creator_list");
+        return Person.buildList(dbPath, models);
     }
 
     protected <C extends Model> void removeCreatorsDirectors() {
-        removeAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PersonType.CREATOR.name());
+        removeReferencedElements("creator_list");
     }
 
     protected <C extends Model> void removeCreatorDirector(Person person) {
-        removeAssociation(getPeopleAssociationModel(), getAssociationIdField(), person, "person_id", DatabaseMediator.PersonType.CREATOR.name());
+        removeReferencedElement("creator_list", person);
     }
 
     protected void setCreatorsDirectors(List<Person> persons) {
-        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.CREATOR.name(), persons);
+        setReferencedElements("creator_list", persons);
     }
 
     protected void setCreatorsDirectors(Person... persons) {
-        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.CREATOR.name(), persons);
+        setReferencedElements("creator_list", persons);
     }
 
     protected <C extends Model> void addCreatorDirector(Person person) {
-        addAssociation(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.CREATOR.name(), person);
+        addReferencedElement("creator_list", person);
     }
 
+//    protected List<Person> getCreatorsDirectors() {
+//        List<jacz.store.database.models.Person> modelPersons = getAssociation(jacz.store.database.models.Person.class, "type = ? ", DatabaseMediator.PersonType.CREATOR.name());
+//        return Person.buildList(dbPath, modelPersons);
+//    }
+//
+//    protected <C extends Model> void removeCreatorsDirectors() {
+//        removeAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PersonType.CREATOR.name());
+//    }
+//
+//    protected <C extends Model> void removeCreatorDirector(Person person) {
+//        removeAssociation(getPeopleAssociationModel(), getAssociationIdField(), person, "person_id", DatabaseMediator.PersonType.CREATOR.name());
+//    }
+//
+//    protected void setCreatorsDirectors(List<Person> persons) {
+//        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.CREATOR.name(), persons);
+//    }
+//
+//    protected void setCreatorsDirectors(Person... persons) {
+//        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.CREATOR.name(), persons);
+//    }
+//
+//    protected <C extends Model> void addCreatorDirector(Person person) {
+//        addAssociation(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.CREATOR.name(), person);
+//    }
+//
     protected List<Person> getActors() {
-        List<jacz.store.database.models.Person> modelPersons = getAssociation(jacz.store.database.models.Person.class, "type = ? ", DatabaseMediator.PersonType.ACTOR.name());
-        return Person.buildList(dbPath, modelPersons);
+        LazyList<jacz.store.database.models.Person> models = getReferencedElements(jacz.store.database.models.Person.class, "actor_list");
+        return Person.buildList(dbPath, models);
     }
 
     public <C extends Model> void removeActors() {
-        removeAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PersonType.ACTOR.name());
+        removeReferencedElements("actor_list");
     }
 
     public <C extends Model> void removeActor(Person person) {
-        removeAssociation(getPeopleAssociationModel(), getAssociationIdField(), person, "person_id", DatabaseMediator.PersonType.ACTOR.name());
+        removeReferencedElement("actor_list", person);
     }
 
     public void setActors(List<Person> persons) {
-        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.ACTOR.name(), persons);
+        setReferencedElements("actor_list", persons);
     }
 
     public void setActors(Person... persons) {
-        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.ACTOR.name(), persons);
+        setReferencedElements("actor_list", persons);
     }
 
     public <C extends Model> void addActor(Person person) {
-        addAssociation(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.ACTOR.name(), person);
+        addReferencedElement("actor_list", person);
     }
+//    protected List<Person> getActors() {
+//        List<jacz.store.database.models.Person> modelPersons = getAssociation(jacz.store.database.models.Person.class, "type = ? ", DatabaseMediator.PersonType.ACTOR.name());
+//        return Person.buildList(dbPath, modelPersons);
+//    }
+//
+//    public <C extends Model> void removeActors() {
+//        removeAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PersonType.ACTOR.name());
+//    }
+//
+//    public <C extends Model> void removeActor(Person person) {
+//        removeAssociation(getPeopleAssociationModel(), getAssociationIdField(), person, "person_id", DatabaseMediator.PersonType.ACTOR.name());
+//    }
+//
+//    public void setActors(List<Person> persons) {
+//        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.ACTOR.name(), persons);
+//    }
+//
+//    public void setActors(Person... persons) {
+//        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.ACTOR.name(), persons);
+//    }
+//
+//    public <C extends Model> void addActor(Person person) {
+//        addAssociation(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.ACTOR.name(), person);
+//    }
 }

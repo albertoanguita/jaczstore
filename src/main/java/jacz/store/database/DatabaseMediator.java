@@ -52,10 +52,6 @@ public class DatabaseMediator {
         Base.exec("DROP TABLE IF EXISTS movies_people");
         Base.exec("DROP TABLE IF EXISTS tv_series_people");
         Base.exec("DROP TABLE IF EXISTS chapters_people");
-        Base.exec("DROP TABLE IF EXISTS movies_companies");
-        Base.exec("DROP TABLE IF EXISTS tv_series_companies");
-        Base.exec("DROP TABLE IF EXISTS movies_video_files");
-        Base.exec("DROP TABLE IF EXISTS chapters_video_files");
 
         Base.close();
     }
@@ -81,16 +77,20 @@ public class DatabaseMediator {
                         ")"
         );
         Base.exec("CREATE TABLE movies (" +
-                        "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp     INTEGER, " +
-                        "title         TEXT, " +
-                        "originalTitle TEXT, " +
-                        "year          INTEGER, " +
-                        "countries     TEXT, " +
-                        "externalURLs  TEXT, " +
-                        "genres        TEXT, " +
-                        "image_hash    TEXT, " +
-                        "minutes       INTEGER " +
+                        "id              INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                        "timestamp       INTEGER, " +
+                        "title           TEXT, " +
+                        "originalTitle   TEXT, " +
+                        "year            INTEGER, " +
+                        "creator_list    TEXT, " +
+                        "actor_list      TEXT, " +
+                        "company_list    TEXT, " +
+                        "countries       TEXT, " +
+                        "externalURLs    TEXT, " +
+                        "genres          TEXT, " +
+                        "video_file_list TEXT, " +
+                        "image_hash      TEXT, " +
+                        "minutes         INTEGER " +
                         ")"
         );
         Base.exec("CREATE TABLE tv_series (" +
@@ -99,6 +99,9 @@ public class DatabaseMediator {
                         "title         TEXT, " +
                         "originalTitle TEXT, " +
                         "year          INTEGER, " +
+                        "creator_list  TEXT, " +
+                        "actor_list    TEXT, " +
+                        "company_list  TEXT, " +
                         "countries     TEXT, " +
                         "externalURLs  TEXT, " +
                         "genres        TEXT, " +
@@ -106,16 +109,19 @@ public class DatabaseMediator {
                         ")"
         );
         Base.exec("CREATE TABLE chapters (" +
-                        "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp     INTEGER, " +
-                        "title         TEXT, " +
-                        "originalTitle TEXT, " +
-                        "year          INTEGER, " +
-                        "countries     TEXT, " +
-                        "externalURLs  TEXT, " +
-                        "tv_series_id  INTEGER REFERENCES tv_series(id), " +
-                        "season        TEXT, " +
-                        "minutes       INTEGER " +
+                        "id              INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                        "timestamp       INTEGER, " +
+                        "title           TEXT, " +
+                        "originalTitle   TEXT, " +
+                        "year            INTEGER, " +
+                        "creator_list    TEXT, " +
+                        "actor_list      TEXT, " +
+                        "countries       TEXT, " +
+                        "externalURLs    TEXT, " +
+                        "tv_series_id    INTEGER REFERENCES tv_series(id), " +
+                        "season          TEXT, " +
+                        "video_file_list TEXT, " +
+                        "minutes         INTEGER " +
                         ")"
         );
         Base.exec("CREATE TABLE people (" +
@@ -154,58 +160,30 @@ public class DatabaseMediator {
                         "languages     TEXT " +
                         ")"
         );
-        Base.exec("CREATE TABLE movies_people (\n" +
-                        "id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp INTEGER, " +
-                        "movie_id  INTEGER NOT NULL REFERENCES movies(id), " +
-                        "person_id INTEGER NOT NULL REFERENCES people(id), " +
-                        "type      TEXT" +
-                        ")"
-        );
-        Base.exec("CREATE TABLE tv_series_people (\n" +
-                        "id           INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp    INTEGER, " +
-                        "tv_series_id INTEGER NOT NULL REFERENCES movies(id), " +
-                        "person_id    INTEGER NOT NULL REFERENCES people(id), " +
-                        "type         TEXT" +
-                        ")"
-        );
-        Base.exec("CREATE TABLE chapters_people (\n" +
-                        "id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp  INTEGER, " +
-                        "chapter_id INTEGER NOT NULL REFERENCES movies(id), " +
-                        "person_id  INTEGER NOT NULL REFERENCES people(id), " +
-                        "type       TEXT" +
-                        ")"
-        );
-        Base.exec("CREATE TABLE movies_companies (\n" +
-                        "id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp  INTEGER, " +
-                        "movie_id   INTEGER NOT NULL REFERENCES movies(id), " +
-                        "company_id INTEGER NOT NULL REFERENCES people(id)" +
-                        ")"
-        );
-        Base.exec("CREATE TABLE tv_series_companies (\n" +
-                        "id           INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp    INTEGER, " +
-                        "tv_series_id INTEGER NOT NULL REFERENCES movies(id), " +
-                        "company_id   INTEGER NOT NULL REFERENCES people(id)" +
-                        ")"
-        );
-        Base.exec("CREATE TABLE movies_video_files (\n" +
-                        "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp     INTEGER, " +
-                        "movie_id      INTEGER NOT NULL REFERENCES movies(id), " +
-                        "video_file_id INTEGER NOT NULL REFERENCES video_files(id)" +
-                        ")"
-        );
-        Base.exec("CREATE TABLE chapters_video_files (\n" +
-                        "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp     INTEGER, " +
-                        "chapter_id    INTEGER NOT NULL REFERENCES chapters(id), " +
-                        "video_file_id INTEGER NOT NULL REFERENCES video_files(id)" +
-                        ")"
-        );
+//        Base.exec("CREATE TABLE movies_people (\n" +
+//                        "id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+//                        "timestamp INTEGER, " +
+//                        "movie_id  INTEGER NOT NULL REFERENCES movies(id), " +
+//                        "person_id INTEGER NOT NULL REFERENCES people(id), " +
+//                        "type      TEXT" +
+//                        ")"
+//        );
+//        Base.exec("CREATE TABLE tv_series_people (\n" +
+//                        "id           INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+//                        "timestamp    INTEGER, " +
+//                        "tv_series_id INTEGER NOT NULL REFERENCES movies(id), " +
+//                        "person_id    INTEGER NOT NULL REFERENCES people(id), " +
+//                        "type         TEXT" +
+//                        ")"
+//        );
+//        Base.exec("CREATE TABLE chapters_people (\n" +
+//                        "id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+//                        "timestamp  INTEGER, " +
+//                        "chapter_id INTEGER NOT NULL REFERENCES movies(id), " +
+//                        "person_id  INTEGER NOT NULL REFERENCES people(id), " +
+//                        "type       TEXT" +
+//                        ")"
+//        );
         String nowString = dateFormat.format(new Date());
         new Metadata()
                 .set("version", version)

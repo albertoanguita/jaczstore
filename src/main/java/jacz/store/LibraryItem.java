@@ -1,7 +1,6 @@
 package jacz.store;
 
 import jacz.store.database.DatabaseMediator;
-import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
@@ -345,6 +344,86 @@ public abstract class LibraryItem {
         }
     }
 
+    protected <C extends Model> LazyList<C> getReferencedElements(Class<? extends Model> modelClass, String field) {
+        Object[] ids = getStringList(field).toArray();
+        DatabaseMediator.connect(dbPath);
+        try {
+            Method where = modelClass.getMethod("where", String.class, Object[].class);
+            String query = "id = -1";
+            for (int i = 0; i < ids.length; i++) {
+                query += " OR id = ?";
+            }
+            return  (LazyList<C>) where.invoke(null, query, ids);
+        } catch (Exception e) {
+            // todo internal error
+            e.printStackTrace();
+            return null;
+        } finally {
+            DatabaseMediator.disconnect(dbPath);
+        }
+    }
+
+    protected void removeReferencedElements(String field) {
+        removeList(field);
+    }
+
+    protected void removeReferencedElementsAndDelete(String field) {
+        // todo
+    }
+
+    protected <C extends Model> boolean removeReferencedElement(String field, LibraryItem item) {
+        List<String> stringList = getStringList(field);
+        boolean removed = stringList.remove(item.getId().toString());
+        setStringList(field, stringList);
+        return removed;
+    }
+
+    protected <C extends Model> boolean removeReferencedElementAndDelete(String field, C model) {
+        List<String> stringList = getStringList(field);
+        boolean removed = stringList.remove(model.getId());
+        setStringList(field, stringList);
+        return removed;
+        // todo
+    }
+
+    protected void setReferencedElements(String field, List<? extends LibraryItem> models) {
+        List<String> idList = new ArrayList<>();
+        for (LibraryItem item : models) {
+            idList.add(item.getId().toString());
+        }
+        setStringList(field, idList);
+    }
+
+    protected void setReferencedElements(String field, LibraryItem... models) {
+        List<String> idList = new ArrayList<>();
+        for (LibraryItem item : models) {
+            idList.add(item.getId().toString());
+        }
+        setStringList(field, idList);
+    }
+
+    protected <C extends Model> boolean addReferencedElement(String field, LibraryItem item) {
+        return addStringValue(field, item.getId().toString());
+    }
+
+    protected <C extends Model> LazyList<C> getElementsContainingMe(Class<? extends Model> modelClass, String field) {
+        Object[] myId = new String[]{"%\n" + getId().toString() + "\n%"};
+        DatabaseMediator.connect(dbPath);
+        try {
+            Method where = modelClass.getMethod("where", String.class, Object[].class);
+            String query = field + " LIKE ?";
+            return  (LazyList<C>) where.invoke(null, query, myId);
+        } catch (Exception e) {
+            // todo internal error
+            e.printStackTrace();
+            return null;
+        } finally {
+            DatabaseMediator.disconnect(dbPath);
+        }
+    }
+
+
+
     protected List<String> getStringList(String field) {
         return deserializeList(getString(field));
     }
@@ -392,10 +471,6 @@ public abstract class LibraryItem {
             e.printStackTrace();
         }
         return null;
-    }
-
-    protected void removeList(String field) {
-        set(field, null);
     }
 
     protected <E> boolean removeEnum(String field, Class<E> enum_, E value, String getNameMethod) {
@@ -447,13 +522,17 @@ public abstract class LibraryItem {
         return notContains;
     }
 
+    protected void removeList(String field) {
+        set(field, null);
+    }
+
     protected String serializeList(List<String> list) {
         if (list.isEmpty()) {
             return "";
         } else {
-            StringBuilder serList = new StringBuilder(list.get(0));
-            for (int i = 1; i < list.size(); i++) {
-                serList.append(LIST_SEPARATOR).append(list.get(i));
+            StringBuilder serList = new StringBuilder(LIST_SEPARATOR);
+            for (String item : list) {
+                serList.append(item).append(LIST_SEPARATOR);
             }
             return serList.toString();
         }

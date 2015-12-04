@@ -1,6 +1,7 @@
 package jacz.store;
 
 import jacz.store.database.DatabaseMediator;
+import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
 import java.util.ArrayList;
@@ -54,14 +55,10 @@ public final class Chapter extends CreationItem {
         }
     }
 
-    @Override
-    Class<? extends Model> getPeopleAssociationModel() {
-        return jacz.store.database.models.ChaptersPeople.class;
-    }
-
-    private Class<? extends Model> getVideoFileAssociationModel() {
-        return jacz.store.database.models.ChaptersVideoFiles.class;
-    }
+//    @Override
+//    Class<? extends Model> getPeopleAssociationModel() {
+//        return jacz.store.database.models.ChaptersPeople.class;
+//    }
 
     @Override
     String getAssociationIdField() {
@@ -110,27 +107,27 @@ public final class Chapter extends CreationItem {
 
 
     public List<VideoFile> getVideoFiles() {
-        List<jacz.store.database.models.VideoFile> modelVideoFiles = getAssociation(jacz.store.database.models.VideoFile.class);
-        return VideoFile.buildList(dbPath, modelVideoFiles);
+        LazyList<jacz.store.database.models.VideoFile> models = getReferencedElements(jacz.store.database.models.VideoFile.class, "video_file_list");
+        return VideoFile.buildList(dbPath, models);
     }
 
     public <C extends Model> void removeVideoFiles() {
-        removeAssociations(jacz.store.database.models.ChaptersVideoFiles.class, getAssociationIdField(), null);
+        removeReferencedElements("video_file_list");
     }
 
     public <C extends Model> void removeVideoFile(VideoFile videoFile) {
-        removeAssociation(getVideoFileAssociationModel(), getAssociationIdField(), videoFile, "video_file_id", null);
+        removeReferencedElement("video_file_list", videoFile);
     }
 
     public void setVideoFiles(List<VideoFile> videoFiles) {
-        setAssociations(getVideoFileAssociationModel(), getAssociationIdField(), "video_file_id", null, videoFiles);
+        setReferencedElements("video_file_list", videoFiles);
     }
 
     public void setVideoFiles(VideoFile... videoFiles) {
-        setAssociations(getVideoFileAssociationModel(), getAssociationIdField(), "video_file_id", null, videoFiles);
+        setReferencedElements("video_file_list", videoFiles);
     }
 
     public <C extends Model> void addVideoFile(VideoFile videoFile) {
-        addAssociation(getVideoFileAssociationModel(), getAssociationIdField(), "video_file_id", null, videoFile);
+        addReferencedElement("video_file_list", videoFile);
     }
 }

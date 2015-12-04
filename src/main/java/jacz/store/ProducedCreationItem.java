@@ -1,6 +1,7 @@
 package jacz.store;
 
 import jacz.store.util.GenreCode;
+import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
 import java.util.List;
@@ -24,31 +25,29 @@ public abstract class ProducedCreationItem extends CreationItem {
         super(model, dbPath);
     }
 
-    abstract Class<? extends Model> getCompanyAssociationModel();
-
     public List<Company> getProductionCompanies() {
-        List<jacz.store.database.models.Company> modelCompanies = getAssociation(jacz.store.database.models.Company.class);
-        return Company.buildList(dbPath, modelCompanies);
+        LazyList<jacz.store.database.models.Company> models = getReferencedElements(jacz.store.database.models.Company.class, "company_list");
+        return Company.buildList(dbPath, models);
     }
 
     public <C extends Model> void removeProductionCompanies() {
-        removeAssociations(getCompanyAssociationModel(), getAssociationIdField(), null);
+        removeReferencedElements("company_list");
     }
 
     public <C extends Model> void removeProductionCompany(Company company) {
-        removeAssociation(getCompanyAssociationModel(), getAssociationIdField(), company, "company_id", null);
+        removeReferencedElement("company_list", company);
     }
 
-    public void setProductionCompanies(List<Person> persons) {
-        setAssociations(getCompanyAssociationModel(), getAssociationIdField(), "company_id", null, persons);
+    public void setProductionCompanies(List<Company> companies) {
+        setReferencedElements("company_list", companies);
     }
 
-    public void setProductionCompanies(Person... persons) {
-        setAssociations(getCompanyAssociationModel(), getAssociationIdField(), "company_id", null, persons);
+    public void setProductionCompanies(Company... companies) {
+        setReferencedElements("company_list", companies);
     }
 
     public <C extends Model> void addProductionCompany(Company company) {
-        addAssociation(getCompanyAssociationModel(), getAssociationIdField(), "company_id", null, company);
+        addReferencedElement("company_list", company);
     }
 
     protected List<GenreCode> getGenres() {

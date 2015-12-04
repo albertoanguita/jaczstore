@@ -9,28 +9,28 @@ import java.util.List;
 /**
  * TVSeries to Persons associative relation
  */
-@Table("tv_series_people")
-public class TVSeriesPeople extends Model {
+//@Table("tv_series_people")
+public class TVSeriesPeople /*extends Model*/ {
 
-    @Override
-    protected void afterCreate() {
-        if (DatabaseMediator.mustAutoComplete()) {
-            super.afterCreate();
-            set("timestamp", DatabaseMediator.getNewTimestamp()).saveIt();
-        }
-    }
-
-    @Override
-    public void beforeDelete() {
-        if (DatabaseMediator.mustAutoComplete()) {
-            DeletedItem.addDeletedItem(this, getTableName());
-        }
-    }
-
-    static void deleteRecords(String field, Object id) {
-        List<TVSeriesPeople> tvSeriesPeopleModels = where(field + " = ?", id);
-        for (TVSeriesPeople tvSeriesPeople : tvSeriesPeopleModels) {
-            tvSeriesPeople.delete();
-        }
-    }
+//    @Override
+//    protected void afterCreate() {
+//        if (DatabaseMediator.mustAutoComplete()) {
+//            super.afterCreate();
+//            set("timestamp", DatabaseMediator.getNewTimestamp()).saveIt();
+//        }
+//    }
+//
+//    @Override
+//    public void beforeDelete() {
+//        if (DatabaseMediator.mustAutoComplete()) {
+//            DeletedItem.addDeletedItem(this, getTableName());
+//        }
+//    }
+//
+//    static void deleteRecords(String field, Object id) {
+//        List<TVSeriesPeople> tvSeriesPeopleModels = where(field + " = ?", id);
+//        for (TVSeriesPeople tvSeriesPeople : tvSeriesPeopleModels) {
+//            tvSeriesPeople.delete();
+//        }
+//    }
 }
