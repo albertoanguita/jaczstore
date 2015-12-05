@@ -55,16 +55,6 @@ public final class Chapter extends CreationItem {
         }
     }
 
-//    @Override
-//    Class<? extends Model> getPeopleAssociationModel() {
-//        return jacz.store.database.models.ChaptersPeople.class;
-//    }
-
-    @Override
-    String getAssociationIdField() {
-        return "chapter_id";
-    }
-
     public String getSeason() {
         return getString("season");
     }

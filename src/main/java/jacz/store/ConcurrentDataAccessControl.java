@@ -3,7 +3,6 @@ package jacz.store;
 import jacz.util.concurrency.concurrency_controller.ConcurrencyController;
 import jacz.util.concurrency.concurrency_controller.ConcurrencyControllerAction;
 import jacz.util.maps.ObjectCount;
-import org.javalite.activejdbc.Base;
 
 import java.util.Set;
 

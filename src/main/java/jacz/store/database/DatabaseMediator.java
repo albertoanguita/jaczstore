@@ -25,8 +25,6 @@ public class DatabaseMediator {
         IMAGE_FILE
     }
 
-    public enum PersonType {CREATOR, ACTOR}
-
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("Y/M/d-HH:mm:ss:SSS");
 
     private static final Pattern AUTOCOMPLETE_DB = Pattern.compile("^(.)*store.db$");
@@ -34,7 +32,10 @@ public class DatabaseMediator {
     private static int connectionCount = 0;
 
 
-
+    public static void dropAndCreate(String path, String version, String identifier) {
+        dropDatabase(path);
+        createDatabase(path, version, identifier);
+    }
 
 
     private static void dropDatabase(String path) {
@@ -49,9 +50,6 @@ public class DatabaseMediator {
         Base.exec("DROP TABLE IF EXISTS companies");
         Base.exec("DROP TABLE IF EXISTS video_files");
         Base.exec("DROP TABLE IF EXISTS subtitle_files");
-        Base.exec("DROP TABLE IF EXISTS movies_people");
-        Base.exec("DROP TABLE IF EXISTS tv_series_people");
-        Base.exec("DROP TABLE IF EXISTS chapters_people");
 
         Base.close();
     }
@@ -160,30 +158,6 @@ public class DatabaseMediator {
                         "languages     TEXT " +
                         ")"
         );
-//        Base.exec("CREATE TABLE movies_people (\n" +
-//                        "id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-//                        "timestamp INTEGER, " +
-//                        "movie_id  INTEGER NOT NULL REFERENCES movies(id), " +
-//                        "person_id INTEGER NOT NULL REFERENCES people(id), " +
-//                        "type      TEXT" +
-//                        ")"
-//        );
-//        Base.exec("CREATE TABLE tv_series_people (\n" +
-//                        "id           INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-//                        "timestamp    INTEGER, " +
-//                        "tv_series_id INTEGER NOT NULL REFERENCES movies(id), " +
-//                        "person_id    INTEGER NOT NULL REFERENCES people(id), " +
-//                        "type         TEXT" +
-//                        ")"
-//        );
-//        Base.exec("CREATE TABLE chapters_people (\n" +
-//                        "id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-//                        "timestamp  INTEGER, " +
-//                        "chapter_id INTEGER NOT NULL REFERENCES movies(id), " +
-//                        "person_id  INTEGER NOT NULL REFERENCES people(id), " +
-//                        "type       TEXT" +
-//                        ")"
-//        );
         String nowString = dateFormat.format(new Date());
         new Metadata()
                 .set("version", version)
@@ -251,16 +225,6 @@ public class DatabaseMediator {
         return (Metadata) Metadata.findAll().get(0);
     }
 
-    public static void main(String[] args) {
-        dropAndCreate("store.db", "v1", "a");
-    }
-
-    public static void dropAndCreate(String path, String version, String identifier) {
-        dropDatabase(path);
-        createDatabase(path, version, identifier);
-    }
-
-
     public static void connect(String dbPath) {
         ConcurrentDataAccessControl.getInstance().getConcurrencyController().beginActivity(dbPath);
         synchronized (DatabaseMediator.class) {
@@ -287,5 +251,9 @@ public class DatabaseMediator {
         } catch (SQLException e) {
             return false;
         }
+    }
+
+    public static void main(String[] args) {
+        dropAndCreate("store.db", "v1", "a");
     }
 }

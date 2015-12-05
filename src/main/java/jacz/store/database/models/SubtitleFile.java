@@ -15,10 +15,6 @@ public class SubtitleFile extends Model {
     @Override
     public void beforeDelete() {
         if (DatabaseMediator.mustAutoComplete()) {
-//            // delete people association records
-//            ChaptersPeople.deleteRecords("chapter_id", getId());
-//            // delete video files
-//            ChaptersVideoFiles.deleteRecords("chapter_id", getId());
             DeletedItem.addDeletedItem(this, getTableName());
         }
     }

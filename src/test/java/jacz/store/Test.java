@@ -445,9 +445,6 @@ public class Test {
         chapter.addDirector(george);
 
         Assert.assertEquals(4, Person.getPeople("store.db").size());
-        Assert.assertEquals(3, Person.getDirectors("store.db").size());
-        Assert.assertEquals(2, Person.getCreators("store.db").size());
-        Assert.assertEquals(4, Person.getActors("store.db").size());
 
         Assert.assertEquals(0, arnold.getMoviesAsActor("store.db").size());
         Assert.assertEquals("Predator", arnold.getMoviesAsDirector("store.db").get(0).getTitle());
@@ -481,8 +478,6 @@ public class Test {
         chapter.delete();
 
         Assert.assertEquals(4, Person.getPeople("store.db").size());
-        Assert.assertEquals(0, Person.getDirectors("store.db").size());
-        Assert.assertEquals(0, Person.getActors("store.db").size());
     }
 
     @org.junit.Test

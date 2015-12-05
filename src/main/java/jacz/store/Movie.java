@@ -53,18 +53,6 @@ public final class Movie extends ProducedCreationItem {
         }
     }
 
-
-//    @Override
-//    Class<? extends Model> getPeopleAssociationModel() {
-////        return jacz.store.database.models.MoviesPeople.class;
-//        return null;
-//    }
-
-    @Override
-    String getAssociationIdField() {
-        return "movie_id";
-    }
-
     public List<Person> getDirectors() {
         return getCreatorsDirectors();
     }

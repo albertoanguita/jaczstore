@@ -236,114 +236,6 @@ public abstract class LibraryItem {
         disconnect();
     }
 
-    protected <C extends Model> LazyList<C> getAssociation(Class<C> clazz) {
-        connect();
-        try {
-            return getAssociation(clazz, null);
-        } finally {
-            disconnect();
-        }
-    }
-
-    protected <C extends Model> LazyList<C> getAssociation(Class<C> clazz, String query, Object... params) {
-        connect();
-        try {
-            if (query != null) {
-                return model.get(clazz, query, params);
-            } else {
-                return model.getAll(clazz);
-            }
-        } catch (Exception e) {
-            // todo internal error
-            e.printStackTrace();
-            return null;
-        } finally {
-            disconnect();
-        }
-    }
-
-    protected <C extends Model> void removeAssociations(Class<? extends Model> modelClass, String idField, String type) {
-        connect();
-        try {
-            Method where = modelClass.getMethod("where", String.class, Object[].class);
-            List<C> associations;
-            if (type != null) {
-                associations = (List<C>) where.invoke(null, idField + " = '" + getId() + "' AND type = '" + type + "'", new Object[0]);
-            } else {
-                associations = (List<C>) where.invoke(null, idField + " = '" + getId() + "'", new Object[0]);
-            }
-            for (C association : associations) {
-                association.delete();
-            }
-        } catch (Exception e) {
-            // todo internal error
-            e.printStackTrace();
-        } finally {
-            disconnect();
-        }
-    }
-
-    protected <C extends Model> void removeAssociation(Class<? extends Model> modelClass, String idField, LibraryItem otherItem, String otherIdField, String type) {
-        connect();
-        try {
-            Method findFirst = modelClass.getMethod("findFirst", String.class, Object[].class);
-            C association;
-            if (type != null) {
-                association = (C) findFirst.invoke(null, idField + " = '" + getId() + "' AND " + otherIdField + " = '" + otherItem.getId() + "' AND type = '" + type + "'", new Object[0]);
-            } else {
-                association = (C) findFirst.invoke(null, idField + " = '" + getId() + "' AND " + otherIdField + " = '" + otherItem.getId() + "'", new Object[0]);
-            }
-            association.delete();
-        } catch (Exception e) {
-            // todo internal error
-            e.printStackTrace();
-        } finally {
-            disconnect();
-        }
-    }
-
-    protected <C extends Model> void setAssociations(Class<? extends Model> modelClass, String idField, String childIdField, String type, List<? extends LibraryItem> items) {
-        connect();
-        try {
-            removeAssociations(modelClass, idField, type);
-            for (LibraryItem item : items) {
-                addAssociation(modelClass, idField, childIdField, type, item);
-            }
-        } finally {
-            disconnect();
-        }
-    }
-
-    protected <C extends Model> void setAssociations(Class<? extends Model> modelClass, String idField, String childIdField, String type, LibraryItem... items) {
-        connect();
-        try {
-            removeAssociations(modelClass, idField, type);
-            for (LibraryItem item : items) {
-                addAssociation(modelClass, idField, childIdField, type, item);
-            }
-        } finally {
-            disconnect();
-        }
-    }
-
-    protected <C extends Model> void addAssociation(Class<? extends Model> modelClass, String idField, String childIdField, String type, LibraryItem item) {
-        connect();
-        try {
-            Model associativeModel = modelClass.newInstance();
-            associativeModel.set(idField, getId());
-            associativeModel.set(childIdField, item.getId());
-            if (type != null) {
-                associativeModel.set("type", type);
-            }
-            associativeModel.saveIt();
-        } catch (Exception e) {
-            // todo internal error
-            e.printStackTrace();
-        } finally {
-            disconnect();
-        }
-    }
-
     protected <C extends Model> LazyList<C> getReferencedElements(Class<? extends Model> modelClass, String field) {
         Object[] ids = getStringList(field).toArray();
         DatabaseMediator.connect(dbPath);
@@ -380,7 +272,7 @@ public abstract class LibraryItem {
 
     protected <C extends Model> boolean removeReferencedElementAndDelete(String field, C model) {
         List<String> stringList = getStringList(field);
-        boolean removed = stringList.remove(model.getId());
+        boolean removed = stringList.remove(model.getId().toString());
         setStringList(field, stringList);
         return removed;
         // todo

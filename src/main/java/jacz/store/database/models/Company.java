@@ -11,9 +11,6 @@ public class Company extends Model {
     @Override
     public void beforeDelete() {
         if (DatabaseMediator.mustAutoComplete()) {
-            // delete people association records
-//            MoviesCompanies.deleteRecords("company_id", getId());
-//            TVSeriesCompanies.deleteRecords("company_id", getId());
             DeletedItem.addDeletedItem(this, getTableName());
         }
     }

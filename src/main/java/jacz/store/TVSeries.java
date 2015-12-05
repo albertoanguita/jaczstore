@@ -49,16 +49,6 @@ public final class TVSeries extends ProducedCreationItem {
         }
     }
 
-//    @Override
-//    Class<? extends Model> getPeopleAssociationModel() {
-//        return jacz.store.database.models.TVSeriesPeople.class;
-//    }
-
-    @Override
-    String getAssociationIdField() {
-        return "tv_series_id";
-    }
-
     public List<Person> getCreators() {
         return super.getCreatorsDirectors();
     }

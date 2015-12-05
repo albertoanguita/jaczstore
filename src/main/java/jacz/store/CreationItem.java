@@ -6,6 +6,7 @@ import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Alberto on 16/11/2015.
@@ -33,10 +34,6 @@ public abstract class CreationItem extends LibraryItem {
     public CreationItem(Model model, String dbPath) {
         super(model, dbPath);
     }
-
-//    abstract Class<? extends Model> getPeopleAssociationModel();
-
-    abstract String getAssociationIdField();
 
     public String getTitle() {
         return getString("title");
@@ -127,7 +124,7 @@ public abstract class CreationItem extends LibraryItem {
         addReferencedElement("creator_list", person);
     }
 
-//    protected List<Person> getCreatorsDirectors() {
+    //    protected List<Person> getCreatorsDirectors() {
 //        List<jacz.store.database.models.Person> modelPersons = getAssociation(jacz.store.database.models.Person.class, "type = ? ", DatabaseMediator.PersonType.CREATOR.name());
 //        return Person.buildList(dbPath, modelPersons);
 //    }
