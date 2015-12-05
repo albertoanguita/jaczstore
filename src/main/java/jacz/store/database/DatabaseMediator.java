@@ -15,16 +15,80 @@ import java.util.regex.Pattern;
 public class DatabaseMediator {
 
     public enum ItemType {
-        MOVIE,
-        TV_SERIES,
-        CHAPTER,
-        PERSON,
-        COMPANY,
-        VIDEO_FILE,
-        SUBTITLE_FILE,
-        IMAGE_FILE
+        METADATA("metadata"),
+        DELETED_ITEMS("deleted_items"),
+        MOVIE("movies"),
+        TV_SERIES("tv_series"),
+        CHAPTER("chapters"),
+        PERSON("people"),
+        COMPANY("companies"),
+        VIDEO_FILE("video_files"),
+        SUBTITLE_FILE("subtitle_files");
+
+        public final String table;
+
+        ItemType(String table) {
+            this.table = table;
+        }
     }
 
+    public enum Field {
+        ID("id", Type.INTEGER_PK_AUTO),
+        VERSION("version", Type.TEXT),
+        IDENTIFIER("identifier", Type.TEXT),
+        CREATION_DATE("creationDate", Type.TEXT),
+        LAST_ACCESS("lastAccess", Type.TEXT),
+        LAST_UPDATE("lastUpdate", Type.TEXT),
+        NEXT_TIMESTAMP("nextTimestamp", Type.INTEGER),
+        ITEM_TABLE("item_table", Type.TEXT),
+        ITEM_ID("item_id", Type.INTEGER),
+        TIMESTAMP("timestamp", Type.INTEGER),
+        TITLE("title", Type.TEXT),
+        ORIGINAL_TITLE("originalTitle", Type.TEXT),
+        YEAR("year", Type.INTEGER),
+        CREATOR_LIST("creator_list", Type.TEXT),
+        ACTOR_LIST("actor_list", Type.TEXT),
+        COMPANY_LIST("company_list", Type.TEXT),
+        COUNTRIES("countries", Type.TEXT),
+        EXTERNAL_URLS("externalURLs", Type.TEXT),
+        GENRES("genres", Type.TEXT),
+        VIDEO_FILE_LIST("video_file_list", Type.TEXT),
+        IMAGE_HASH("image_hash", Type.TEXT),
+        MINUTES("minutes", Type.INTEGER),
+        TV_SERIES_ID("tv_series_id", Type.INTEGER_REF_TV_SERIES),
+        SEASON("season", Type.TEXT),
+        NAME("name", Type.TEXT),
+        ALIASES("aliases", Type.TEXT),
+        HASH("hash", Type.TEXT),
+        LENGTH("length", Type.INTEGER),
+        RESOLUTION("resolution", Type.INTEGER),
+        QUALITY_CODE("qualityCode", Type.TEXT),
+        LANGUAGES("languages", Type.TEXT),
+        VIDEO_FILE_ID("video_file_id", Type.INTEGER_REF_VIDEO_FILES);
+
+        public final String value;
+
+        public final Type type;
+
+        Field(String value, Type type) {
+            this.value = value;
+            this.type = type;
+        }
+    }
+
+    private enum Type {
+        INTEGER_PK_AUTO("INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT"),
+        TEXT("TEXT"),
+        INTEGER("INTEGER"),
+        INTEGER_REF_TV_SERIES("INTEGER REFERENCES tv_series(id)"),
+        INTEGER_REF_VIDEO_FILES("INTEGER REFERENCES video_files(id)");
+
+        private final String value;
+
+        Type(String value) {
+            this.value = value;
+        }
+    }
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("Y/M/d-HH:mm:ss:SSS");
 
     private static final Pattern AUTOCOMPLETE_DB = Pattern.compile("^(.)*store.db$");
@@ -39,136 +103,57 @@ public class DatabaseMediator {
 
 
     private static void dropDatabase(String path) {
-        Base.open("org.sqlite.JDBC", "jdbc:sqlite:" + path, "", "");
+        connect(path);
 
-        Base.exec("DROP TABLE IF EXISTS metadata");
-        Base.exec("DROP TABLE IF EXISTS deleted_items");
-        Base.exec("DROP TABLE IF EXISTS movies");
-        Base.exec("DROP TABLE IF EXISTS tv_series");
-        Base.exec("DROP TABLE IF EXISTS chapters");
-        Base.exec("DROP TABLE IF EXISTS people");
-        Base.exec("DROP TABLE IF EXISTS companies");
-        Base.exec("DROP TABLE IF EXISTS video_files");
-        Base.exec("DROP TABLE IF EXISTS subtitle_files");
+        for (ItemType itemType : ItemType.values()) {
+            Base.exec("DROP TABLE IF EXISTS " + itemType.table);
+        }
 
-        Base.close();
+        disconnect(path);
     }
 
     private static void createDatabase(String path, String version, String identifier) {
-        Base.open("org.sqlite.JDBC", "jdbc:sqlite:" + path, "", "");
+        connect(path);
 
-        Base.exec("CREATE TABLE metadata (" +
-                        "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "version       TEXT, " +
-                        "identifier    TEXT, " +
-                        "creationDate  TEXT, " +
-                        "lastAccess    TEXT, " +
-                        "lastUpdate    TEXT, " +
-                        "nextTimestamp INTEGER " +
-                        ")"
-        );
-        Base.exec("CREATE TABLE deleted_items (" +
-                        "id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "item_table TEXT, " +
-                        "item_id    INTEGER, " +
-                        "timestamp  INTEGER " +
-                        ")"
-        );
-        Base.exec("CREATE TABLE movies (" +
-                        "id              INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp       INTEGER, " +
-                        "title           TEXT, " +
-                        "originalTitle   TEXT, " +
-                        "year            INTEGER, " +
-                        "creator_list    TEXT, " +
-                        "actor_list      TEXT, " +
-                        "company_list    TEXT, " +
-                        "countries       TEXT, " +
-                        "externalURLs    TEXT, " +
-                        "genres          TEXT, " +
-                        "video_file_list TEXT, " +
-                        "image_hash      TEXT, " +
-                        "minutes         INTEGER " +
-                        ")"
-        );
-        Base.exec("CREATE TABLE tv_series (" +
-                        "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp     INTEGER, " +
-                        "title         TEXT, " +
-                        "originalTitle TEXT, " +
-                        "year          INTEGER, " +
-                        "creator_list  TEXT, " +
-                        "actor_list    TEXT, " +
-                        "company_list  TEXT, " +
-                        "countries     TEXT, " +
-                        "externalURLs  TEXT, " +
-                        "genres        TEXT, " +
-                        "image_hash    TEXT " +
-                        ")"
-        );
-        Base.exec("CREATE TABLE chapters (" +
-                        "id              INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp       INTEGER, " +
-                        "title           TEXT, " +
-                        "originalTitle   TEXT, " +
-                        "year            INTEGER, " +
-                        "creator_list    TEXT, " +
-                        "actor_list      TEXT, " +
-                        "countries       TEXT, " +
-                        "externalURLs    TEXT, " +
-                        "tv_series_id    INTEGER REFERENCES tv_series(id), " +
-                        "season          TEXT, " +
-                        "video_file_list TEXT, " +
-                        "minutes         INTEGER " +
-                        ")"
-        );
-        Base.exec("CREATE TABLE people (" +
-                        "id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp INTEGER, " +
-                        "name      TEXT, " +
-                        "aliases   TEXT " +
-                        ")"
-        );
-        Base.exec("CREATE TABLE companies (" +
-                        "id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp INTEGER, " +
-                        "name      TEXT, " +
-                        "aliases   TEXT " +
-                        ")"
-        );
-        Base.exec("CREATE TABLE video_files (" +
-                        "id          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp   INTEGER, " +
-                        "hash        TEXT, " +
-                        "length      INTEGER, " +
-                        "name        TEXT, " +
-                        "minutes     INTEGER, " +
-                        "resolution  INTEGER, " +
-                        "qualityCode TEXT, " +
-                        "languages   TEXT " +
-                        ")"
-        );
-        Base.exec("CREATE TABLE subtitle_files (" +
-                        "id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp     INTEGER, " +
-                        "hash          TEXT, " +
-                        "length        INTEGER, " +
-                        "name          TEXT, " +
-                        "video_file_id INTEGER REFERENCES video_files(id), " +
-                        "languages     TEXT " +
-                        ")"
-        );
+        createTable(ItemType.METADATA, Field.ID, Field.VERSION, Field.IDENTIFIER, Field.CREATION_DATE,
+                Field.LAST_ACCESS, Field.LAST_UPDATE, Field.NEXT_TIMESTAMP);
+        createTable(ItemType.DELETED_ITEMS, Field.ID, Field.ITEM_TABLE, Field.ITEM_ID, Field.TIMESTAMP);
+        createTable(ItemType.MOVIE, Field.ID, Field.TIMESTAMP, Field.TITLE, Field.ORIGINAL_TITLE, Field.YEAR,
+                Field.CREATOR_LIST, Field.ACTOR_LIST, Field.COMPANY_LIST, Field.COUNTRIES, Field.EXTERNAL_URLS,
+                Field.GENRES, Field.VIDEO_FILE_LIST, Field.IMAGE_HASH, Field.MINUTES);
+        createTable(ItemType.TV_SERIES, Field.ID, Field.TIMESTAMP, Field.TITLE, Field.ORIGINAL_TITLE, Field.YEAR,
+                Field.CREATOR_LIST, Field.ACTOR_LIST, Field.COMPANY_LIST, Field.COUNTRIES, Field.EXTERNAL_URLS,
+                Field.GENRES, Field.IMAGE_HASH);
+        createTable(ItemType.CHAPTER, Field.ID, Field.TIMESTAMP, Field.TITLE, Field.ORIGINAL_TITLE, Field.YEAR,
+                Field.CREATOR_LIST, Field.ACTOR_LIST, Field.COUNTRIES, Field.EXTERNAL_URLS,
+                Field.TV_SERIES_ID, Field.SEASON, Field.VIDEO_FILE_LIST, Field.MINUTES);
+        createTable(ItemType.PERSON, Field.ID, Field.TIMESTAMP, Field.NAME, Field.ALIASES);
+        createTable(ItemType.COMPANY, Field.ID, Field.TIMESTAMP, Field.NAME, Field.ALIASES);
+        createTable(ItemType.VIDEO_FILE, Field.ID, Field.TIMESTAMP, Field.HASH, Field.LENGTH, Field.NAME,
+                Field.MINUTES, Field.RESOLUTION, Field.QUALITY_CODE, Field.LANGUAGES);
+        createTable(ItemType.SUBTITLE_FILE, Field.ID, Field.TIMESTAMP, Field.HASH, Field.LENGTH, Field.NAME,
+                Field.VIDEO_FILE_ID, Field.LANGUAGES);
         String nowString = dateFormat.format(new Date());
         new Metadata()
-                .set("version", version)
-                .set("identifier", identifier)
-                .set("creationDate", nowString)
-                .set("lastAccess", nowString)
-                .set("lastUpdate", nowString)
-                .set("nextTimestamp", 1L)
+                .set(Field.VERSION.value, version)
+                .set(Field.IDENTIFIER.value, version)
+                .set(Field.CREATION_DATE.value, version)
+                .set(Field.LAST_ACCESS.value, version)
+                .set(Field.LAST_UPDATE.value, version)
+                .set(Field.NEXT_TIMESTAMP.value, version)
                 .saveIt();
 
-        Base.close();
+        disconnect(path);
+    }
+
+    private static void createTable(ItemType itemType, Field... fields) {
+        StringBuilder create = new StringBuilder("CREATE TABLE ").append(itemType.table).append("(");
+        for (Field field : fields) {
+            create.append(field.value).append(" ").append(field.type.value).append(",");
+        }
+        // replace last comma with a ')'
+        create.replace(create.length() - 1, create.length(), ")");
+        Base.exec(create.toString());
     }
 
     public static String getDatabaseIdentifier(String dbPath) {
