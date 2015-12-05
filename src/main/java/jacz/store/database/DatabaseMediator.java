@@ -1,8 +1,9 @@
 package jacz.store.database;
 
 import jacz.store.ConcurrentDataAccessControl;
-import jacz.store.database.models.Metadata;
+import jacz.store.database.models.*;
 import org.javalite.activejdbc.Base;
+import org.javalite.activejdbc.Model;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -15,20 +16,24 @@ import java.util.regex.Pattern;
 public class DatabaseMediator {
 
     public enum ItemType {
-        METADATA("metadata"),
-        DELETED_ITEMS("deleted_items"),
-        MOVIE("movies"),
-        TV_SERIES("tv_series"),
-        CHAPTER("chapters"),
-        PERSON("people"),
-        COMPANY("companies"),
-        VIDEO_FILE("video_files"),
-        SUBTITLE_FILE("subtitle_files");
+        METADATA("metadata", Metadata.class),
+        DELETED_ITEMS("deleted_items", DeletedItem.class),
+        MOVIE("movies", Movie.class),
+        TV_SERIES("tv_series", TVSeries.class),
+        CHAPTER("chapters", Chapter.class),
+        PERSON("people", Person.class),
+        COMPANY("companies", Company.class),
+        VIDEO_FILE("video_files", VideoFile.class),
+        SUBTITLE_FILE("subtitle_files", SubtitleFile.class),
+        TAG("tags", Tag.class);
 
         public final String table;
 
-        ItemType(String table) {
+        public final Class<? extends Model> modelClass;
+
+        ItemType(String table, Class<? extends Model> modelClass) {
             this.table = table;
+            this.modelClass = modelClass;
         }
     }
 
@@ -133,14 +138,16 @@ public class DatabaseMediator {
                 Field.MINUTES, Field.RESOLUTION, Field.QUALITY_CODE, Field.LANGUAGES);
         createTable(ItemType.SUBTITLE_FILE, Field.ID, Field.TIMESTAMP, Field.HASH, Field.LENGTH, Field.NAME,
                 Field.VIDEO_FILE_ID, Field.LANGUAGES);
+        createTable(ItemType.TAG, Field.ID, Field.ITEM_TABLE, Field.ITEM_ID, Field.NAME);
+
         String nowString = dateFormat.format(new Date());
         new Metadata()
                 .set(Field.VERSION.value, version)
-                .set(Field.IDENTIFIER.value, version)
-                .set(Field.CREATION_DATE.value, version)
-                .set(Field.LAST_ACCESS.value, version)
-                .set(Field.LAST_UPDATE.value, version)
-                .set(Field.NEXT_TIMESTAMP.value, version)
+                .set(Field.IDENTIFIER.value, identifier)
+                .set(Field.CREATION_DATE.value, nowString)
+                .set(Field.LAST_ACCESS.value, nowString)
+                .set(Field.LAST_UPDATE.value, nowString)
+                .set(Field.NEXT_TIMESTAMP.value, 1L)
                 .saveIt();
 
         disconnect(path);

@@ -146,6 +146,26 @@ public class Test {
         videoFiles = movie.getVideoFiles();
         Assert.assertEquals(1, videoFiles.size());
         Assert.assertEquals("video2", videoFiles.get(0).getName());
+
+        boolean added;
+        added = movie.addTag("favorite");
+        Assert.assertEquals(true, added);
+        added = movie.addTag("star");
+        Assert.assertEquals(true, added);
+        added = movie.addTag("favorite");
+        Assert.assertEquals(false, added);
+
+        List<Movie> favoriteMovies = Tag.getMoviesWithTag("store.db", "favorite");
+        Assert.assertEquals(1, favoriteMovies.size());
+        Assert.assertEquals("Predator", favoriteMovies.get(0).getTitle());
+        Assert.assertEquals(2, movie.getTags().size());
+        Assert.assertEquals("favorite", movie.getTags().get(0));
+        Assert.assertEquals("star", movie.getTags().get(1));
+        Assert.assertEquals(true, movie.removeTag("favorite"));
+        Assert.assertEquals(false, movie.removeTag("favorite"));
+        Assert.assertEquals(1, movie.getTags().size());
+        Assert.assertEquals("star", movie.getTags().get(0));
+
 //            movie.removeVideoFiles();
 //            Assert.assertEquals(0, movie.getVideoFiles().size());
     }

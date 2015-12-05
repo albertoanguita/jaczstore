@@ -13,6 +13,7 @@ public class Movie extends Model {
     @Override
     public void beforeDelete() {
         if (DatabaseMediator.mustAutoComplete()) {
+            // todo delete from tag table
             DeletedItem.addDeletedItem(this, getTableName());
         }
     }

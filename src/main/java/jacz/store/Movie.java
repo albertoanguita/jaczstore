@@ -109,4 +109,16 @@ public final class Movie extends ProducedCreationItem {
     public <C extends Model> void addVideoFile(VideoFile videoFile) {
         addReferencedElement("video_file_list", videoFile);
     }
+
+    public List<String> getTags() {
+        return Tag.getItemTags(dbPath, this, DatabaseMediator.ItemType.MOVIE);
+    }
+
+    public boolean addTag(String tag) {
+        return Tag.addTag(dbPath, this, tag, DatabaseMediator.ItemType.MOVIE);
+    }
+
+    public boolean removeTag(String tag) {
+        return Tag.removeTag(dbPath, this, tag, DatabaseMediator.ItemType.MOVIE);
+    }
 }
