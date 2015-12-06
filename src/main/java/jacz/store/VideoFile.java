@@ -51,27 +51,27 @@ public final class VideoFile extends FileWithLanguages {
     }
 
     public Integer getMinutes() {
-        return getInteger("minutes");
+        return getInteger(DatabaseMediator.Field.MINUTES);
     }
 
     public void setMinutes(Integer minutes) {
-        set("minutes", minutes);
+        set(DatabaseMediator.Field.MINUTES, minutes);
     }
 
     public Integer getResolution() {
-        return getInteger("resolution");
+        return getInteger(DatabaseMediator.Field.RESOLUTION);
     }
 
     public void setResolution(Integer resolution) {
-        set("resolution", resolution);
+        set(DatabaseMediator.Field.RESOLUTION, resolution);
     }
 
     public QualityCode getQuality() {
-        return QualityCode.valueOf(getString("qualityCode"));
+        return QualityCode.valueOf(getString(DatabaseMediator.Field.QUALITY_CODE));
     }
 
     public void setQuality(QualityCode quality) {
-        set("qualityCode", quality.name());
+        set(DatabaseMediator.Field.QUALITY_CODE, quality.name());
     }
 
     public List<SubtitleFile> getSubtitleFiles() {
@@ -107,6 +107,6 @@ public final class VideoFile extends FileWithLanguages {
         if (getQuality() == null && anotherVideoFile.getQuality() != null) {
             setQuality(anotherVideoFile.getQuality());
         }
-        // todo subtitles?
+        List<SubtitleFile> subtitleFiles = anotherVideoFile.getSubtitleFiles();
     }
 }

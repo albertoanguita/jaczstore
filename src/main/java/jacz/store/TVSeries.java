@@ -26,11 +26,11 @@ public final class TVSeries extends ProducedCreationItem {
     }
 
     public static List<TVSeries> getTVSeries(String dbPath) {
-        return buildList(dbPath, getModels(dbPath, jacz.store.database.models.TVSeries.class));
+        return buildList(dbPath, getModels(dbPath, DatabaseMediator.ItemType.TV_SERIES));
     }
 
     public static TVSeries getTVSeriesById(String dbPath, int id) {
-        Model model = getModelById(dbPath, jacz.store.database.models.TVSeries.class, id);
+        Model model = getModelById(dbPath, DatabaseMediator.ItemType.TV_SERIES, id);
         return model != null ? new TVSeries(model, dbPath) : null;
     }
 

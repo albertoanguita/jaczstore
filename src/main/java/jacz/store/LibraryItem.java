@@ -43,7 +43,7 @@ public abstract class LibraryItem {
 
     static boolean contains(Collection<? extends LibraryItem> items, Model model) {
         for (LibraryItem item : items) {
-            if (item.getId().equals(model.getInteger("id"))) {
+            if (item.getId().equals(model.getInteger(DatabaseMediator.Field.ID.value))) {
                 return true;
             }
         }
@@ -55,19 +55,19 @@ public abstract class LibraryItem {
         return (Integer) model.getId();
     }
 
-    public String getString(String field) {
+    public String getString(DatabaseMediator.Field field) {
         updateLastAccessTime();
-        return model.getString(field);
+        return model.getString(field.value);
     }
 
-    public Integer getInteger(String field) {
+    public Integer getInteger(DatabaseMediator.Field field) {
         updateLastAccessTime();
-        return model.getInteger(field);
+        return model.getInteger(field.value);
     }
 
-    public Long getLong(String field) {
+    public Long getLong(DatabaseMediator.Field field) {
         updateLastAccessTime();
-        return model.getLong(field);
+        return model.getLong(field.value);
     }
 
     public void updateLastAccessTime() {
@@ -76,18 +76,18 @@ public abstract class LibraryItem {
 
 
     public long getTimestamp() {
-        return getLong("timestamp");
+        return getLong(DatabaseMediator.Field.TIMESTAMP);
     }
 
     public void updateTimestamp() {
         connect();
-        model.set("timestamp", DatabaseMediator.getNewTimestamp(dbPath));
+        model.set(DatabaseMediator.Field.TIMESTAMP.value, DatabaseMediator.getNewTimestamp(dbPath));
         disconnect();
     }
 
-    protected void set(String field, Object value) {
+    protected void set(DatabaseMediator.Field field, Object value) {
         connect();
-        model.set(field, value);
+        model.set(field.value, value);
         DatabaseMediator.updateLastUpdateTime(dbPath);
         updateTimestamp();
         save();
@@ -109,10 +109,10 @@ public abstract class LibraryItem {
         disconnect();
     }
 
-    protected static <C extends Model> List<C> getModels(String dbPath, Class<? extends Model> modelClass) {
+    protected static <C extends Model> List<C> getModels(String dbPath, DatabaseMediator.ItemType type) {
         DatabaseMediator.connect(dbPath);
         try {
-            Method findAll = modelClass.getMethod("findAll");
+            Method findAll = type.modelClass.getMethod("findAll");
             List<C> models;
             models = (List<C>) findAll.invoke(null);
             return models;
@@ -125,10 +125,10 @@ public abstract class LibraryItem {
         }
     }
 
-    protected static <C extends Model> List<C> getModels(String dbPath, Class<? extends Model> modelClass, String query, Object[] params) {
+    protected static <C extends Model> List<C> getModels(String dbPath, DatabaseMediator.ItemType type, String query, Object[] params) {
         DatabaseMediator.connect(dbPath);
         try {
-            Method where = modelClass.getMethod("where", String.class, Object[].class);
+            Method where = type.modelClass.getMethod("where", String.class, Object[].class);
             params = params != null ? params : new Object[0];
             List<C> models;
             models = (List<C>) where.invoke(null, query, params);
@@ -142,11 +142,11 @@ public abstract class LibraryItem {
         }
     }
 
-    protected static <C extends Model> C getModelById(String dbPath, Class<? extends Model> modelClass, int id) {
+    protected static <C extends Model> C getModelById(String dbPath, DatabaseMediator.ItemType type, int id) {
         DatabaseMediator.connect(dbPath);
         try {
             Object[] params = {id};
-            List<C> models = getModels(dbPath, modelClass, "id = ?", params);
+            List<C> models = getModels(dbPath, type, "id = ?", params);
             return models.isEmpty() ? null : models.get(0);
         } finally {
             DatabaseMediator.disconnect(dbPath);
@@ -236,11 +236,11 @@ public abstract class LibraryItem {
         disconnect();
     }
 
-    protected <C extends Model> LazyList<C> getReferencedElements(Class<? extends Model> modelClass, String field) {
+    protected <C extends Model> LazyList<C> getReferencedElements(DatabaseMediator.ItemType type, DatabaseMediator.Field field) {
         Object[] ids = getStringList(field).toArray();
         DatabaseMediator.connect(dbPath);
         try {
-            Method where = modelClass.getMethod("where", String.class, Object[].class);
+            Method where = type.modelClass.getMethod("where", String.class, Object[].class);
             String query = "id = -1";
             for (int i = 0; i < ids.length; i++) {
                 query += " OR id = ?";
@@ -255,7 +255,7 @@ public abstract class LibraryItem {
         }
     }
 
-    protected void removeReferencedElements(String field) {
+    protected void removeReferencedElements(DatabaseMediator.Field field) {
         removeList(field);
     }
 
@@ -263,14 +263,14 @@ public abstract class LibraryItem {
         // todo
     }
 
-    protected <C extends Model> boolean removeReferencedElement(String field, LibraryItem item) {
+    protected <C extends Model> boolean removeReferencedElement(DatabaseMediator.Field field, LibraryItem item) {
         List<String> stringList = getStringList(field);
         boolean removed = stringList.remove(item.getId().toString());
         setStringList(field, stringList);
         return removed;
     }
 
-    protected <C extends Model> boolean removeReferencedElementAndDelete(String field, C model) {
+    protected <C extends Model> boolean removeReferencedElementAndDelete(DatabaseMediator.Field field, C model) {
         List<String> stringList = getStringList(field);
         boolean removed = stringList.remove(model.getId().toString());
         setStringList(field, stringList);
@@ -278,7 +278,7 @@ public abstract class LibraryItem {
         // todo
     }
 
-    protected void setReferencedElements(String field, List<? extends LibraryItem> models) {
+    protected void setReferencedElements(DatabaseMediator.Field field, List<? extends LibraryItem> models) {
         List<String> idList = new ArrayList<>();
         for (LibraryItem item : models) {
             idList.add(item.getId().toString());
@@ -286,7 +286,7 @@ public abstract class LibraryItem {
         setStringList(field, idList);
     }
 
-    protected void setReferencedElements(String field, LibraryItem... models) {
+    protected void setReferencedElements(DatabaseMediator.Field field, LibraryItem... models) {
         List<String> idList = new ArrayList<>();
         for (LibraryItem item : models) {
             idList.add(item.getId().toString());
@@ -294,16 +294,16 @@ public abstract class LibraryItem {
         setStringList(field, idList);
     }
 
-    protected <C extends Model> boolean addReferencedElement(String field, LibraryItem item) {
+    protected <C extends Model> boolean addReferencedElement(DatabaseMediator.Field field, LibraryItem item) {
         return addStringValue(field, item.getId().toString());
     }
 
-    protected <C extends Model> LazyList<C> getElementsContainingMe(Class<? extends Model> modelClass, String field) {
+    protected <C extends Model> LazyList<C> getElementsContainingMe(DatabaseMediator.ItemType type, DatabaseMediator.Field field) {
         Object[] myId = new String[]{"%\n" + getId().toString() + "\n%"};
         DatabaseMediator.connect(dbPath);
         try {
-            Method where = modelClass.getMethod("where", String.class, Object[].class);
-            String query = field + " LIKE ?";
+            Method where = type.modelClass.getMethod("where", String.class, Object[].class);
+            String query = field.value + " LIKE ?";
             return  (LazyList<C>) where.invoke(null, query, myId);
         } catch (Exception e) {
             // todo internal error
@@ -316,26 +316,26 @@ public abstract class LibraryItem {
 
 
 
-    protected List<String> getStringList(String field) {
+    protected List<String> getStringList(DatabaseMediator.Field field) {
         return deserializeList(getString(field));
     }
 
-    protected void removeStringList(String field) {
+    protected void removeStringList(DatabaseMediator.Field field) {
         removeList(field);
     }
 
-    protected boolean removeStringValue(String field, String value) {
+    protected boolean removeStringValue(DatabaseMediator.Field field, String value) {
         List<String> stringList = getStringList(field);
         boolean removed = stringList.remove(value);
         setStringList(field, stringList);
         return removed;
     }
 
-    protected void setStringList(String field, List<String> stringList) {
+    protected void setStringList(DatabaseMediator.Field field, List<String> stringList) {
         set(field, serializeList(stringList));
     }
 
-    protected boolean addStringValue(String field, String value) {
+    protected boolean addStringValue(DatabaseMediator.Field field, String value) {
         List<String> stringList = getStringList(field);
         boolean notContains = !stringList.contains(value);
         if (notContains) {
@@ -345,7 +345,7 @@ public abstract class LibraryItem {
         return notContains;
     }
 
-    protected <E> List<E> getEnums(String field, Class<E> enum_) {
+    protected <E> List<E> getEnums(DatabaseMediator.Field field, Class<E> enum_) {
         try {
             Method valueOf = enum_.getMethod("valueOf", String.class);
             String strList = getString(field);
@@ -365,14 +365,14 @@ public abstract class LibraryItem {
         return null;
     }
 
-    protected <E> boolean removeEnum(String field, Class<E> enum_, E value, String getNameMethod) {
+    protected <E> boolean removeEnum(DatabaseMediator.Field field, Class<E> enum_, E value, String getNameMethod) {
         List<E> enums = getEnums(field, enum_);
         boolean removed = enums.remove(value);
         setEnums(field, enum_, enums, getNameMethod);
         return removed;
     }
 
-    protected <E> void setEnums(String field, Class<E> enum_, List<E> values, String getNameMethod) {
+    protected <E> void setEnums(DatabaseMediator.Field field, Class<E> enum_, List<E> values, String getNameMethod) {
         try {
             Method getName = enum_.getMethod(getNameMethod);
             List<String> strList = new ArrayList<>();
@@ -390,7 +390,7 @@ public abstract class LibraryItem {
         }
     }
 
-    protected <E> boolean addEnums(String field, Class<E> enum_, List<E> newValues, String getNameMethod) {
+    protected <E> boolean addEnums(DatabaseMediator.Field field, Class<E> enum_, List<E> newValues, String getNameMethod) {
         List<E> values = getEnums(field, enum_);
         boolean modified = false;
         for (E newValue : newValues) {
@@ -404,7 +404,7 @@ public abstract class LibraryItem {
         return modified;
     }
 
-    protected <E> boolean addEnum(String field, Class<E> enum_, E value, String getNameMethod) {
+    protected <E> boolean addEnum(DatabaseMediator.Field field, Class<E> enum_, E value, String getNameMethod) {
         List<E> values = getEnums(field, enum_);
         boolean notContains = !values.contains(value);
         if (notContains) {
@@ -414,7 +414,7 @@ public abstract class LibraryItem {
         return notContains;
     }
 
-    protected void removeList(String field) {
+    protected void removeList(DatabaseMediator.Field field) {
         set(field, null);
     }
 

@@ -40,18 +40,21 @@ public final class Company extends NamedLibraryItem {
     }
 
     public static List<Company> getCompanies(String dbPath) {
-        return buildList(dbPath, getModels(dbPath, jacz.store.database.models.Company.class));
+        return buildList(dbPath, getModels(dbPath, DatabaseMediator.ItemType.COMPANY));
     }
 
     public List<Movie> getMovies(String dbPath) {
-        List<jacz.store.database.models.Movie> modelMovies = getElementsContainingMe(jacz.store.database.models.Movie.class, "company_list");
+        List<jacz.store.database.models.Movie> modelMovies = getElementsContainingMe(DatabaseMediator.ItemType.MOVIE, DatabaseMediator.Field.COMPANY_LIST);
         return Movie.buildList(dbPath, modelMovies);
     }
 
     public List<TVSeries> getTVSeries(String dbPath) {
-        List<jacz.store.database.models.TVSeries> modelTVSeries = getElementsContainingMe(jacz.store.database.models.TVSeries.class, "company_list");
+        List<jacz.store.database.models.TVSeries> modelTVSeries = getElementsContainingMe(DatabaseMediator.ItemType.TV_SERIES, DatabaseMediator.Field.COMPANY_LIST);
         return TVSeries.buildList(dbPath, modelTVSeries);
     }
 
-
+    @Override
+    public void delete() {
+        super.delete();
+    }
 }

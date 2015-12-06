@@ -167,27 +167,27 @@ public class DatabaseMediator {
         connect(dbPath);
         Metadata metadata = getMetadata();
         disconnect(dbPath);
-        return metadata.getString("identifier");
+        return metadata.getString(Field.IDENTIFIER.value);
     }
 
     public static void setDatabaseIdentifier(String dbPath, String identifier) {
         connect(dbPath);
         Metadata metadata = getMetadata();
-        metadata.setString("identifier", identifier).saveIt();
+        metadata.setString(Field.IDENTIFIER.value, identifier).saveIt();
         disconnect(dbPath);
     }
 
     public static void updateLastAccessTime(String dbPath) {
         connect(dbPath);
         Metadata metadata = getMetadata();
-        metadata.set("lastAccess", dateFormat.format(new Date())).saveIt();
+        metadata.set(Field.LAST_ACCESS.value, dateFormat.format(new Date())).saveIt();
         disconnect(dbPath);
     }
 
     public static void updateLastUpdateTime(String dbPath) {
         connect(dbPath);
         Metadata metadata = getMetadata();
-        metadata.set("lastUpdate", dateFormat.format(new Date())).saveIt();
+        metadata.set(Field.LAST_UPDATE.value, dateFormat.format(new Date())).saveIt();
         disconnect(dbPath);
     }
 
@@ -201,15 +201,15 @@ public class DatabaseMediator {
     public static synchronized long getLastTimestamp(String dbPath) {
         connect(dbPath);
         Metadata metadata = getMetadata();
-        long nextTimestamp = metadata.getLong("nextTimestamp");
+        long nextTimestamp = metadata.getLong(Field.NEXT_TIMESTAMP.value);
         disconnect(dbPath);
         return nextTimestamp - 1;
     }
 
     public static synchronized long getNewTimestamp() {
         Metadata metadata = getMetadata();
-        long newTimestamp = metadata.getLong("nextTimestamp");
-        metadata.setLong("nextTimestamp", newTimestamp + 1).saveIt();
+        long newTimestamp = metadata.getLong(Field.NEXT_TIMESTAMP.value);
+        metadata.setLong(Field.NEXT_TIMESTAMP.value, newTimestamp + 1).saveIt();
         return newTimestamp;
     }
 

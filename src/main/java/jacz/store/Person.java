@@ -53,36 +53,36 @@ public final class Person extends NamedLibraryItem {
     }
 
     public static List<Person> getPeople(String dbPath) {
-        return buildList(dbPath, getModels(dbPath, jacz.store.database.models.Person.class));
+        return buildList(dbPath, getModels(dbPath, DatabaseMediator.ItemType.PERSON));
     }
 
     public List<Movie> getMoviesAsActor(String dbPath) {
-        List<jacz.store.database.models.Movie> modelMovies = getElementsContainingMe(jacz.store.database.models.Movie.class, "actor_list");
+        List<jacz.store.database.models.Movie> modelMovies = getElementsContainingMe(DatabaseMediator.ItemType.MOVIE, DatabaseMediator.Field.ACTOR_LIST);
         return Movie.buildList(dbPath, modelMovies);
     }
 
     public List<Movie> getMoviesAsDirector(String dbPath) {
-        List<jacz.store.database.models.Movie> modelMovies = getElementsContainingMe(jacz.store.database.models.Movie.class, "creator_list");
+        List<jacz.store.database.models.Movie> modelMovies = getElementsContainingMe(DatabaseMediator.ItemType.MOVIE, DatabaseMediator.Field.CREATOR_LIST);
         return Movie.buildList(dbPath, modelMovies);
     }
 
     public List<TVSeries> getTVSeriesAsActor(String dbPath) {
-        List<jacz.store.database.models.TVSeries> modelTVSeries = getElementsContainingMe(jacz.store.database.models.TVSeries.class, "actor_list");
+        List<jacz.store.database.models.TVSeries> modelTVSeries = getElementsContainingMe(DatabaseMediator.ItemType.TV_SERIES, DatabaseMediator.Field.ACTOR_LIST);
         return TVSeries.buildList(dbPath, modelTVSeries);
     }
 
     public List<TVSeries> getTVSeriesAsCreator(String dbPath) {
-        List<jacz.store.database.models.TVSeries> modelTVSeries = getElementsContainingMe(jacz.store.database.models.TVSeries.class, "creator_list");
+        List<jacz.store.database.models.TVSeries> modelTVSeries = getElementsContainingMe(DatabaseMediator.ItemType.TV_SERIES, DatabaseMediator.Field.CREATOR_LIST);
         return TVSeries.buildList(dbPath, modelTVSeries);
     }
 
     public List<Chapter> getChaptersAsActor(String dbPath) {
-        List<jacz.store.database.models.Chapter> modelChapters = getElementsContainingMe(jacz.store.database.models.Chapter.class, "actor_list");
+        List<jacz.store.database.models.Chapter> modelChapters = getElementsContainingMe(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.Field.ACTOR_LIST);
         return Chapter.buildList(dbPath, modelChapters);
     }
 
     public List<Chapter> getChaptersAsDirector(String dbPath) {
-        List<jacz.store.database.models.Chapter> modelChapters = getElementsContainingMe(jacz.store.database.models.Chapter.class, "creator_list");
+        List<jacz.store.database.models.Chapter> modelChapters = getElementsContainingMe(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.Field.CREATOR_LIST);
         return Chapter.buildList(dbPath, modelChapters);
     }
 }

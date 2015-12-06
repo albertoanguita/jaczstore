@@ -30,11 +30,11 @@ public final class Movie extends ProducedCreationItem {
     }
 
     public static List<Movie> getMovies(String dbPath) {
-        return buildList(dbPath, getModels(dbPath, jacz.store.database.models.Movie.class));
+        return buildList(dbPath, getModels(dbPath, DatabaseMediator.ItemType.MOVIE));
     }
 
     public static Movie getMovieById(String dbPath, int id) {
-        Model model = getModelById(dbPath, jacz.store.database.models.Movie.class, id);
+        Model model = getModelById(dbPath, DatabaseMediator.ItemType.MOVIE, id);
         return model != null ? new Movie(model, dbPath) : null;
     }
 
@@ -78,36 +78,36 @@ public final class Movie extends ProducedCreationItem {
     }
 
     public Integer getMinutes() {
-        return getInteger("minutes");
+        return getInteger(DatabaseMediator.Field.MINUTES);
     }
 
     public void setMinutes(Integer minutes) {
-        set("minutes", minutes);
+        set(DatabaseMediator.Field.MINUTES, minutes);
     }
 
     public List<VideoFile> getVideoFiles() {
-        LazyList<jacz.store.database.models.VideoFile> models = getReferencedElements(jacz.store.database.models.VideoFile.class, "video_file_list");
+        LazyList<jacz.store.database.models.VideoFile> models = getReferencedElements(DatabaseMediator.ItemType.VIDEO_FILE, DatabaseMediator.Field.VIDEO_FILE_LIST);
         return VideoFile.buildList(dbPath, models);
     }
 
     public <C extends Model> void removeVideoFiles() {
-        removeReferencedElements("video_file_list");
+        removeReferencedElements(DatabaseMediator.Field.VIDEO_FILE_LIST);
     }
 
     public <C extends Model> void removeVideoFile(VideoFile videoFile) {
-        removeReferencedElement("video_file_list", videoFile);
+        removeReferencedElement(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFile);
     }
 
     public void setVideoFiles(List<VideoFile> videoFiles) {
-        setReferencedElements("video_file_list", videoFiles);
+        setReferencedElements(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFiles);
     }
 
     public void setVideoFiles(VideoFile... videoFiles) {
-        setReferencedElements("video_file_list", videoFiles);
+        setReferencedElements(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFiles);
     }
 
     public <C extends Model> void addVideoFile(VideoFile videoFile) {
-        addReferencedElement("video_file_list", videoFile);
+        addReferencedElement(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFile);
     }
 
     public List<String> getTags() {

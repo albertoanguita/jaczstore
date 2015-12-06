@@ -1,7 +1,6 @@
 package jacz.store;
 
-import jacz.store.database_old.DatabaseMediator;
-import jacz.store.old2.common.IdentifierMap;
+import jacz.store.database.DatabaseMediator;
 import org.javalite.activejdbc.Model;
 
 /**
@@ -22,27 +21,27 @@ public abstract class File extends LibraryItem {
     }
 
     public String getHash() {
-        return getString("hash");
+        return getString(DatabaseMediator.Field.HASH);
     }
 
     public void setHash(String hash) {
-        set("hash", hash);
+        set(DatabaseMediator.Field.HASH, hash);
     }
 
     public Long getLength() {
-        return getLong("length");
+        return getLong(DatabaseMediator.Field.LENGTH);
     }
 
     public void setLength(Long length) {
-        set("length", length);
+        set(DatabaseMediator.Field.LENGTH, length);
     }
 
     public String getName() {
-        return getString("name");
+        return getString(DatabaseMediator.Field.NAME);
     }
 
     public void setName(String name) {
-        set("name", name);
+        set(DatabaseMediator.Field.NAME, name);
     }
 
     @Override

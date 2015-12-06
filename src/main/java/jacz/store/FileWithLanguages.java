@@ -1,6 +1,7 @@
 package jacz.store;
 
 import com.neovisionaries.i18n.LanguageCode;
+import jacz.store.database.DatabaseMediator;
 import org.javalite.activejdbc.Model;
 
 import java.util.List;
@@ -19,29 +20,29 @@ public abstract class FileWithLanguages extends File {
     }
 
     protected List<LanguageCode> getLanguages() {
-        return getEnums("languages", LanguageCode.class);
+        return getEnums(DatabaseMediator.Field.LANGUAGES, LanguageCode.class);
     }
 
     protected void removeLanguages() {
-        removeList("languages");
+        removeList(DatabaseMediator.Field.LANGUAGES);
     }
 
     protected boolean removeLanguage(LanguageCode language) {
-        return removeEnum("languages", LanguageCode.class, language, "name");
+        return removeEnum(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, language, "name");
     }
 
     protected void setLanguages(List<LanguageCode> languages) {
-        setEnums("languages", LanguageCode.class, languages, "name");
+        setEnums(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, languages, "name");
     }
 
     protected boolean addLanguage(LanguageCode language) {
-        return addEnum("languages", LanguageCode.class, language, "name");
+        return addEnum(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, language, "name");
     }
 
     @Override
     public void merge(LibraryItem anotherItem) {
         super.merge(anotherItem);
         FileWithLanguages anotherFileWithLanguages = (FileWithLanguages) anotherItem;
-        addEnums("languages", LanguageCode.class, anotherFileWithLanguages.getLanguages(), "name");
+        addEnums(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, anotherFileWithLanguages.getLanguages(), "name");
     }
 }

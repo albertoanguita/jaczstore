@@ -1,5 +1,6 @@
 package jacz.store;
 
+import jacz.store.database.DatabaseMediator;
 import org.javalite.activejdbc.Model;
 
 import java.util.List;
@@ -22,19 +23,19 @@ public abstract class NamedLibraryItem extends LibraryItem {
     }
 
     public String getName() {
-        return getString("name");
+        return getString(DatabaseMediator.Field.NAME);
     }
 
     public void setName(String name) {
-        set("name", name);
+        set(DatabaseMediator.Field.NAME, name);
     }
 
     public List<String> getAliases() {
-        return deserializeList(getString("aliases"));
+        return deserializeList(getString(DatabaseMediator.Field.ALIASES));
     }
 
     public void removeAliases() {
-        set("aliases", null);
+        set(DatabaseMediator.Field.ALIASES, null);
     }
 
     public boolean removeAlias(String alias) {
@@ -45,7 +46,7 @@ public abstract class NamedLibraryItem extends LibraryItem {
     }
 
     public void setAliases(List<String> aliases) {
-        set("aliases", serializeList(aliases));
+        set(DatabaseMediator.Field.ALIASES, serializeList(aliases));
     }
 
     public boolean addAlias(String alias) {

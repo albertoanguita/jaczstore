@@ -6,7 +6,6 @@ import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Alberto on 16/11/2015.
@@ -36,165 +35,116 @@ public abstract class CreationItem extends LibraryItem {
     }
 
     public String getTitle() {
-        return getString("title");
+        return getString(DatabaseMediator.Field.TITLE);
     }
 
     public void setTitle(String title) {
-        set("title", title);
+        set(DatabaseMediator.Field.TITLE, title);
     }
 
     public String getOriginalTitle() {
-        return getString("originalTitle");
+        return getString(DatabaseMediator.Field.ORIGINAL_TITLE);
     }
 
     public void setOriginalTitle(String originalTitle) {
-        set("originalTitle", originalTitle);
+        set(DatabaseMediator.Field.ORIGINAL_TITLE, originalTitle);
     }
 
     public Integer getYear() {
-        return getInteger("year");
+        return getInteger(DatabaseMediator.Field.YEAR);
     }
 
     public void setYear(Integer year) {
-        set("year", year);
+        set(DatabaseMediator.Field.YEAR, year);
     }
 
     public List<CountryCode> getCountries() {
-        return getEnums("countries", CountryCode.class);
+        return getEnums(DatabaseMediator.Field.COUNTRIES, CountryCode.class);
     }
 
     public void removeCountries() {
-        removeList("countries");
+        removeList(DatabaseMediator.Field.COUNTRIES);
     }
 
     public boolean removeCountry(CountryCode country) {
-        return removeEnum("countries", CountryCode.class, country, "getAlpha2");
+        return removeEnum(DatabaseMediator.Field.COUNTRIES, CountryCode.class, country, "getAlpha2");
     }
 
     public void setCountries(List<CountryCode> countries) {
-        setEnums("countries", CountryCode.class, countries, "getAlpha2");
+        setEnums(DatabaseMediator.Field.COUNTRIES, CountryCode.class, countries, "getAlpha2");
     }
 
     public boolean addCountry(CountryCode country) {
-        return addEnum("countries", CountryCode.class, country, "getAlpha2");
+        return addEnum(DatabaseMediator.Field.COUNTRIES, CountryCode.class, country, "getAlpha2");
     }
 
     public List<String> getExternalURLs() {
-        return getStringList("externalURLs");
+        return getStringList(DatabaseMediator.Field.EXTERNAL_URLS);
     }
 
     public void removeExternalURLs() {
-        removeStringList("externalURLs");
+        removeStringList(DatabaseMediator.Field.EXTERNAL_URLS);
     }
 
     public boolean removeExternalURL(String externalURL) {
-        return removeStringValue("externalURLs", externalURL);
+        return removeStringValue(DatabaseMediator.Field.EXTERNAL_URLS, externalURL);
     }
 
     public void setExternalURLs(List<String> externalURLs) {
-        setStringList("externalURLs", externalURLs);
+        setStringList(DatabaseMediator.Field.EXTERNAL_URLS, externalURLs);
     }
 
     public boolean addExternalURL(String externalURL) {
-        return addStringValue("externalURLs", externalURL);
+        return addStringValue(DatabaseMediator.Field.EXTERNAL_URLS, externalURL);
     }
 
     protected List<Person> getCreatorsDirectors() {
-        LazyList<jacz.store.database.models.Person> models = getReferencedElements(jacz.store.database.models.Person.class, "creator_list");
+        LazyList<jacz.store.database.models.Person> models = getReferencedElements(DatabaseMediator.ItemType.PERSON, DatabaseMediator.Field.CREATOR_LIST);
         return Person.buildList(dbPath, models);
     }
 
     protected <C extends Model> void removeCreatorsDirectors() {
-        removeReferencedElements("creator_list");
+        removeReferencedElements(DatabaseMediator.Field.CREATOR_LIST);
     }
 
     protected <C extends Model> void removeCreatorDirector(Person person) {
-        removeReferencedElement("creator_list", person);
+        removeReferencedElement(DatabaseMediator.Field.CREATOR_LIST, person);
     }
 
     protected void setCreatorsDirectors(List<Person> persons) {
-        setReferencedElements("creator_list", persons);
+        setReferencedElements(DatabaseMediator.Field.CREATOR_LIST, persons);
     }
 
     protected void setCreatorsDirectors(Person... persons) {
-        setReferencedElements("creator_list", persons);
+        setReferencedElements(DatabaseMediator.Field.CREATOR_LIST, persons);
     }
 
     protected <C extends Model> void addCreatorDirector(Person person) {
-        addReferencedElement("creator_list", person);
+        addReferencedElement(DatabaseMediator.Field.CREATOR_LIST, person);
     }
 
-    //    protected List<Person> getCreatorsDirectors() {
-//        List<jacz.store.database.models.Person> modelPersons = getAssociation(jacz.store.database.models.Person.class, "type = ? ", DatabaseMediator.PersonType.CREATOR.name());
-//        return Person.buildList(dbPath, modelPersons);
-//    }
-//
-//    protected <C extends Model> void removeCreatorsDirectors() {
-//        removeAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PersonType.CREATOR.name());
-//    }
-//
-//    protected <C extends Model> void removeCreatorDirector(Person person) {
-//        removeAssociation(getPeopleAssociationModel(), getAssociationIdField(), person, "person_id", DatabaseMediator.PersonType.CREATOR.name());
-//    }
-//
-//    protected void setCreatorsDirectors(List<Person> persons) {
-//        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.CREATOR.name(), persons);
-//    }
-//
-//    protected void setCreatorsDirectors(Person... persons) {
-//        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.CREATOR.name(), persons);
-//    }
-//
-//    protected <C extends Model> void addCreatorDirector(Person person) {
-//        addAssociation(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.CREATOR.name(), person);
-//    }
-//
     protected List<Person> getActors() {
-        LazyList<jacz.store.database.models.Person> models = getReferencedElements(jacz.store.database.models.Person.class, "actor_list");
+        LazyList<jacz.store.database.models.Person> models = getReferencedElements(DatabaseMediator.ItemType.PERSON, DatabaseMediator.Field.ACTOR_LIST);
         return Person.buildList(dbPath, models);
     }
 
     public <C extends Model> void removeActors() {
-        removeReferencedElements("actor_list");
+        removeReferencedElements(DatabaseMediator.Field.ACTOR_LIST);
     }
 
     public <C extends Model> void removeActor(Person person) {
-        removeReferencedElement("actor_list", person);
+        removeReferencedElement(DatabaseMediator.Field.ACTOR_LIST, person);
     }
 
     public void setActors(List<Person> persons) {
-        setReferencedElements("actor_list", persons);
+        setReferencedElements(DatabaseMediator.Field.ACTOR_LIST, persons);
     }
 
     public void setActors(Person... persons) {
-        setReferencedElements("actor_list", persons);
+        setReferencedElements(DatabaseMediator.Field.ACTOR_LIST, persons);
     }
 
     public <C extends Model> void addActor(Person person) {
-        addReferencedElement("actor_list", person);
+        addReferencedElement(DatabaseMediator.Field.ACTOR_LIST, person);
     }
-//    protected List<Person> getActors() {
-//        List<jacz.store.database.models.Person> modelPersons = getAssociation(jacz.store.database.models.Person.class, "type = ? ", DatabaseMediator.PersonType.ACTOR.name());
-//        return Person.buildList(dbPath, modelPersons);
-//    }
-//
-//    public <C extends Model> void removeActors() {
-//        removeAssociations(getPeopleAssociationModel(), getAssociationIdField(), DatabaseMediator.PersonType.ACTOR.name());
-//    }
-//
-//    public <C extends Model> void removeActor(Person person) {
-//        removeAssociation(getPeopleAssociationModel(), getAssociationIdField(), person, "person_id", DatabaseMediator.PersonType.ACTOR.name());
-//    }
-//
-//    public void setActors(List<Person> persons) {
-//        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.ACTOR.name(), persons);
-//    }
-//
-//    public void setActors(Person... persons) {
-//        setAssociations(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.ACTOR.name(), persons);
-//    }
-//
-//    public <C extends Model> void addActor(Person person) {
-//        addAssociation(getPeopleAssociationModel(), getAssociationIdField(), "person_id", DatabaseMediator.PersonType.ACTOR.name(), person);
-//    }
 }
