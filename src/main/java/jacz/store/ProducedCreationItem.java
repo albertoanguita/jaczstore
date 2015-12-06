@@ -1,7 +1,9 @@
 package jacz.store;
 
+import com.neovisionaries.i18n.CountryCode;
 import jacz.store.database.DatabaseMediator;
 import jacz.store.util.GenreCode;
+import jacz.util.AI.inference.Mycin;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
@@ -77,5 +79,32 @@ public abstract class ProducedCreationItem extends CreationItem {
 
     public void setImageHash(String imageHash) {
         set(DatabaseMediator.Field.IMAGE_HASH, imageHash);
+    }
+
+    @Override
+    public float match(LibraryItem anotherItem, ListSimilarity... listSimilarities) {
+        float similarity = super.match(anotherItem, listSimilarities);
+        ProducedCreationItem anotherProducedItem = (ProducedCreationItem) anotherItem;
+        List<GenreCode> genres1 = getGenres();
+        List<GenreCode> genres2 = anotherProducedItem.getGenres();
+        int genreMatches = 0;
+        for (GenreCode genreCode : genres1) {
+            if (genres2.contains(genreCode)) {
+                genreMatches++;
+            }
+        }
+        similarity = Mycin.combine(similarity, evaluateListSimilarity(new ListSimilarity(genres1.size(), genres2.size(), genreMatches), 0.1f));
+        for (ListSimilarity listSimilarity : listSimilarities) {
+            switch (listSimilarity.referencedList) {
+                case COMPANIES:
+                    similarity = Mycin.combine(similarity, evaluateListSimilarity(listSimilarity, 0.1f));
+            }
+        }
+        return similarity;
+    }
+
+    @Override
+    public void merge(LibraryItem anotherItem) {
+
     }
 }

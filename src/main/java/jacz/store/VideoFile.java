@@ -79,8 +79,14 @@ public final class VideoFile extends FileWithLanguages {
     }
 
     public void removeSubtitleFiles() {
+        // todo replace with enums
         removeDirectAssociationChildren(jacz.store.database.models.SubtitleFile.class);
     }
+
+//    public <C extends Model> void removeSubtitleFile(SubtitleFile subtitleFile) {
+        //removeReferencedElement(DatabaseMediator.Field.SUB, subtitleFile);
+        // todo
+//    }
 
     public void setSubtitleFiles(List<SubtitleFile> subtitleFiles) {
         setDirectAssociationChildren(jacz.store.database.models.SubtitleFile.class, subtitleFiles);
@@ -98,7 +104,7 @@ public final class VideoFile extends FileWithLanguages {
     public void merge(LibraryItem anotherItem) {
         super.merge(anotherItem);
         VideoFile anotherVideoFile = (VideoFile) anotherItem;
-        if (getLength() == null && anotherVideoFile.getMinutes() != null) {
+        if (getMinutes() == null && anotherVideoFile.getMinutes() != null) {
             setMinutes(anotherVideoFile.getMinutes());
         }
         if (getResolution() == null && anotherVideoFile.getResolution() != null) {
@@ -107,6 +113,12 @@ public final class VideoFile extends FileWithLanguages {
         if (getQuality() == null && anotherVideoFile.getQuality() != null) {
             setQuality(anotherVideoFile.getQuality());
         }
-        List<SubtitleFile> subtitleFiles = anotherVideoFile.getSubtitleFiles();
+    }
+
+    @Override
+    public void delete() {
+        // video files cannot be deleted. This way we avoid inconsistencies of references to video files pointing
+        // to an non-existent item. We simply delete references to these
+        // todo in the future, add the process of removing non-referenced video files at startup
     }
 }

@@ -94,13 +94,20 @@ public abstract class LibraryItem {
         disconnect();
     }
 
-    public float match(LibraryItem anotherItem) {
+    public float match(LibraryItem anotherItem, ListSimilarity... listSimilarities) {
         // no fields of this class indicate equality
         return 0f;
     }
 
-    // todo make abstract
-    public void merge(LibraryItem anotherItem) {
+    public abstract void merge(LibraryItem anotherItem);
+
+    static float evaluateListSimilarity(ListSimilarity listSimilarity, float confidence) {
+        int min = Math.min(listSimilarity.firstListSize, listSimilarity.secondListSize);
+        if (min != 0) {
+            return confidence * (listSimilarity.commonItems / Math.min(listSimilarity.firstListSize, listSimilarity.secondListSize));
+        } else {
+            return 0;
+        }
     }
 
     protected void save() {
@@ -264,8 +271,12 @@ public abstract class LibraryItem {
     }
 
     protected <C extends Model> boolean removeReferencedElement(DatabaseMediator.Field field, LibraryItem item) {
+        return removeReferencedElementById(field, item.getId().toString());
+    }
+
+    protected <C extends Model> boolean removeReferencedElementById(DatabaseMediator.Field field, String id) {
         List<String> stringList = getStringList(field);
-        boolean removed = stringList.remove(item.getId().toString());
+        boolean removed = stringList.remove(id);
         setStringList(field, stringList);
         return removed;
     }

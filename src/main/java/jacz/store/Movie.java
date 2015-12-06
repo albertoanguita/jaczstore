@@ -1,6 +1,8 @@
 package jacz.store;
 
 import jacz.store.database.DatabaseMediator;
+import jacz.store.util.GenreCode;
+import jacz.util.AI.inference.Mycin;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
@@ -120,5 +122,18 @@ public final class Movie extends ProducedCreationItem {
 
     public boolean removeTag(String tag) {
         return Tag.removeTag(dbPath, this, tag, DatabaseMediator.ItemType.MOVIE);
+    }
+
+    @Override
+    public float match(LibraryItem anotherItem, ListSimilarity... listSimilarities) {
+        float similarity = super.match(anotherItem, listSimilarities);
+        Movie anotherMovieItem = (Movie) anotherItem;
+        similarity = Mycin.combine(similarity, ItemIntegrator.durationSimilarity(getMinutes(), anotherMovieItem.getMinutes()));
+        return similarity;
+    }
+
+    @Override
+    public void merge(LibraryItem anotherItem) {
+
     }
 }

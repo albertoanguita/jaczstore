@@ -2,6 +2,7 @@ package jacz.store;
 
 import com.neovisionaries.i18n.CountryCode;
 import jacz.store.database.DatabaseMediator;
+import jacz.util.AI.inference.Mycin;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
@@ -146,5 +147,36 @@ public abstract class CreationItem extends LibraryItem {
 
     public <C extends Model> void addActor(Person person) {
         addReferencedElement(DatabaseMediator.Field.ACTOR_LIST, person);
+    }
+
+    @Override
+    public float match(LibraryItem anotherItem, ListSimilarity... listSimilarities) {
+        float similarity = super.match(anotherItem, listSimilarities);
+        CreationItem anotherCreationItem = (CreationItem) anotherItem;
+        similarity = Mycin.combine(similarity, ItemIntegrator.creationsTitleSimilarity(getTitle(), anotherCreationItem.getTitle(), getOriginalTitle(), anotherCreationItem.getOriginalTitle()));
+        similarity = Mycin.combine(similarity, ItemIntegrator.eventsYearSimilarity(getYear(), anotherCreationItem.getYear()));
+        List<CountryCode> countries1 = getCountries();
+        List<CountryCode> countries2 = anotherCreationItem.getCountries();
+        int countryMatches = 0;
+        for (CountryCode countryCode : countries1) {
+            if (countries2.contains(countryCode)) {
+                countryMatches++;
+            }
+        }
+        similarity = Mycin.combine(similarity, evaluateListSimilarity(new ListSimilarity(countries1.size(), countries2.size(), countryMatches), 0.1f));
+        for (ListSimilarity listSimilarity : listSimilarities) {
+            switch (listSimilarity.referencedList) {
+                case CREATORS:
+                    similarity = Mycin.combine(similarity, evaluateListSimilarity(listSimilarity, 0.7f));
+                case ACTORS:
+                    similarity = Mycin.combine(similarity, evaluateListSimilarity(listSimilarity, 0.9f));
+            }
+        }
+        return similarity;
+    }
+
+    @Override
+    public void merge(LibraryItem anotherItem) {
+
     }
 }

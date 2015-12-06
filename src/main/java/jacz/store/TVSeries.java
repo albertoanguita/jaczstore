@@ -1,6 +1,7 @@
 package jacz.store;
 
 import jacz.store.database.DatabaseMediator;
+import jacz.util.AI.inference.Mycin;
 import org.javalite.activejdbc.Model;
 
 import java.util.*;
@@ -110,5 +111,22 @@ public final class TVSeries extends ProducedCreationItem {
 
     public void addChapter(Chapter chapter) {
         addDirectAssociationChild(chapter);
+    }
+
+    @Override
+    public float match(LibraryItem anotherItem, ListSimilarity... listSimilarities) {
+        float similarity = super.match(anotherItem, listSimilarities);
+        for (ListSimilarity listSimilarity : listSimilarities) {
+            switch (listSimilarity.referencedList) {
+                case CHAPTERS:
+                    return evaluateListSimilarity(listSimilarity, 1.0f);
+            }
+        }
+        return similarity;
+    }
+
+    @Override
+    public void merge(LibraryItem anotherItem) {
+
     }
 }

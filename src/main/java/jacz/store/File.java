@@ -45,7 +45,7 @@ public abstract class File extends LibraryItem {
     }
 
     @Override
-    public float match(LibraryItem anotherItem) {
+    public float match(LibraryItem anotherItem, ListSimilarity... listSimilarities) {
         File anotherFile = (File) anotherItem;
         if (getHash() != null && anotherFile.getHash() != null && getHash().equals(anotherFile.getHash())) {
             return 1f;

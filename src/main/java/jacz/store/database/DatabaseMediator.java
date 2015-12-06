@@ -94,6 +94,14 @@ public class DatabaseMediator {
             this.value = value;
         }
     }
+
+    public enum ReferencedList {
+        CREATORS,
+        ACTORS,
+        COMPANIES,
+        CHAPTERS
+    }
+
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("Y/M/d-HH:mm:ss:SSS");
 
     private static final Pattern AUTOCOMPLETE_DB = Pattern.compile("^(.)*store.db$");
@@ -234,6 +242,16 @@ public class DatabaseMediator {
             if (connectionCount == 0) {
                 Base.close();
             }
+        }
+    }
+
+    public static String getDBPath() {
+        try {
+            String url = Base.connection().getMetaData().getURL();
+            return url.substring(url.indexOf(':') + 1);
+        } catch (SQLException e) {
+            // todo
+            return null;
         }
     }
 

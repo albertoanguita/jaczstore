@@ -15,7 +15,7 @@ public final class Person extends NamedLibraryItem {
         super(dbPath);
     }
 
-    Person(Model model, String dbPath) {
+    public Person(Model model, String dbPath) {
         super(model, dbPath);
     }
 

@@ -122,7 +122,23 @@ public class ItemIntegrator {
             } else if (Math.abs(year1 - year2) == 1) {
                 return -0.2f;
             } else {
-                return -0.99f;
+                return -0.90f;
+            }
+        } else {
+            return 0f;
+        }
+    }
+
+    public static float durationSimilarity(Integer minutes1, Integer minutes2) {
+        if (minutes1 != null && minutes2 != null) {
+            if (minutes1.equals(minutes2)) {
+                return 0.2f;
+            } else if (Math.abs(minutes1 - minutes2) < 3) {
+                return 0.1f;
+            } else if (Math.abs(minutes1 - minutes2) < 6) {
+                return 0.05f;
+            } else {
+                return 0f;
             }
         } else {
             return 0f;

@@ -15,7 +15,7 @@ public final class Company extends NamedLibraryItem {
         super(dbPath);
     }
 
-    Company(Model model, String dbPath) {
+    public Company(Model model, String dbPath) {
         super(model, dbPath);
     }
 

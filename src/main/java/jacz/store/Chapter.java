@@ -1,6 +1,7 @@
 package jacz.store;
 
 import jacz.store.database.DatabaseMediator;
+import jacz.util.AI.inference.Mycin;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
@@ -119,5 +120,18 @@ public final class Chapter extends CreationItem {
 
     public <C extends Model> void addVideoFile(VideoFile videoFile) {
         addReferencedElement(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFile);
+    }
+
+    @Override
+    public float match(LibraryItem anotherItem, ListSimilarity... listSimilarities) {
+        float similarity = super.match(anotherItem, listSimilarities);
+        Movie anotherMovieItem = (Movie) anotherItem;
+        similarity = Mycin.combine(similarity, ItemIntegrator.durationSimilarity(getMinutes(), anotherMovieItem.getMinutes()));
+        return similarity;
+    }
+
+    @Override
+    public void merge(LibraryItem anotherItem) {
+
     }
 }

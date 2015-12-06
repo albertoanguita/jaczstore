@@ -31,31 +31,50 @@ public abstract class NamedLibraryItem extends LibraryItem {
     }
 
     public List<String> getAliases() {
-        return deserializeList(getString(DatabaseMediator.Field.ALIASES));
+        return getStringList(DatabaseMediator.Field.ALIASES);
     }
 
     public void removeAliases() {
-        set(DatabaseMediator.Field.ALIASES, null);
+        removeStringList(DatabaseMediator.Field.ALIASES);
     }
 
     public boolean removeAlias(String alias) {
-        List<String> Aliases = getAliases();
-        boolean removed = Aliases.remove(alias);
-        setAliases(Aliases);
-        return removed;
+        return removeStringValue(DatabaseMediator.Field.ALIASES, alias);
     }
 
     public void setAliases(List<String> aliases) {
-        set(DatabaseMediator.Field.ALIASES, serializeList(aliases));
+        setStringList(DatabaseMediator.Field.ALIASES, aliases);
     }
 
     public boolean addAlias(String alias) {
-        List<String> aliases = getAliases();
-        boolean notContains = !aliases.contains(alias);
-        if (notContains) {
-            aliases.add(alias);
+        return addStringValue(DatabaseMediator.Field.ALIASES, alias);
+    }
+
+    @Override
+    public float match(LibraryItem anotherItem, ListSimilarity... listSimilarities) {
+        NamedLibraryItem anotherNamedItem = (NamedLibraryItem) anotherItem;
+        List<String> names1 = getAliases();
+        names1.add(getName());
+        List<String> names2 = anotherNamedItem.getAliases();
+        names2.add(anotherNamedItem.getName());
+        float maxSimilarity = -1;
+        for (String name1 : names1) {
+            for (String name2 : names2) {
+                float similarity = ItemIntegrator.personsNameSimilarity(name1, name2);
+                maxSimilarity = similarity > maxSimilarity ? similarity : maxSimilarity;
+            }
         }
-        setAliases(aliases);
-        return notContains;
+        return maxSimilarity;
+    }
+
+    @Override
+    public void merge(LibraryItem anotherItem) {
+        NamedLibraryItem anotherNamedItem = (NamedLibraryItem) anotherItem;
+        if (getName() == null && anotherNamedItem.getName() != null) {
+            setName(anotherNamedItem.getName());
+        }
+        for (String alias : anotherNamedItem.getAliases()) {
+            addAlias(alias);
+        }
     }
 }
