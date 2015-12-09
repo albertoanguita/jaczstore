@@ -1,7 +1,6 @@
 package jacz.store;
 
 import jacz.store.database.DatabaseMediator;
-import jacz.util.AI.inference.Mycin;
 import org.javalite.activejdbc.Model;
 
 import java.util.*;
@@ -22,8 +21,8 @@ public final class TVSeries extends ProducedCreationItem {
     }
 
     @Override
-    protected Model buildModel() {
-        return new jacz.store.database.models.TVSeries();
+    protected DatabaseMediator.ItemType getItemType() {
+        return DatabaseMediator.ItemType.TV_SERIES;
     }
 
     public static List<TVSeries> getTVSeries(String dbPath) {
@@ -127,6 +126,11 @@ public final class TVSeries extends ProducedCreationItem {
 
     @Override
     public void merge(LibraryItem anotherItem) {
+
+    }
+
+    @Override
+    public void mergePostponed(LibraryItem anotherItem) {
 
     }
 }

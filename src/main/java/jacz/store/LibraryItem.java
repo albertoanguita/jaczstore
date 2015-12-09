@@ -6,10 +6,8 @@ import org.javalite.activejdbc.Model;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * Generic library item
@@ -22,13 +20,21 @@ public abstract class LibraryItem {
 
     protected final String dbPath;
 
+    private final Map<DatabaseMediator.Field, Object> pendingChanges;
+
     public LibraryItem(String dbPath) {
         this.dbPath = dbPath;
-        connect();
-        this.model = buildModel();
-        updateTimestamp();
-        save();
-        disconnect();
+        pendingChanges = new HashMap<>();
+        try {
+            connect();
+            this.model = getItemType().modelClass.newInstance();
+            set(DatabaseMediator.Field.CREATION_DATE, DatabaseMediator.dateFormat.format(new Date()), true);
+            save();
+            disconnect();
+        } catch (Exception e) {
+            // todo fatal error
+            System.exit(1);
+        }
     }
 
     LibraryItem(Model model, String dbPath) {
@@ -37,9 +43,10 @@ public abstract class LibraryItem {
         }
         this.model = model;
         this.dbPath = dbPath;
+        pendingChanges = new HashMap<>();
     }
 
-    protected abstract Model buildModel();
+    protected abstract DatabaseMediator.ItemType getItemType();
 
     static boolean contains(Collection<? extends LibraryItem> items, Model model) {
         for (LibraryItem item : items) {
@@ -53,6 +60,16 @@ public abstract class LibraryItem {
     public Integer getId() {
         updateLastAccessTime();
         return (Integer) model.getId();
+    }
+
+    public Date getCreationDate() {
+        try {
+            return DatabaseMediator.dateFormat.parse(getString(DatabaseMediator.Field.CREATION_DATE));
+        } catch (ParseException e) {
+            // error reading the stored date
+            // todo set new date and return it
+            return null;
+        }
     }
 
     public String getString(DatabaseMediator.Field field) {
@@ -85,13 +102,42 @@ public abstract class LibraryItem {
         disconnect();
     }
 
-    protected void set(DatabaseMediator.Field field, Object value) {
+//    protected void set(DatabaseMediator.Field field, Object value) {
+//        set(field, value, true);
+//    }
+
+    protected void set(DatabaseMediator.Field field, Object value, boolean flush) {
+        pendingChanges.put(field, value);
+        if (flush) {
+            flushChanges();
+        }
+    }
+
+    public void reset() {
+        reset(true);
+    }
+
+    public void resetPostponed() {
+        reset(false);
+    }
+
+    private void reset(boolean flush) {
+        for (DatabaseMediator.Field field : getItemType().fields) {
+            set(field, null, flush);
+        }
+    }
+
+    public void flushChanges() {
+        // todo use a transaction so all changes or none are set
         connect();
-        model.set(field.value, value);
+        for (Map.Entry<DatabaseMediator.Field, Object> change : pendingChanges.entrySet()) {
+            model.set(change.getKey().value, change.getValue());
+        }
         DatabaseMediator.updateLastUpdateTime(dbPath);
         updateTimestamp();
         save();
         disconnect();
+        pendingChanges.clear();
     }
 
     public float match(LibraryItem anotherItem, ListSimilarity... listSimilarities) {
@@ -100,6 +146,8 @@ public abstract class LibraryItem {
     }
 
     public abstract void merge(LibraryItem anotherItem);
+
+    public abstract void mergePostponed(LibraryItem anotherItem);
 
     static float evaluateListSimilarity(ListSimilarity listSimilarity, float confidence) {
         int min = Math.min(listSimilarity.firstListSize, listSimilarity.secondListSize);
@@ -262,51 +310,51 @@ public abstract class LibraryItem {
         }
     }
 
-    protected void removeReferencedElements(DatabaseMediator.Field field) {
-        removeList(field);
+    protected void removeReferencedElements(DatabaseMediator.Field field, boolean flush) {
+        removeList(field, flush);
     }
 
-    protected void removeReferencedElementsAndDelete(String field) {
+    protected void removeReferencedElementsAndDelete(String field, boolean flush) {
         // todo
     }
 
-    protected <C extends Model> boolean removeReferencedElement(DatabaseMediator.Field field, LibraryItem item) {
-        return removeReferencedElementById(field, item.getId().toString());
+    protected <C extends Model> boolean removeReferencedElement(DatabaseMediator.Field field, LibraryItem item, boolean flush) {
+        return removeReferencedElementById(field, item.getId().toString(), flush);
     }
 
-    protected <C extends Model> boolean removeReferencedElementById(DatabaseMediator.Field field, String id) {
+    protected <C extends Model> boolean removeReferencedElementById(DatabaseMediator.Field field, String id, boolean flush) {
         List<String> stringList = getStringList(field);
         boolean removed = stringList.remove(id);
-        setStringList(field, stringList);
+        setStringList(field, stringList, flush);
         return removed;
     }
 
-    protected <C extends Model> boolean removeReferencedElementAndDelete(DatabaseMediator.Field field, C model) {
+    protected <C extends Model> boolean removeReferencedElementAndDelete(DatabaseMediator.Field field, C model, boolean flush) {
         List<String> stringList = getStringList(field);
         boolean removed = stringList.remove(model.getId().toString());
-        setStringList(field, stringList);
+        setStringList(field, stringList, flush);
         return removed;
         // todo
     }
 
-    protected void setReferencedElements(DatabaseMediator.Field field, List<? extends LibraryItem> models) {
+    protected void setReferencedElements(DatabaseMediator.Field field, List<? extends LibraryItem> models, boolean flush) {
         List<String> idList = new ArrayList<>();
         for (LibraryItem item : models) {
             idList.add(item.getId().toString());
         }
-        setStringList(field, idList);
+        setStringList(field, idList, flush);
     }
 
-    protected void setReferencedElements(DatabaseMediator.Field field, LibraryItem... models) {
+    protected void setReferencedElements(DatabaseMediator.Field field, boolean flush, LibraryItem... models) {
         List<String> idList = new ArrayList<>();
         for (LibraryItem item : models) {
             idList.add(item.getId().toString());
         }
-        setStringList(field, idList);
+        setStringList(field, idList, flush);
     }
 
-    protected <C extends Model> boolean addReferencedElement(DatabaseMediator.Field field, LibraryItem item) {
-        return addStringValue(field, item.getId().toString());
+    protected <C extends Model> boolean addReferencedElement(DatabaseMediator.Field field, LibraryItem item, boolean flush) {
+        return addStringValue(field, item.getId().toString(), flush);
     }
 
     protected <C extends Model> LazyList<C> getElementsContainingMe(DatabaseMediator.ItemType type, DatabaseMediator.Field field) {
@@ -331,28 +379,28 @@ public abstract class LibraryItem {
         return deserializeList(getString(field));
     }
 
-    protected void removeStringList(DatabaseMediator.Field field) {
-        removeList(field);
+    protected void removeStringList(DatabaseMediator.Field field, boolean flush) {
+        removeList(field, flush);
     }
 
-    protected boolean removeStringValue(DatabaseMediator.Field field, String value) {
+    protected boolean removeStringValue(DatabaseMediator.Field field, String value, boolean flush) {
         List<String> stringList = getStringList(field);
         boolean removed = stringList.remove(value);
-        setStringList(field, stringList);
+        setStringList(field, stringList, flush);
         return removed;
     }
 
-    protected void setStringList(DatabaseMediator.Field field, List<String> stringList) {
-        set(field, serializeList(stringList));
+    protected void setStringList(DatabaseMediator.Field field, List<String> stringList, boolean flush) {
+        set(field, serializeList(stringList), flush);
     }
 
-    protected boolean addStringValue(DatabaseMediator.Field field, String value) {
+    protected boolean addStringValue(DatabaseMediator.Field field, String value, boolean flush) {
         List<String> stringList = getStringList(field);
         boolean notContains = !stringList.contains(value);
         if (notContains) {
             stringList.add(value);
         }
-        setStringList(field, stringList);
+        setStringList(field, stringList, flush);
         return notContains;
     }
 
@@ -376,21 +424,21 @@ public abstract class LibraryItem {
         return null;
     }
 
-    protected <E> boolean removeEnum(DatabaseMediator.Field field, Class<E> enum_, E value, String getNameMethod) {
+    protected <E> boolean removeEnum(DatabaseMediator.Field field, Class<E> enum_, E value, String getNameMethod, boolean flush) {
         List<E> enums = getEnums(field, enum_);
         boolean removed = enums.remove(value);
-        setEnums(field, enum_, enums, getNameMethod);
+        setEnums(field, enum_, enums, getNameMethod, flush);
         return removed;
     }
 
-    protected <E> void setEnums(DatabaseMediator.Field field, Class<E> enum_, List<E> values, String getNameMethod) {
+    protected <E> void setEnums(DatabaseMediator.Field field, Class<E> enum_, List<E> values, String getNameMethod, boolean flush) {
         try {
             Method getName = enum_.getMethod(getNameMethod);
             List<String> strList = new ArrayList<>();
             for (E value : values) {
                 strList.add((String) getName.invoke(value));
             }
-            set(field, serializeList(strList));
+            set(field, serializeList(strList), flush);
         } catch (NoSuchMethodException e) {
             // todo
             e.printStackTrace();
@@ -401,7 +449,7 @@ public abstract class LibraryItem {
         }
     }
 
-    protected <E> boolean addEnums(DatabaseMediator.Field field, Class<E> enum_, List<E> newValues, String getNameMethod) {
+    protected <E> boolean addEnums(DatabaseMediator.Field field, Class<E> enum_, List<E> newValues, String getNameMethod, boolean flush) {
         List<E> values = getEnums(field, enum_);
         boolean modified = false;
         for (E newValue : newValues) {
@@ -411,22 +459,22 @@ public abstract class LibraryItem {
                 modified = true;
             }
         }
-        setEnums(field, enum_, values, getNameMethod);
+        setEnums(field, enum_, values, getNameMethod, flush);
         return modified;
     }
 
-    protected <E> boolean addEnum(DatabaseMediator.Field field, Class<E> enum_, E value, String getNameMethod) {
+    protected <E> boolean addEnum(DatabaseMediator.Field field, Class<E> enum_, E value, String getNameMethod, boolean flush) {
         List<E> values = getEnums(field, enum_);
         boolean notContains = !values.contains(value);
         if (notContains) {
             values.add(value);
         }
-        setEnums(field, enum_, values, getNameMethod);
+        setEnums(field, enum_, values, getNameMethod, flush);
         return notContains;
     }
 
-    protected void removeList(DatabaseMediator.Field field) {
-        set(field, null);
+    protected void removeList(DatabaseMediator.Field field, boolean flush) {
+        set(field, null, flush);
     }
 
     protected String serializeList(List<String> list) {

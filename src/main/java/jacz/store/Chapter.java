@@ -28,8 +28,8 @@ public final class Chapter extends CreationItem {
     }
 
     @Override
-    protected Model buildModel() {
-        return new jacz.store.database.models.Chapter();
+    protected DatabaseMediator.ItemType getItemType() {
+        return DatabaseMediator.ItemType.CHAPTER;
     }
 
     public static List<Chapter> getChapters(String dbPath) {
@@ -61,7 +61,11 @@ public final class Chapter extends CreationItem {
     }
 
     public void setSeason(String season) {
-        set(DatabaseMediator.Field.SEASON, season);
+        set(DatabaseMediator.Field.SEASON, season, true);
+    }
+
+    public void setSeasonPostponed(String season) {
+        set(DatabaseMediator.Field.SEASON, season, false);
     }
 
     public Integer getMinutes() {
@@ -69,7 +73,11 @@ public final class Chapter extends CreationItem {
     }
 
     public void setMinutes(int minutes) {
-        set(DatabaseMediator.Field.MINUTES, minutes);
+        set(DatabaseMediator.Field.MINUTES, minutes, true);
+    }
+
+    public void setMinutesPostponed(int minutes) {
+        set(DatabaseMediator.Field.MINUTES, minutes, false);
     }
 
     public List<Person> getDirectors() {
@@ -103,23 +111,43 @@ public final class Chapter extends CreationItem {
     }
 
     public <C extends Model> void removeVideoFiles() {
-        removeReferencedElements(DatabaseMediator.Field.VIDEO_FILE_LIST);
+        removeReferencedElements(DatabaseMediator.Field.VIDEO_FILE_LIST, true);
+    }
+
+    public <C extends Model> void removeVideoFilesPostponed() {
+        removeReferencedElements(DatabaseMediator.Field.VIDEO_FILE_LIST, false);
     }
 
     public <C extends Model> void removeVideoFile(VideoFile videoFile) {
-        removeReferencedElement(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFile);
+        removeReferencedElement(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFile, true);
+    }
+
+    public <C extends Model> void removeVideoFilePostponed(VideoFile videoFile) {
+        removeReferencedElement(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFile, false);
     }
 
     public void setVideoFiles(List<VideoFile> videoFiles) {
-        setReferencedElements(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFiles);
+        setReferencedElements(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFiles, true);
+    }
+
+    public void setVideoFilesPostponed(List<VideoFile> videoFiles) {
+        setReferencedElements(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFiles, false);
     }
 
     public void setVideoFiles(VideoFile... videoFiles) {
-        setReferencedElements(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFiles);
+        setReferencedElements(DatabaseMediator.Field.VIDEO_FILE_LIST, true, videoFiles);
+    }
+
+    public void setVideoFilesPostponed(VideoFile... videoFiles) {
+        setReferencedElements(DatabaseMediator.Field.VIDEO_FILE_LIST, false, videoFiles);
     }
 
     public <C extends Model> void addVideoFile(VideoFile videoFile) {
-        addReferencedElement(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFile);
+        addReferencedElement(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFile, true);
+    }
+
+    public <C extends Model> void addVideoFilePostponed(VideoFile videoFile) {
+        addReferencedElement(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFile, false);
     }
 
     @Override
@@ -132,6 +160,11 @@ public final class Chapter extends CreationItem {
 
     @Override
     public void merge(LibraryItem anotherItem) {
+
+    }
+
+    @Override
+    public void mergePostponed(LibraryItem anotherItem) {
 
     }
 }

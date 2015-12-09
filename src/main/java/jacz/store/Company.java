@@ -20,8 +20,8 @@ public final class Company extends NamedLibraryItem {
     }
 
     @Override
-    protected Model buildModel() {
-        return new jacz.store.database.models.Company();
+    protected DatabaseMediator.ItemType getItemType() {
+        return DatabaseMediator.ItemType.COMPANY;
     }
 
     static List<Company> buildList(String dbPath, List<? extends Model> models) {
@@ -41,6 +41,11 @@ public final class Company extends NamedLibraryItem {
 
     public static List<Company> getCompanies(String dbPath) {
         return buildList(dbPath, getModels(dbPath, DatabaseMediator.ItemType.COMPANY));
+    }
+
+    public static Company getCompanyById(String dbPath, int id) {
+        Model model = getModelById(dbPath, DatabaseMediator.ItemType.COMPANY, id);
+        return model != null ? new Company(model, dbPath) : null;
     }
 
     public List<Movie> getMovies(String dbPath) {

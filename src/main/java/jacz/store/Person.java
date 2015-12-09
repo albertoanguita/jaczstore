@@ -20,8 +20,8 @@ public final class Person extends NamedLibraryItem {
     }
 
     @Override
-    protected Model buildModel() {
-        return new jacz.store.database.models.Person();
+    protected DatabaseMediator.ItemType getItemType() {
+        return DatabaseMediator.ItemType.PERSON;
     }
 
     static List<Person> buildList(String dbPath, List<? extends Model> models) {
@@ -54,6 +54,11 @@ public final class Person extends NamedLibraryItem {
 
     public static List<Person> getPeople(String dbPath) {
         return buildList(dbPath, getModels(dbPath, DatabaseMediator.ItemType.PERSON));
+    }
+
+    public static Person getPersonById(String dbPath, int id) {
+        Model model = getModelById(dbPath, DatabaseMediator.ItemType.PERSON, id);
+        return model != null ? new Person(model, dbPath) : null;
     }
 
     public List<Movie> getMoviesAsActor(String dbPath) {

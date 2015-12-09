@@ -1,13 +1,23 @@
 package jacz.store.database;
 
-import jacz.store.ConcurrentDataAccessControl;
+import jacz.store.*;
 import jacz.store.database.models.*;
+import jacz.store.database.models.Chapter;
+import jacz.store.database.models.Company;
+import jacz.store.database.models.Metadata;
+import jacz.store.database.models.Movie;
+import jacz.store.database.models.Person;
+import jacz.store.database.models.SubtitleFile;
+import jacz.store.database.models.TVSeries;
+import jacz.store.database.models.Tag;
+import jacz.store.database.models.VideoFile;
 import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.Model;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -16,24 +26,36 @@ import java.util.regex.Pattern;
 public class DatabaseMediator {
 
     public enum ItemType {
-        METADATA("metadata", Metadata.class),
-        DELETED_ITEMS("deleted_items", DeletedItem.class),
-        MOVIE("movies", Movie.class),
-        TV_SERIES("tv_series", TVSeries.class),
-        CHAPTER("chapters", Chapter.class),
-        PERSON("people", Person.class),
-        COMPANY("companies", Company.class),
-        VIDEO_FILE("video_files", VideoFile.class),
-        SUBTITLE_FILE("subtitle_files", SubtitleFile.class),
-        TAG("tags", Tag.class);
+        METADATA("metadata", Metadata.class, Field.ID, Field.VERSION, Field.IDENTIFIER, Field.CREATION_DATE,
+                Field.LAST_ACCESS, Field.LAST_UPDATE, Field.NEXT_TIMESTAMP),
+        DELETED_ITEMS("deleted_items", DeletedItem.class, Field.ID, Field.ITEM_TABLE, Field.ITEM_ID, Field.TIMESTAMP),
+        MOVIE("movies", Movie.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.TITLE, Field.ORIGINAL_TITLE,
+                Field.YEAR, Field.CREATOR_LIST, Field.ACTOR_LIST, Field.COMPANY_LIST, Field.COUNTRIES,
+                Field.EXTERNAL_URLS, Field.GENRES, Field.VIDEO_FILE_LIST, Field.IMAGE_HASH, Field.MINUTES),
+        TV_SERIES("tv_series", TVSeries.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.TITLE,
+                Field.ORIGINAL_TITLE, Field.YEAR, Field.CREATOR_LIST, Field.ACTOR_LIST, Field.COMPANY_LIST,
+                Field.COUNTRIES, Field.EXTERNAL_URLS, Field.GENRES, Field.IMAGE_HASH),
+        CHAPTER("chapters", Chapter.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.TITLE,
+                Field.ORIGINAL_TITLE, Field.YEAR, Field.CREATOR_LIST, Field.ACTOR_LIST, Field.COUNTRIES,
+                Field.EXTERNAL_URLS, Field.TV_SERIES_ID, Field.SEASON, Field.VIDEO_FILE_LIST, Field.MINUTES),
+        PERSON("people", Person.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.NAME, Field.ALIASES),
+        COMPANY("companies", Company.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.NAME, Field.ALIASES),
+        VIDEO_FILE("video_files", VideoFile.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.HASH,
+                Field.LENGTH, Field.NAME, Field.MINUTES, Field.RESOLUTION, Field.QUALITY_CODE, Field.LANGUAGES),
+        SUBTITLE_FILE("subtitle_files", SubtitleFile.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP,
+                Field.HASH, Field.LENGTH, Field.NAME, Field.VIDEO_FILE_ID, Field.LANGUAGES),
+        TAG("tags", Tag.class, Field.ID, Field.ITEM_TABLE, Field.ITEM_ID, Field.NAME);
 
         public final String table;
 
         public final Class<? extends Model> modelClass;
 
-        ItemType(String table, Class<? extends Model> modelClass) {
+        public final Field[] fields;
+
+        ItemType(String table, Class<? extends Model> modelClass, Field... fields) {
             this.table = table;
             this.modelClass = modelClass;
+            this.fields = fields;
         }
     }
 
@@ -102,7 +124,7 @@ public class DatabaseMediator {
         CHAPTERS
     }
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("Y/M/d-HH:mm:ss:SSS");
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("Y/M/d-HH:mm:ss:SSS");
 
     private static final Pattern AUTOCOMPLETE_DB = Pattern.compile("^(.)*store.db$");
 
@@ -128,25 +150,16 @@ public class DatabaseMediator {
     private static void createDatabase(String path, String version, String identifier) {
         connect(path);
 
-        createTable(ItemType.METADATA, Field.ID, Field.VERSION, Field.IDENTIFIER, Field.CREATION_DATE,
-                Field.LAST_ACCESS, Field.LAST_UPDATE, Field.NEXT_TIMESTAMP);
-        createTable(ItemType.DELETED_ITEMS, Field.ID, Field.ITEM_TABLE, Field.ITEM_ID, Field.TIMESTAMP);
-        createTable(ItemType.MOVIE, Field.ID, Field.TIMESTAMP, Field.TITLE, Field.ORIGINAL_TITLE, Field.YEAR,
-                Field.CREATOR_LIST, Field.ACTOR_LIST, Field.COMPANY_LIST, Field.COUNTRIES, Field.EXTERNAL_URLS,
-                Field.GENRES, Field.VIDEO_FILE_LIST, Field.IMAGE_HASH, Field.MINUTES);
-        createTable(ItemType.TV_SERIES, Field.ID, Field.TIMESTAMP, Field.TITLE, Field.ORIGINAL_TITLE, Field.YEAR,
-                Field.CREATOR_LIST, Field.ACTOR_LIST, Field.COMPANY_LIST, Field.COUNTRIES, Field.EXTERNAL_URLS,
-                Field.GENRES, Field.IMAGE_HASH);
-        createTable(ItemType.CHAPTER, Field.ID, Field.TIMESTAMP, Field.TITLE, Field.ORIGINAL_TITLE, Field.YEAR,
-                Field.CREATOR_LIST, Field.ACTOR_LIST, Field.COUNTRIES, Field.EXTERNAL_URLS,
-                Field.TV_SERIES_ID, Field.SEASON, Field.VIDEO_FILE_LIST, Field.MINUTES);
-        createTable(ItemType.PERSON, Field.ID, Field.TIMESTAMP, Field.NAME, Field.ALIASES);
-        createTable(ItemType.COMPANY, Field.ID, Field.TIMESTAMP, Field.NAME, Field.ALIASES);
-        createTable(ItemType.VIDEO_FILE, Field.ID, Field.TIMESTAMP, Field.HASH, Field.LENGTH, Field.NAME,
-                Field.MINUTES, Field.RESOLUTION, Field.QUALITY_CODE, Field.LANGUAGES);
-        createTable(ItemType.SUBTITLE_FILE, Field.ID, Field.TIMESTAMP, Field.HASH, Field.LENGTH, Field.NAME,
-                Field.VIDEO_FILE_ID, Field.LANGUAGES);
-        createTable(ItemType.TAG, Field.ID, Field.ITEM_TABLE, Field.ITEM_ID, Field.NAME);
+        createTable(ItemType.METADATA);
+        createTable(ItemType.DELETED_ITEMS);
+        createTable(ItemType.MOVIE);
+        createTable(ItemType.TV_SERIES);
+        createTable(ItemType.CHAPTER);
+        createTable(ItemType.PERSON);
+        createTable(ItemType.COMPANY);
+        createTable(ItemType.VIDEO_FILE);
+        createTable(ItemType.SUBTITLE_FILE);
+        createTable(ItemType.TAG);
 
         String nowString = dateFormat.format(new Date());
         new Metadata()
@@ -161,14 +174,101 @@ public class DatabaseMediator {
         disconnect(path);
     }
 
-    private static void createTable(ItemType itemType, Field... fields) {
+    private static void createTable(ItemType itemType) {
         StringBuilder create = new StringBuilder("CREATE TABLE ").append(itemType.table).append("(");
-        for (Field field : fields) {
+        for (Field field : itemType.fields) {
             create.append(field.value).append(" ").append(field.type.value).append(",");
         }
         // replace last comma with a ')'
         create.replace(create.length() - 1, create.length(), ")");
         Base.exec(create.toString());
+    }
+
+    public static LibraryItem createNewItem(String dbPath, ItemType type) {
+        switch (type) {
+
+            case MOVIE:
+                return new jacz.store.Movie(dbPath);
+
+            case TV_SERIES:
+                return new jacz.store.TVSeries(dbPath);
+
+            case CHAPTER:
+                return new jacz.store.Chapter(dbPath);
+
+            case PERSON:
+                return new jacz.store.Person(dbPath);
+
+            case COMPANY:
+                return new jacz.store.Company(dbPath);
+
+            case VIDEO_FILE:
+                return new jacz.store.VideoFile(dbPath);
+
+            case SUBTITLE_FILE:
+                return new jacz.store.SubtitleFile(dbPath);
+
+            default:
+                throw new IllegalArgumentException("Cannot build items of type " + type.name());
+        }
+    }
+
+    public static List<? extends LibraryItem> getItems(String dbPath, ItemType type) {
+        switch (type) {
+
+            case MOVIE:
+                return jacz.store.Movie.getMovies(dbPath);
+
+            case TV_SERIES:
+                return jacz.store.TVSeries.getTVSeries(dbPath);
+
+            case CHAPTER:
+                return jacz.store.Chapter.getChapters(dbPath);
+
+            case PERSON:
+                return jacz.store.Person.getPeople(dbPath);
+
+            case COMPANY:
+                return jacz.store.Company.getCompanies(dbPath);
+
+            case VIDEO_FILE:
+                return jacz.store.VideoFile.getVideoFiles(dbPath);
+
+            case SUBTITLE_FILE:
+                return jacz.store.SubtitleFile.getSubtitleFiles(dbPath);
+
+            default:
+                throw new IllegalArgumentException("Cannot build items of type " + type.name());
+        }
+    }
+
+    public static LibraryItem getItem(String dbPath, ItemType type, Integer id) {
+        switch (type) {
+
+            case MOVIE:
+                return jacz.store.Movie.getMovieById(dbPath, id);
+
+            case TV_SERIES:
+                return jacz.store.TVSeries.getTVSeriesById(dbPath, id);
+
+            case CHAPTER:
+                return jacz.store.Chapter.getChapterById(dbPath, id);
+
+            case PERSON:
+                return jacz.store.Person.getPersonById(dbPath, id);
+
+            case COMPANY:
+                return jacz.store.Company.getCompanyById(dbPath, id);
+
+            case VIDEO_FILE:
+                return jacz.store.VideoFile.getVideoFileById(dbPath, id);
+
+            case SUBTITLE_FILE:
+                return jacz.store.SubtitleFile.getSubtitleFileById(dbPath, id);
+
+            default:
+                throw new IllegalArgumentException("Cannot build items of type " + type.name());
+        }
     }
 
     public static String getDatabaseIdentifier(String dbPath) {

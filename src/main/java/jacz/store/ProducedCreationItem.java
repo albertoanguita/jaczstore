@@ -1,6 +1,5 @@
 package jacz.store;
 
-import com.neovisionaries.i18n.CountryCode;
 import jacz.store.database.DatabaseMediator;
 import jacz.store.util.GenreCode;
 import jacz.util.AI.inference.Mycin;
@@ -34,23 +33,43 @@ public abstract class ProducedCreationItem extends CreationItem {
     }
 
     public <C extends Model> void removeProductionCompanies() {
-        removeReferencedElements(DatabaseMediator.Field.COMPANY_LIST);
+        removeReferencedElements(DatabaseMediator.Field.COMPANY_LIST, true);
+    }
+
+    public <C extends Model> void removeProductionCompaniesPostponed() {
+        removeReferencedElements(DatabaseMediator.Field.COMPANY_LIST, false);
     }
 
     public <C extends Model> void removeProductionCompany(Company company) {
-        removeReferencedElement(DatabaseMediator.Field.COMPANY_LIST, company);
+        removeReferencedElement(DatabaseMediator.Field.COMPANY_LIST, company, true);
+    }
+
+    public <C extends Model> void removeProductionCompanyPostponed(Company company) {
+        removeReferencedElement(DatabaseMediator.Field.COMPANY_LIST, company, false);
     }
 
     public void setProductionCompanies(List<Company> companies) {
-        setReferencedElements(DatabaseMediator.Field.COMPANY_LIST, companies);
+        setReferencedElements(DatabaseMediator.Field.COMPANY_LIST, companies, true);
+    }
+
+    public void setProductionCompaniesPostponed(List<Company> companies) {
+        setReferencedElements(DatabaseMediator.Field.COMPANY_LIST, companies, false);
     }
 
     public void setProductionCompanies(Company... companies) {
-        setReferencedElements(DatabaseMediator.Field.COMPANY_LIST, companies);
+        setReferencedElements(DatabaseMediator.Field.COMPANY_LIST, true, companies);
+    }
+
+    public void setProductionCompaniesPostponed(Company... companies) {
+        setReferencedElements(DatabaseMediator.Field.COMPANY_LIST, false, companies);
     }
 
     public <C extends Model> void addProductionCompany(Company company) {
-        addReferencedElement(DatabaseMediator.Field.COMPANY_LIST, company);
+        addReferencedElement(DatabaseMediator.Field.COMPANY_LIST, company, true);
+    }
+
+    public <C extends Model> void addProductionCompanyPostponed(Company company) {
+        addReferencedElement(DatabaseMediator.Field.COMPANY_LIST, company, false);
     }
 
     protected List<GenreCode> getGenres() {
@@ -58,19 +77,35 @@ public abstract class ProducedCreationItem extends CreationItem {
     }
 
     protected void removeGenres() {
-        removeList(DatabaseMediator.Field.GENRES);
+        removeList(DatabaseMediator.Field.GENRES, true);
+    }
+
+    protected void removeGenresPostponed() {
+        removeList(DatabaseMediator.Field.GENRES, false);
     }
 
     protected boolean removeGenre(GenreCode genre) {
-        return removeEnum(DatabaseMediator.Field.GENRES, GenreCode.class, genre, "name");
+        return removeEnum(DatabaseMediator.Field.GENRES, GenreCode.class, genre, "name", true);
+    }
+
+    protected boolean removeGenrePostponed(GenreCode genre) {
+        return removeEnum(DatabaseMediator.Field.GENRES, GenreCode.class, genre, "name", false);
     }
 
     protected void setGenres(List<GenreCode> genres) {
-        setEnums(DatabaseMediator.Field.GENRES, GenreCode.class, genres, "name");
+        setEnums(DatabaseMediator.Field.GENRES, GenreCode.class, genres, "name", true);
+    }
+
+    protected void setGenresPostponed(List<GenreCode> genres) {
+        setEnums(DatabaseMediator.Field.GENRES, GenreCode.class, genres, "name", false);
     }
 
     protected boolean addGenre(GenreCode genre) {
-        return addEnum(DatabaseMediator.Field.GENRES, GenreCode.class, genre, "name");
+        return addEnum(DatabaseMediator.Field.GENRES, GenreCode.class, genre, "name", true);
+    }
+
+    protected boolean addGenrePostponed(GenreCode genre) {
+        return addEnum(DatabaseMediator.Field.GENRES, GenreCode.class, genre, "name", false);
     }
 
     public String getImageHash() {
@@ -78,7 +113,11 @@ public abstract class ProducedCreationItem extends CreationItem {
     }
 
     public void setImageHash(String imageHash) {
-        set(DatabaseMediator.Field.IMAGE_HASH, imageHash);
+        set(DatabaseMediator.Field.IMAGE_HASH, imageHash, true);
+    }
+
+    public void setImageHashPostponed(String imageHash) {
+        set(DatabaseMediator.Field.IMAGE_HASH, imageHash, false);
     }
 
     @Override
@@ -105,6 +144,11 @@ public abstract class ProducedCreationItem extends CreationItem {
 
     @Override
     public void merge(LibraryItem anotherItem) {
+
+    }
+
+    @Override
+    public void mergePostponed(LibraryItem anotherItem) {
 
     }
 }

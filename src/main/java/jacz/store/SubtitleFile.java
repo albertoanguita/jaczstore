@@ -22,8 +22,17 @@ public final class SubtitleFile extends FileWithLanguages {
     }
 
     @Override
-    protected Model buildModel() {
-        return new jacz.store.database.models.SubtitleFile();
+    protected DatabaseMediator.ItemType getItemType() {
+        return DatabaseMediator.ItemType.SUBTITLE_FILE;
+    }
+
+    public static List<SubtitleFile> getSubtitleFiles(String dbPath) {
+        return buildList(dbPath, getModels(dbPath, DatabaseMediator.ItemType.SUBTITLE_FILE));
+    }
+
+    public static SubtitleFile getSubtitleFileById(String dbPath, int id) {
+        Model model = getModelById(dbPath, DatabaseMediator.ItemType.SUBTITLE_FILE, id);
+        return model != null ? new SubtitleFile(model, dbPath) : null;
     }
 
     static List<SubtitleFile> buildList(String dbPath, List<? extends Model> models) {

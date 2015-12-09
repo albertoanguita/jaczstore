@@ -31,8 +31,17 @@ public final class VideoFile extends FileWithLanguages {
     }
 
     @Override
-    protected Model buildModel() {
-        return new jacz.store.database.models.VideoFile();
+    protected DatabaseMediator.ItemType getItemType() {
+        return DatabaseMediator.ItemType.VIDEO_FILE;
+    }
+
+    public static List<VideoFile> getVideoFiles(String dbPath) {
+        return buildList(dbPath, getModels(dbPath, DatabaseMediator.ItemType.VIDEO_FILE));
+    }
+
+    public static VideoFile getVideoFileById(String dbPath, int id) {
+        Model model = getModelById(dbPath, DatabaseMediator.ItemType.VIDEO_FILE, id);
+        return model != null ? new VideoFile(model, dbPath) : null;
     }
 
     static List<VideoFile> buildList(String dbPath, List<? extends Model> models) {
@@ -55,7 +64,11 @@ public final class VideoFile extends FileWithLanguages {
     }
 
     public void setMinutes(Integer minutes) {
-        set(DatabaseMediator.Field.MINUTES, minutes);
+        set(DatabaseMediator.Field.MINUTES, minutes, true);
+    }
+
+    public void setMinutesPostponed(Integer minutes) {
+        set(DatabaseMediator.Field.MINUTES, minutes, false);
     }
 
     public Integer getResolution() {
@@ -63,7 +76,11 @@ public final class VideoFile extends FileWithLanguages {
     }
 
     public void setResolution(Integer resolution) {
-        set(DatabaseMediator.Field.RESOLUTION, resolution);
+        set(DatabaseMediator.Field.RESOLUTION, resolution, true);
+    }
+
+    public void setResolutionPostponed(Integer resolution) {
+        set(DatabaseMediator.Field.RESOLUTION, resolution, false);
     }
 
     public QualityCode getQuality() {
@@ -71,7 +88,11 @@ public final class VideoFile extends FileWithLanguages {
     }
 
     public void setQuality(QualityCode quality) {
-        set(DatabaseMediator.Field.QUALITY_CODE, quality.name());
+        set(DatabaseMediator.Field.QUALITY_CODE, quality.name(), true);
+    }
+
+    public void setQualityPostponed(QualityCode quality) {
+        set(DatabaseMediator.Field.QUALITY_CODE, quality.name(), false);
     }
 
     public List<SubtitleFile> getSubtitleFiles() {

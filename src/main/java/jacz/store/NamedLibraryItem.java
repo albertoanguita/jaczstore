@@ -27,7 +27,11 @@ public abstract class NamedLibraryItem extends LibraryItem {
     }
 
     public void setName(String name) {
-        set(DatabaseMediator.Field.NAME, name);
+        set(DatabaseMediator.Field.NAME, name, true);
+    }
+
+    public void setNamePostponed(String name) {
+        set(DatabaseMediator.Field.NAME, name, false);
     }
 
     public List<String> getAliases() {
@@ -35,19 +39,35 @@ public abstract class NamedLibraryItem extends LibraryItem {
     }
 
     public void removeAliases() {
-        removeStringList(DatabaseMediator.Field.ALIASES);
+        removeStringList(DatabaseMediator.Field.ALIASES, true);
+    }
+
+    public void removeAliasesPostponed() {
+        removeStringList(DatabaseMediator.Field.ALIASES, false);
     }
 
     public boolean removeAlias(String alias) {
-        return removeStringValue(DatabaseMediator.Field.ALIASES, alias);
+        return removeStringValue(DatabaseMediator.Field.ALIASES, alias, true);
+    }
+
+    public boolean removeAliasPostponed(String alias) {
+        return removeStringValue(DatabaseMediator.Field.ALIASES, alias, false);
     }
 
     public void setAliases(List<String> aliases) {
-        setStringList(DatabaseMediator.Field.ALIASES, aliases);
+        setStringList(DatabaseMediator.Field.ALIASES, aliases, true);
+    }
+
+    public void setAliasesPostponed(List<String> aliases) {
+        setStringList(DatabaseMediator.Field.ALIASES, aliases, false);
     }
 
     public boolean addAlias(String alias) {
-        return addStringValue(DatabaseMediator.Field.ALIASES, alias);
+        return addStringValue(DatabaseMediator.Field.ALIASES, alias, true);
+    }
+
+    public boolean addAliasPostponed(String alias) {
+        return addStringValue(DatabaseMediator.Field.ALIASES, alias, false);
     }
 
     @Override
@@ -75,6 +95,17 @@ public abstract class NamedLibraryItem extends LibraryItem {
         }
         for (String alias : anotherNamedItem.getAliases()) {
             addAlias(alias);
+        }
+    }
+
+    @Override
+    public void mergePostponed(LibraryItem anotherItem) {
+        NamedLibraryItem anotherNamedItem = (NamedLibraryItem) anotherItem;
+        if (getName() == null && anotherNamedItem.getName() != null) {
+            setNamePostponed(anotherNamedItem.getName());
+        }
+        for (String alias : anotherNamedItem.getAliases()) {
+            addAliasPostponed(alias);
         }
     }
 }

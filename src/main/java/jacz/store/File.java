@@ -25,7 +25,11 @@ public abstract class File extends LibraryItem {
     }
 
     public void setHash(String hash) {
-        set(DatabaseMediator.Field.HASH, hash);
+        set(DatabaseMediator.Field.HASH, hash, true);
+    }
+
+    public void setHashPostponed(String hash) {
+        set(DatabaseMediator.Field.HASH, hash, false);
     }
 
     public Long getLength() {
@@ -33,7 +37,11 @@ public abstract class File extends LibraryItem {
     }
 
     public void setLength(Long length) {
-        set(DatabaseMediator.Field.LENGTH, length);
+        set(DatabaseMediator.Field.LENGTH, length, true);
+    }
+
+    public void setLengthPostponed(Long length) {
+        set(DatabaseMediator.Field.LENGTH, length, false);
     }
 
     public String getName() {
@@ -41,7 +49,11 @@ public abstract class File extends LibraryItem {
     }
 
     public void setName(String name) {
-        set(DatabaseMediator.Field.NAME, name);
+        set(DatabaseMediator.Field.NAME, name, true);
+    }
+
+    public void setNamePostponed(String name) {
+        set(DatabaseMediator.Field.NAME, name, false);
     }
 
     @Override
@@ -62,6 +74,17 @@ public abstract class File extends LibraryItem {
         }
         if (getName() == null && anotherFile.getName() != null) {
             setName(anotherFile.getName());
+        }
+    }
+
+    @Override
+    public void mergePostponed(LibraryItem anotherItem) {
+        File anotherFile = (File) anotherItem;
+        if (getLength() == null && anotherFile.getLength() != null) {
+            setLengthPostponed(anotherFile.getLength());
+        }
+        if (getName() == null && anotherFile.getName() != null) {
+            setNamePostponed(anotherFile.getName());
         }
     }
 }
