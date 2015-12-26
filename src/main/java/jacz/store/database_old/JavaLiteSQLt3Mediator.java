@@ -1,6 +1,6 @@
 package jacz.store.database_old;
 
-import jacz.store.*;
+import jacz.database.*;
 
 import java.sql.SQLException;
 import java.util.List;

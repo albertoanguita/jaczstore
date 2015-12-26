@@ -5,7 +5,7 @@ import jacz.util.io.SixBitSerializer;
 /**
  * Factory for identifier objects
  * <p/>
- * Identifiers are local to a database but global to containers; two databases might share identifiers,
+ * Identifiers are local to a database but global to containers; two database might share identifiers,
  * but two containers may not share an id.
  * <p/>
  * We use 60-bit identifiers, which is enough for the library items that a user will ever create. We store them with the 6-bit character codification

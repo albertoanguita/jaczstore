@@ -1,10 +1,10 @@
-package jacz.store.old2;
+package jacz.database;
 
-import jacz.store.old2.common.LibraryItem;
+import jacz.store.old.ItemContainer;
+import jacz.store.old2.Database;
 import jacz.store.old2.db_mediator.CorruptDataException;
 import jacz.store.old2.db_mediator.DBException;
 import jacz.store.old2.db_mediator.DBMediator;
-import jacz.store.old.ItemContainer;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -12,12 +12,12 @@ import java.util.Collection;
 /**
  * Code for integrating disparate database into a single one
  */
-public class Integrator {
+public class ItemIntegrator {
 
     /**
      * Threshold for considering two items equal
      */
-    private static final float threshold = 0.95f;
+    private static final float THRESHOLD = 0.95f;
 
     public static Database integrateDatabases(DBMediator integratedDBMediator, boolean loadInMemory, Collection<Database> databases) throws DBException, IOException, CorruptDataException {
         // we merge the database one by one into a "central" database
@@ -38,7 +38,7 @@ public class Integrator {
 //        integrateLibrary(integratedDatabase.getAudioAlbumLibrary(), oneDatabase.getAudioAlbumLibrary());
     }
 
-    private static <T extends LibraryItem> void integrateLibrary(ItemContainer<T> integratedLibrary, ItemContainer<T> anotherLibrary) {
+    private static <T extends jacz.store.old2.common.LibraryItem> void integrateLibrary(ItemContainer<T> integratedLibrary, ItemContainer<T> anotherLibrary) {
 //        for (Map.Entry<String, T> onePerson : anotherLibrary.getAllItems()) {
 //            boolean matchFound = false;
 //            String integratedIdentifier = null;
@@ -60,8 +60,8 @@ public class Integrator {
 //        }
     }
 
-    private static boolean isMatch(LibraryItem value1, LibraryItem value2) {
-        return value1.match(value2) >= threshold;
+    private static boolean isMatch(DatabaseItem item1, DatabaseItem item2) {
+        return item1.match(item2) >= THRESHOLD;
     }
 
     public static float genericNameSimilarity(String name1, String name2) {
@@ -122,7 +122,23 @@ public class Integrator {
             } else if (Math.abs(year1 - year2) == 1) {
                 return -0.2f;
             } else {
-                return -0.99f;
+                return -0.90f;
+            }
+        } else {
+            return 0f;
+        }
+    }
+
+    public static float durationSimilarity(Integer minutes1, Integer minutes2) {
+        if (minutes1 != null && minutes2 != null) {
+            if (minutes1.equals(minutes2)) {
+                return 0.2f;
+            } else if (Math.abs(minutes1 - minutes2) < 3) {
+                return 0.1f;
+            } else if (Math.abs(minutes1 - minutes2) < 6) {
+                return 0.05f;
+            } else {
+                return 0f;
             }
         } else {
             return 0f;
