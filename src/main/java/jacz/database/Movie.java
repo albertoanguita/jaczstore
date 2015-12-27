@@ -25,7 +25,7 @@ public final class Movie extends ProducedCreationItem {
     }
 
     @Override
-    protected DatabaseMediator.ItemType getItemType() {
+    public DatabaseMediator.ItemType getItemType() {
         return DatabaseMediator.ItemType.MOVIE;
     }
 

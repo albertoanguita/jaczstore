@@ -22,7 +22,7 @@ public final class TVSeries extends ProducedCreationItem {
     }
 
     @Override
-    protected DatabaseMediator.ItemType getItemType() {
+    public DatabaseMediator.ItemType getItemType() {
         return DatabaseMediator.ItemType.TV_SERIES;
     }
 

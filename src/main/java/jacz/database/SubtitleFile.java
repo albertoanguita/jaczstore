@@ -21,7 +21,7 @@ public final class SubtitleFile extends FileWithLanguages {
     }
 
     @Override
-    protected DatabaseMediator.ItemType getItemType() {
+    public DatabaseMediator.ItemType getItemType() {
         return DatabaseMediator.ItemType.SUBTITLE_FILE;
     }
 

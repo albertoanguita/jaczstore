@@ -1,8 +1,8 @@
 package jacz.database;
 
-import jacz.database.models.*;
 import jacz.database.models.Chapter;
 import jacz.database.models.Company;
+import jacz.database.models.DeletedItem;
 import jacz.database.models.Metadata;
 import jacz.database.models.Movie;
 import jacz.database.models.Person;
@@ -16,7 +16,9 @@ import org.javalite.activejdbc.Model;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -27,7 +29,7 @@ public class DatabaseMediator {
     public enum ItemType {
         METADATA("metadata", Metadata.class, Field.ID, Field.VERSION, Field.IDENTIFIER, Field.CREATION_DATE,
                 Field.LAST_ACCESS, Field.LAST_UPDATE, Field.NEXT_TIMESTAMP),
-        DELETED_ITEMS("deleted_items", DeletedItem.class, Field.ID, Field.ITEM_TABLE, Field.ITEM_ID, Field.TIMESTAMP),
+        DELETED_ITEM("deleted_items", DeletedItem.class, Field.ID, Field.ITEM_TYPE, Field.ITEM_ID, Field.TIMESTAMP),
         MOVIE("movies", Movie.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.TITLE, Field.ORIGINAL_TITLE,
                 Field.YEAR, Field.CREATOR_LIST, Field.ACTOR_LIST, Field.COMPANY_LIST, Field.COUNTRIES,
                 Field.EXTERNAL_URLS, Field.GENRES, Field.VIDEO_FILE_LIST, Field.IMAGE_HASH, Field.MINUTES),
@@ -54,6 +56,7 @@ public class DatabaseMediator {
 
         ItemType(String table, Class<? extends Model> modelClass, Field... fields) {
             this.table = table;
+            DatabaseMediator.addTableNameToItemMap(table, this);
             this.modelClass = modelClass;
             this.fields = fields;
         }
@@ -67,7 +70,8 @@ public class DatabaseMediator {
         LAST_ACCESS("lastAccess", Type.TEXT),
         LAST_UPDATE("lastUpdate", Type.TEXT),
         NEXT_TIMESTAMP("nextTimestamp", Type.INTEGER),
-        ITEM_TABLE("item_table", Type.TEXT),
+        ITEM_TYPE("item_type", Type.TEXT),
+        ITEM_TABLE("item_table", Type.TEXT), // todo change to type???
         ITEM_ID("item_id", Type.INTEGER),
         TIMESTAMP("timestamp", Type.INTEGER),
         TITLE("title", Type.TEXT),
@@ -130,12 +134,21 @@ public class DatabaseMediator {
 
     public static final String CURRENT_VERSION = VERSION_0_1;
 
+    private static final Map<String, ItemType> tableNameToItemType = new HashMap<>();
+
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("Y/M/d-HH:mm:ss:SSS");
 
-    private static final Pattern AUTOCOMPLETE_DB = Pattern.compile("^(.)*store.db$");
+//    private static final Pattern AUTOCOMPLETE_DB = Pattern.compile("^(.)*store.db$");
 
     private static int connectionCount = 0;
 
+    private static void addTableNameToItemMap(String tableName, ItemType type) {
+        tableNameToItemType.put(tableName, type);
+    }
+
+    public static ItemType getItemType(String tableName) {
+        return tableNameToItemType.get(tableName);
+    }
 
     public static void dropAndCreate(String path, String identifier) {
         dropDatabase(path);
@@ -157,7 +170,7 @@ public class DatabaseMediator {
         connect(path);
 
         createTable(ItemType.METADATA);
-        createTable(ItemType.DELETED_ITEMS);
+        createTable(ItemType.DELETED_ITEM);
         createTable(ItemType.MOVIE);
         createTable(ItemType.TV_SERIES);
         createTable(ItemType.CHAPTER);

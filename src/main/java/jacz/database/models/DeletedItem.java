@@ -9,6 +9,10 @@ import org.javalite.activejdbc.Model;
 public class DeletedItem extends Model {
 
     static void addDeletedItem(Model model, String tableName) {
-        new DeletedItem().set("item_table", tableName).set("item_id", model.getInteger("id")).set("timestamp", DatabaseMediator.getNewTimestamp()).saveIt();
+        new DeletedItem()
+                .set(DatabaseMediator.Field.ITEM_TYPE.value, DatabaseMediator.getItemType(tableName).name())
+                .set(DatabaseMediator.Field.ITEM_ID.value, model.getInteger(DatabaseMediator.Field.ID.value))
+                .set(DatabaseMediator.Field.TIMESTAMP.value, DatabaseMediator.getNewTimestamp())
+                .saveIt();
     }
 }

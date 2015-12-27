@@ -31,7 +31,7 @@ public final class VideoFile extends FileWithLanguages {
     }
 
     @Override
-    protected DatabaseMediator.ItemType getItemType() {
+    public DatabaseMediator.ItemType getItemType() {
         return DatabaseMediator.ItemType.VIDEO_FILE;
     }
 

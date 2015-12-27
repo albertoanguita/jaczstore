@@ -45,7 +45,7 @@ public abstract class DatabaseItem {
         pendingChanges = new HashMap<>();
     }
 
-    protected abstract DatabaseMediator.ItemType getItemType();
+    public abstract DatabaseMediator.ItemType getItemType();
 
     static boolean contains(Collection<? extends DatabaseItem> items, Model model) {
         for (DatabaseItem item : items) {

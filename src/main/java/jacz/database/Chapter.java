@@ -27,7 +27,7 @@ public final class Chapter extends CreationItem {
     }
 
     @Override
-    protected DatabaseMediator.ItemType getItemType() {
+    public DatabaseMediator.ItemType getItemType() {
         return DatabaseMediator.ItemType.CHAPTER;
     }
 

@@ -19,7 +19,7 @@ public final class Company extends NamedItem {
     }
 
     @Override
-    protected DatabaseMediator.ItemType getItemType() {
+    public DatabaseMediator.ItemType getItemType() {
         return DatabaseMediator.ItemType.COMPANY;
     }
 
