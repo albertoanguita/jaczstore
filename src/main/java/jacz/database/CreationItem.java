@@ -142,54 +142,70 @@ public abstract class CreationItem extends DatabaseItem {
         return addStringValue(DatabaseMediator.Field.EXTERNAL_URLS, externalURL, false);
     }
 
-    protected List<Person> getCreatorsDirectors() {
+    public List<Person> getCreators() {
         LazyList<jacz.database.models.Person> models = getReferencedElements(DatabaseMediator.ItemType.PERSON, DatabaseMediator.Field.CREATOR_LIST);
         return Person.buildList(dbPath, models);
     }
 
-    protected <C extends Model> void removeCreatorsDirectors() {
+    public List<String> getCreatorsIds() {
+        return getReferencedElementsIds(DatabaseMediator.ItemType.PERSON, DatabaseMediator.Field.CREATOR_LIST);
+    }
+
+    public <C extends Model> void removeCreators() {
         removeReferencedElements(DatabaseMediator.Field.CREATOR_LIST, true);
     }
 
-    protected <C extends Model> void removeCreatorsDirectorsPostponed() {
+    public <C extends Model> void removeCreatorsPostponed() {
         removeReferencedElements(DatabaseMediator.Field.CREATOR_LIST, false);
     }
 
-    protected <C extends Model> void removeCreatorDirector(Person person) {
+    public <C extends Model> void removeCreator(Person person) {
         removeReferencedElement(DatabaseMediator.Field.CREATOR_LIST, person, true);
     }
 
-    protected <C extends Model> void removeCreatorDirectorPostponed(Person person) {
+    public <C extends Model> void removeCreatorPostponed(Person person) {
         removeReferencedElement(DatabaseMediator.Field.CREATOR_LIST, person, false);
     }
 
-    protected void setCreatorsDirectors(List<Person> persons) {
+    public void setCreators(List<Person> persons) {
         setReferencedElements(DatabaseMediator.Field.CREATOR_LIST, persons, true);
     }
 
-    protected void setCreatorsDirectorsPostponed(List<Person> persons) {
+    public void setCreatorsPostponed(List<Person> persons) {
         setReferencedElements(DatabaseMediator.Field.CREATOR_LIST, persons, false);
     }
 
-    protected void setCreatorsDirectors(Person... persons) {
+    public void setCreatorsIds(List<String> persons) {
+        setReferencedElementsIds(DatabaseMediator.Field.CREATOR_LIST, persons, true);
+    }
+
+    public void setCreatorsIdsPostponed(List<String> persons) {
+        setReferencedElementsIds(DatabaseMediator.Field.CREATOR_LIST, persons, false);
+    }
+
+    public void setCreators(Person... persons) {
         setReferencedElements(DatabaseMediator.Field.CREATOR_LIST, true, persons);
     }
 
-    protected void setCreatorsDirectorsPostponed(Person... persons) {
+    public void setCreatorsPostponed(Person... persons) {
         setReferencedElements(DatabaseMediator.Field.CREATOR_LIST, false, persons);
     }
 
-    protected <C extends Model> void addCreatorDirector(Person person) {
+    public <C extends Model> void addCreator(Person person) {
         addReferencedElement(DatabaseMediator.Field.CREATOR_LIST, person, true);
     }
 
-    protected <C extends Model> void addCreatorDirectorPostponed(Person person) {
+    public <C extends Model> void addCreatorPostponed(Person person) {
         addReferencedElement(DatabaseMediator.Field.CREATOR_LIST, person, false);
     }
 
-    protected List<Person> getActors() {
+    public List<Person> getActors() {
         LazyList<jacz.database.models.Person> models = getReferencedElements(DatabaseMediator.ItemType.PERSON, DatabaseMediator.Field.ACTOR_LIST);
         return Person.buildList(dbPath, models);
+    }
+
+    public List<String> getActorsIds() {
+        return getReferencedElementsIds(DatabaseMediator.ItemType.PERSON, DatabaseMediator.Field.ACTOR_LIST);
     }
 
     public <C extends Model> void removeActors() {
@@ -214,6 +230,14 @@ public abstract class CreationItem extends DatabaseItem {
 
     public void setActorsPostponed(List<Person> persons) {
         setReferencedElements(DatabaseMediator.Field.ACTOR_LIST, persons, false);
+    }
+
+    public void setActorsIds(List<String> persons) {
+        setReferencedElementsIds(DatabaseMediator.Field.ACTOR_LIST, persons, true);
+    }
+
+    public void setActorsIdsPostponed(List<String> persons) {
+        setReferencedElementsIds(DatabaseMediator.Field.ACTOR_LIST, persons, false);
     }
 
     public void setActors(Person... persons) {

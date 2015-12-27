@@ -81,7 +81,8 @@ public class DatabaseMediator {
         VIDEO_FILE_LIST("video_file_list", Type.TEXT),
         IMAGE_HASH("image_hash", Type.TEXT),
         MINUTES("minutes", Type.INTEGER),
-        TV_SERIES_ID("tv_series_id", Type.INTEGER_REF_TV_SERIES),
+//        TV_SERIES_ID("tv_series_id", Type.INTEGER_REF_TV_SERIES),
+        CHAPTER_LIST("chapter_list", Type.TEXT),
         SEASON("season", Type.TEXT),
         NAME("name", Type.TEXT),
         ALIASES("aliases", Type.TEXT),
@@ -90,7 +91,8 @@ public class DatabaseMediator {
         RESOLUTION("resolution", Type.INTEGER),
         QUALITY_CODE("qualityCode", Type.TEXT),
         LANGUAGES("languages", Type.TEXT),
-        VIDEO_FILE_ID("video_file_id", Type.INTEGER_REF_VIDEO_FILES);
+//        VIDEO_FILE_ID("video_file_id", Type.INTEGER_REF_VIDEO_FILES);
+        SUBTITLE_FILE_LIST("subtitle_file_list", Type.TEXT);
 
         public final String value;
 

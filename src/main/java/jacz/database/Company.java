@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by Alberto on 12/09/2015.
  */
-public final class Company extends NamedDatabaseItem {
+public final class Company extends NamedItem {
 
     public Company(String dbPath) {
         super(dbPath);

@@ -2,7 +2,6 @@ package jacz.database;
 
 import com.neovisionaries.i18n.CountryCode;
 import com.neovisionaries.i18n.LanguageCode;
-import jacz.database.*;
 import jacz.database.util.GenreCode;
 import jacz.database.util.QualityCode;
 import junitx.framework.ListAssert;
@@ -90,29 +89,29 @@ public class Test {
         Movie movie = new Movie("store.db");
         movie.setTitle("Predator");
 
-        movie.addDirector(arnold);
-        movie.addDirector(silvester);
+        movie.addCreator(arnold);
+        movie.addCreator(silvester);
         movie.addActor(christian);
         movie.addActor(george);
         List<Person> actors = movie.getActors();
-        List<Person> directors = movie.getDirectors();
+        List<Person> directors = movie.getCreators();
         Assert.assertEquals(2, actors.size());
         Assert.assertEquals(2, directors.size());
         Assert.assertEquals("Christian", actors.get(0).getName());
         Assert.assertEquals("George", actors.get(1).getName());
         Assert.assertEquals("Arnold", directors.get(0).getName());
         Assert.assertEquals("Silvester", directors.get(1).getName());
-        movie.removeDirector(arnold);
+        movie.removeCreator(arnold);
         movie.removeActor(christian);
         actors = movie.getActors();
-        directors = movie.getDirectors();
+        directors = movie.getCreators();
         Assert.assertEquals(1, actors.size());
         Assert.assertEquals(1, directors.size());
         Assert.assertEquals("George", actors.get(0).getName());
         Assert.assertEquals("Silvester", directors.get(0).getName());
-        movie.removeDirectors();
+        movie.removeCreators();
         movie.removeActors();
-        Assert.assertEquals(0, movie.getDirectors().size());
+        Assert.assertEquals(0, movie.getCreators().size());
         Assert.assertEquals(0, movie.getActors().size());
 
         Company hbo = new Company("store.db");
@@ -358,29 +357,29 @@ public class Test {
         Chapter chapter = new Chapter("store.db");
         chapter.setTitle("Predator");
 
-        chapter.addDirector(arnold);
-        chapter.addDirector(silvester);
+        chapter.addCreator(arnold);
+        chapter.addCreator(silvester);
         chapter.addActor(christian);
         chapter.addActor(george);
         List<Person> actors = chapter.getActors();
-        List<Person> directors = chapter.getDirectors();
+        List<Person> directors = chapter.getCreators();
         Assert.assertEquals(2, actors.size());
         Assert.assertEquals(2, directors.size());
         Assert.assertEquals("Christian", actors.get(0).getName());
         Assert.assertEquals("George", actors.get(1).getName());
         Assert.assertEquals("Arnold", directors.get(0).getName());
         Assert.assertEquals("Silvester", directors.get(1).getName());
-        chapter.removeDirector(arnold);
+        chapter.removeCreator(arnold);
         chapter.removeActor(christian);
         actors = chapter.getActors();
-        directors = chapter.getDirectors();
+        directors = chapter.getCreators();
         Assert.assertEquals(1, actors.size());
         Assert.assertEquals(1, directors.size());
         Assert.assertEquals("George", actors.get(0).getName());
         Assert.assertEquals("Silvester", directors.get(0).getName());
-        chapter.removeDirectors();
+        chapter.removeCreators();
         chapter.removeActors();
-        Assert.assertEquals(0, chapter.getDirectors().size());
+        Assert.assertEquals(0, chapter.getCreators().size());
         Assert.assertEquals(0, chapter.getActors().size());
 
         VideoFile videoFile1 = new VideoFile("store.db");
@@ -446,7 +445,7 @@ public class Test {
 
         Movie movie = new Movie("store.db");
         movie.setTitle("Predator");
-        movie.addDirector(arnold);
+        movie.addCreator(arnold);
         movie.addActor(silvester);
         movie.addActor(christian);
 
@@ -461,8 +460,8 @@ public class Test {
         chapter.setTitle("The white walkers");
         chapter.addActor(arnold);
         chapter.addActor(christian);
-        chapter.addDirector(silvester);
-        chapter.addDirector(george);
+        chapter.addCreator(silvester);
+        chapter.addCreator(george);
 
         Assert.assertEquals(4, Person.getPeople("store.db").size());
 

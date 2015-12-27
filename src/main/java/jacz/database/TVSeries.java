@@ -52,30 +52,6 @@ public final class TVSeries extends ProducedCreationItem {
         }
     }
 
-    public List<Person> getCreators() {
-        return super.getCreatorsDirectors();
-    }
-
-    public <C extends Model> void removeCreators() {
-        super.removeCreatorsDirectors();
-    }
-
-    public <C extends Model> void removeCreator(Person person) {
-        removeCreatorDirector(person);
-    }
-
-    public void setCreators(List<Person> persons) {
-        super.setCreatorsDirectors(persons);
-    }
-
-    public void setCreators(Person... persons) {
-        super.setCreatorsDirectors(persons);
-    }
-
-    public <C extends Model> void addCreator(Person person) {
-        addCreatorDirector(person);
-    }
-
     public List<String> getSeasons() {
         List<Chapter> chapters = getChapters();
         return getSeasons(chapters);

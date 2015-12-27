@@ -31,6 +31,10 @@ public abstract class ProducedCreationItem extends CreationItem {
         return Company.buildList(dbPath, models);
     }
 
+    public List<String> getProductionCompaniesIds() {
+        return getReferencedElementsIds(DatabaseMediator.ItemType.COMPANY, DatabaseMediator.Field.COMPANY_LIST);
+    }
+
     public <C extends Model> void removeProductionCompanies() {
         removeReferencedElements(DatabaseMediator.Field.COMPANY_LIST, true);
     }
@@ -55,6 +59,14 @@ public abstract class ProducedCreationItem extends CreationItem {
         setReferencedElements(DatabaseMediator.Field.COMPANY_LIST, companies, false);
     }
 
+    public void setProductionCompaniesIds(List<String> companies) {
+        setReferencedElementsIds(DatabaseMediator.Field.COMPANY_LIST, companies, true);
+    }
+
+    public void setProductionCompaniesIdsPostponed(List<String> companies) {
+        setReferencedElementsIds(DatabaseMediator.Field.COMPANY_LIST, companies, false);
+    }
+
     public void setProductionCompanies(Company... companies) {
         setReferencedElements(DatabaseMediator.Field.COMPANY_LIST, true, companies);
     }
@@ -71,39 +83,39 @@ public abstract class ProducedCreationItem extends CreationItem {
         addReferencedElement(DatabaseMediator.Field.COMPANY_LIST, company, false);
     }
 
-    protected List<GenreCode> getGenres() {
+    public List<GenreCode> getGenres() {
         return getEnums(DatabaseMediator.Field.GENRES, GenreCode.class);
     }
 
-    protected void removeGenres() {
+    public void removeGenres() {
         removeList(DatabaseMediator.Field.GENRES, true);
     }
 
-    protected void removeGenresPostponed() {
+    public void removeGenresPostponed() {
         removeList(DatabaseMediator.Field.GENRES, false);
     }
 
-    protected boolean removeGenre(GenreCode genre) {
+    public boolean removeGenre(GenreCode genre) {
         return removeEnum(DatabaseMediator.Field.GENRES, GenreCode.class, genre, "name", true);
     }
 
-    protected boolean removeGenrePostponed(GenreCode genre) {
+    public boolean removeGenrePostponed(GenreCode genre) {
         return removeEnum(DatabaseMediator.Field.GENRES, GenreCode.class, genre, "name", false);
     }
 
-    protected void setGenres(List<GenreCode> genres) {
+    public void setGenres(List<GenreCode> genres) {
         setEnums(DatabaseMediator.Field.GENRES, GenreCode.class, genres, "name", true);
     }
 
-    protected void setGenresPostponed(List<GenreCode> genres) {
+    public void setGenresPostponed(List<GenreCode> genres) {
         setEnums(DatabaseMediator.Field.GENRES, GenreCode.class, genres, "name", false);
     }
 
-    protected boolean addGenre(GenreCode genre) {
+    public boolean addGenre(GenreCode genre) {
         return addEnum(DatabaseMediator.Field.GENRES, GenreCode.class, genre, "name", true);
     }
 
-    protected boolean addGenrePostponed(GenreCode genre) {
+    public boolean addGenrePostponed(GenreCode genre) {
         return addEnum(DatabaseMediator.Field.GENRES, GenreCode.class, genre, "name", false);
     }
 

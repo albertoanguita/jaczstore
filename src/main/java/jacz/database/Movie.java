@@ -57,30 +57,6 @@ public final class Movie extends ProducedCreationItem {
         }
     }
 
-    public List<Person> getDirectors() {
-        return getCreatorsDirectors();
-    }
-
-    public <C extends Model> void removeDirectors() {
-        removeCreatorsDirectors();
-    }
-
-    public <C extends Model> void removeDirector(Person person) {
-        removeCreatorDirector(person);
-    }
-
-    public void setDirectors(List<Person> persons) {
-        setCreatorsDirectors(persons);
-    }
-
-    public void setDirectors(Person... persons) {
-        setCreatorsDirectors(persons);
-    }
-
-    public <C extends Model> void addDirector(Person person) {
-        addCreatorDirector(person);
-    }
-
     public Integer getMinutes() {
         return getInteger(DatabaseMediator.Field.MINUTES);
     }
@@ -96,6 +72,10 @@ public final class Movie extends ProducedCreationItem {
     public List<VideoFile> getVideoFiles() {
         LazyList<jacz.database.models.VideoFile> models = getReferencedElements(DatabaseMediator.ItemType.VIDEO_FILE, DatabaseMediator.Field.VIDEO_FILE_LIST);
         return VideoFile.buildList(dbPath, models);
+    }
+
+    public List<String> getVideoFilesIds() {
+        return getReferencedElementsIds(DatabaseMediator.ItemType.VIDEO_FILE, DatabaseMediator.Field.VIDEO_FILE_LIST);
     }
 
     public <C extends Model> void removeVideoFiles() {
@@ -120,6 +100,14 @@ public final class Movie extends ProducedCreationItem {
 
     public void setVideoFilesPostponed(List<VideoFile> videoFiles) {
         setReferencedElements(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFiles, false);
+    }
+
+    public void setVideoFilesIds(List<String> videoFilesIds) {
+        setReferencedElementsIds(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFilesIds, true);
+    }
+
+    public void setVideoFilesIdsPostponed(List<String> videoFilesIds) {
+        setReferencedElementsIds(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFilesIds, false);
     }
 
     public void setVideoFiles(VideoFile... videoFiles) {

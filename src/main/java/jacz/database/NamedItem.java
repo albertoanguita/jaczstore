@@ -7,17 +7,17 @@ import java.util.List;
 /**
  * Created by Alberto on 12/09/2015.
  */
-public abstract class NamedDatabaseItem extends DatabaseItem {
+public abstract class NamedItem extends DatabaseItem {
 
 //    private String name;
 
 //    private List<String> aliases;
 
-    public NamedDatabaseItem(String dbPath) {
+    public NamedItem(String dbPath) {
         super(dbPath);
     }
 
-    public NamedDatabaseItem(Model model, String dbPath) {
+    public NamedItem(Model model, String dbPath) {
         super(model, dbPath);
     }
 
@@ -71,7 +71,7 @@ public abstract class NamedDatabaseItem extends DatabaseItem {
 
     @Override
     public float match(DatabaseItem anotherItem, ListSimilarity... listSimilarities) {
-        NamedDatabaseItem anotherNamedItem = (NamedDatabaseItem) anotherItem;
+        NamedItem anotherNamedItem = (NamedItem) anotherItem;
         List<String> names1 = getAliases();
         names1.add(getName());
         List<String> names2 = anotherNamedItem.getAliases();
@@ -88,7 +88,7 @@ public abstract class NamedDatabaseItem extends DatabaseItem {
 
     @Override
     public void merge(DatabaseItem anotherItem) {
-        NamedDatabaseItem anotherNamedItem = (NamedDatabaseItem) anotherItem;
+        NamedItem anotherNamedItem = (NamedItem) anotherItem;
         if (getName() == null && anotherNamedItem.getName() != null) {
             setName(anotherNamedItem.getName());
         }
@@ -99,7 +99,7 @@ public abstract class NamedDatabaseItem extends DatabaseItem {
 
     @Override
     public void mergePostponed(DatabaseItem anotherItem) {
-        NamedDatabaseItem anotherNamedItem = (NamedDatabaseItem) anotherItem;
+        NamedItem anotherNamedItem = (NamedItem) anotherItem;
         if (getName() == null && anotherNamedItem.getName() != null) {
             setNamePostponed(anotherNamedItem.getName());
         }

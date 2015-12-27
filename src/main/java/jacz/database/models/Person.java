@@ -22,7 +22,7 @@ public class Person extends Model {
         }
         movies = person.getMoviesAsDirector(DatabaseMediator.getDBPath());
         for (Movie movie : movies) {
-            movie.removeDirector(person);
+            movie.removeCreator(person);
         }
         List<TVSeries> tvSeries = person.getTVSeriesAsActor(DatabaseMediator.getDBPath());
         for (TVSeries aTVSeries : tvSeries) {
@@ -38,7 +38,7 @@ public class Person extends Model {
         }
         chapters = person.getChaptersAsDirector(DatabaseMediator.getDBPath());
         for (Chapter chapter : chapters) {
-            chapter.removeDirector(person);
+            chapter.removeCreator(person);
         }
         if (DatabaseMediator.mustAutoComplete()) {
             DeletedItem.addDeletedItem(this, getTableName());

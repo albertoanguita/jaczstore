@@ -18,39 +18,39 @@ public abstract class FileWithLanguages extends File {
         super(model, dbPath);
     }
 
-    protected List<LanguageCode> getLanguages() {
+    public List<LanguageCode> getLanguages() {
         return getEnums(DatabaseMediator.Field.LANGUAGES, LanguageCode.class);
     }
 
-    protected void removeLanguages() {
+    public void removeLanguages() {
         removeList(DatabaseMediator.Field.LANGUAGES, true);
     }
 
-    protected void removeLanguagesPostponed() {
+    public void removeLanguagesPostponed() {
         removeList(DatabaseMediator.Field.LANGUAGES, false);
     }
 
-    protected boolean removeLanguage(LanguageCode language) {
+    public boolean removeLanguage(LanguageCode language) {
         return removeEnum(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, language, "name", true);
     }
 
-    protected boolean removeLanguagePostponed(LanguageCode language) {
+    public boolean removeLanguagePostponed(LanguageCode language) {
         return removeEnum(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, language, "name", false);
     }
 
-    protected void setLanguages(List<LanguageCode> languages) {
+    public void setLanguages(List<LanguageCode> languages) {
         setEnums(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, languages, "name", true);
     }
 
-    protected void setLanguagesPostponed(List<LanguageCode> languages) {
+    public void setLanguagesPostponed(List<LanguageCode> languages) {
         setEnums(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, languages, "name", false);
     }
 
-    protected boolean addLanguage(LanguageCode language) {
+    public boolean addLanguage(LanguageCode language) {
         return addEnum(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, language, "name", true);
     }
 
-    protected boolean addLanguagePostponed(LanguageCode language) {
+    public boolean addLanguagePostponed(LanguageCode language) {
         return addEnum(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, language, "name", false);
     }
 

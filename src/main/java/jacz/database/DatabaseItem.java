@@ -92,6 +92,10 @@ public abstract class DatabaseItem {
 
 
     private void updateTimestamp() {
+        updateTimestamp(model);
+    }
+
+    private void updateTimestamp(Model model) {
         connect();
         model.set(DatabaseMediator.Field.TIMESTAMP.value, DatabaseMediator.getNewTimestamp(dbPath));
         disconnect();
@@ -257,11 +261,13 @@ public abstract class DatabaseItem {
     }
 
     protected <C extends Model> void removeDirectAssociationChildren(Class<C> childClass) {
+        // todo use transaction
         connect();
         try {
             List<C> children = getDirectAssociationChildren(childClass);
             for (C child : children) {
                 child.delete();
+                updateTimestamp(child);
             }
         } finally {
             disconnect();
@@ -293,8 +299,10 @@ public abstract class DatabaseItem {
     }
 
     protected void addDirectAssociationChild(DatabaseItem item) {
+        // todo use a transaction
         connect();
         model.add(item.model);
+        item.updateTimestamp();
         disconnect();
     }
 
@@ -315,6 +323,10 @@ public abstract class DatabaseItem {
         } finally {
             DatabaseMediator.disconnect(dbPath);
         }
+    }
+
+    protected List<String> getReferencedElementsIds(DatabaseMediator.ItemType type, DatabaseMediator.Field field) {
+        return getStringList(field);
     }
 
     protected void removeReferencedElements(DatabaseMediator.Field field, boolean flush) {
@@ -349,6 +361,10 @@ public abstract class DatabaseItem {
         for (DatabaseItem item : models) {
             idList.add(item.getId().toString());
         }
+        setStringList(field, idList, flush);
+    }
+
+    protected void setReferencedElementsIds(DatabaseMediator.Field field, List<String> idList, boolean flush) {
         setStringList(field, idList, flush);
     }
 
