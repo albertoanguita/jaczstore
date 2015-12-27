@@ -14,15 +14,13 @@ public class SubtitleFile extends Model {
 
     @Override
     public void beforeDelete() {
-        if (DatabaseMediator.mustAutoComplete()) {
-            DeletedItem.addDeletedItem(this, getTableName());
-        }
+        DeletedItem.addDeletedItem(this, getTableName());
     }
 
-    static void deleteRecords(Model baseModel) {
-        List<SubtitleFile> subtitleFileModels = baseModel.getAll(SubtitleFile.class);
-        for (SubtitleFile subtitleFile : subtitleFileModels) {
-            subtitleFile.delete();
-        }
-    }
+//    static void deleteRecords(Model baseModel) {
+//        List<SubtitleFile> subtitleFileModels = baseModel.getAll(SubtitleFile.class);
+//        for (SubtitleFile subtitleFile : subtitleFileModels) {
+//            subtitleFile.delete();
+//        }
+//    }
 }

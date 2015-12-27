@@ -1,6 +1,7 @@
 package jacz.database;
 
 import jacz.database.util.QualityCode;
+import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
 import java.util.ArrayList;
@@ -99,29 +100,60 @@ public final class VideoFile extends FileWithLanguages {
     }
 
     public List<SubtitleFile> getSubtitleFiles() {
-        return SubtitleFile.buildList(dbPath, getDirectAssociationChildren(jacz.database.models.SubtitleFile.class));
+        LazyList<jacz.database.models.SubtitleFile> models = getReferencedElements(DatabaseMediator.ItemType.SUBTITLE_FILE, DatabaseMediator.Field.SUBTITLE_FILE_LIST);
+        return SubtitleFile.buildList(dbPath, models);
+    }
+
+    public List<String> getSubtitleFilesIds() {
+        return getReferencedElementsIds(DatabaseMediator.ItemType.SUBTITLE_FILE, DatabaseMediator.Field.SUBTITLE_FILE_LIST);
     }
 
     public void removeSubtitleFiles() {
-        // todo replace with enums
-        removeDirectAssociationChildren(jacz.database.models.SubtitleFile.class);
+        removeReferencedElements(DatabaseMediator.Field.SUBTITLE_FILE_LIST, true);
     }
 
-//    public <C extends Model> void removeSubtitleFile(SubtitleFile subtitleFile) {
-        //removeReferencedElement(DatabaseMediator.Field.SUB, subtitleFile);
-        // todo
-//    }
+    public void removeSubtitleFilesPostponed() {
+        removeReferencedElements(DatabaseMediator.Field.SUBTITLE_FILE_LIST, false);
+    }
+
+    public <C extends Model> void removeSubtitleFile(SubtitleFile subtitleFile) {
+        removeReferencedElement(DatabaseMediator.Field.SUBTITLE_FILE_LIST, subtitleFile, true);
+    }
+
+    public <C extends Model> void removeSubtitleFilePostponed(SubtitleFile subtitleFile) {
+        removeReferencedElement(DatabaseMediator.Field.SUBTITLE_FILE_LIST, subtitleFile, false);
+    }
 
     public void setSubtitleFiles(List<SubtitleFile> subtitleFiles) {
-        setDirectAssociationChildren(jacz.database.models.SubtitleFile.class, subtitleFiles);
+        setReferencedElements(DatabaseMediator.Field.SUBTITLE_FILE_LIST, subtitleFiles, true);
+    }
+
+    public void setSubtitleFilesPostponed(List<SubtitleFile> subtitleFiles) {
+        setReferencedElements(DatabaseMediator.Field.SUBTITLE_FILE_LIST, subtitleFiles, false);
+    }
+
+    public void setSubtitleFilesIds(List<String> subtitleFilesIds) {
+        setReferencedElementsIds(DatabaseMediator.Field.SUBTITLE_FILE_LIST, subtitleFilesIds, true);
+    }
+
+    public void setSubtitleFilesIdsPostponed(List<String> subtitleFilesIds) {
+        setReferencedElementsIds(DatabaseMediator.Field.SUBTITLE_FILE_LIST, subtitleFilesIds, false);
     }
 
     public void setSubtitleFiles(SubtitleFile... subtitleFiles) {
-        setDirectAssociationChildren(jacz.database.models.SubtitleFile.class, subtitleFiles);
+        setReferencedElements(DatabaseMediator.Field.SUBTITLE_FILE_LIST, true, subtitleFiles);
+    }
+
+    public void setSubtitleFilesPostponed(SubtitleFile... subtitleFiles) {
+        setReferencedElements(DatabaseMediator.Field.SUBTITLE_FILE_LIST, false, subtitleFiles);
     }
 
     public void addSubtitleFile(SubtitleFile subtitleFile) {
-        addDirectAssociationChild(subtitleFile);
+        addReferencedElement(DatabaseMediator.Field.SUBTITLE_FILE_LIST, subtitleFile, true);
+    }
+
+    public void addSubtitleFilePostponed(SubtitleFile subtitleFile) {
+        addReferencedElement(DatabaseMediator.Field.SUBTITLE_FILE_LIST, subtitleFile, false);
     }
 
     @Override

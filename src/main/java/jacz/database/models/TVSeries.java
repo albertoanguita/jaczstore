@@ -12,9 +12,7 @@ public class TVSeries extends Model {
 
     @Override
     public void beforeDelete() {
-        if (DatabaseMediator.mustAutoComplete()) {
-            Chapter.deleteRecords(this);
-            DeletedItem.addDeletedItem(this, getTableName());
-        }
+//        Chapter.deleteRecords(this);
+        DeletedItem.addDeletedItem(this, getTableName());
     }
 }

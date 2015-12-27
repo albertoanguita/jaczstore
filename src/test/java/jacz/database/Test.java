@@ -343,7 +343,7 @@ public class Test {
         tvSeries.addChapter(chapter1);
         tvSeries.addChapter(chapter3);
         tvSeries.delete();
-        Assert.assertEquals(0, Chapter.getChapters("store.db").size());
+        Assert.assertEquals(2, Chapter.getChapters("store.db").size());
 
         Person arnold = new Person("store.db");
         arnold.setName("Arnold");

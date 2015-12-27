@@ -23,8 +23,6 @@ public class Company extends Model {
         for (TVSeries aTVSeries : tvSeries) {
             aTVSeries.removeProductionCompany(company);
         }
-        if (DatabaseMediator.mustAutoComplete()) {
-            DeletedItem.addDeletedItem(this, getTableName());
-        }
+        DeletedItem.addDeletedItem(this, getTableName());
     }
 }

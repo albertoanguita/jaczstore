@@ -40,8 +40,6 @@ public class Person extends Model {
         for (Chapter chapter : chapters) {
             chapter.removeCreator(person);
         }
-        if (DatabaseMediator.mustAutoComplete()) {
-            DeletedItem.addDeletedItem(this, getTableName());
-        }
+        DeletedItem.addDeletedItem(this, getTableName());
     }
 }

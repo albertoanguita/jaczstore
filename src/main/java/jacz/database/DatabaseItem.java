@@ -219,92 +219,92 @@ public abstract class DatabaseItem {
         }
     }
 
-    protected <C extends Model> Model getDirectAssociationParent(String dbPath, Class<C> parentClass) {
-        connect();
-        try {
-            return model.parent(parentClass);
-        } finally {
-            disconnect();
-        }
-    }
-
-    protected void setDirectAssociationParent(DatabaseItem item) {
-        connect();
-        item.model.add(model);
-        save();
-        disconnect();
-    }
-
-    protected <C extends Model> void removeDirectAssociationParent(Class<C> parentClass) {
-        connect();
-        model.parent(parentClass).delete();
-        save();
-        disconnect();
-    }
-
-    protected <C extends Model> LazyList<C> getDirectAssociationChildren(Class<C> childClass) {
-        connect();
-        try {
-            return model.getAll(childClass);
-        } finally {
-            disconnect();
-        }
-    }
-
-    protected <C extends Model> LazyList<C> getDirectAssociationChildren(Class<C> childClass, String query, Object... params) {
-        connect();
-        try {
-            return model.get(childClass, query, params);
-        } finally {
-            disconnect();
-        }
-    }
-
-    protected <C extends Model> void removeDirectAssociationChildren(Class<C> childClass) {
-        // todo use transaction
-        connect();
-        try {
-            List<C> children = getDirectAssociationChildren(childClass);
-            for (C child : children) {
-                child.delete();
-                updateTimestamp(child);
-            }
-        } finally {
-            disconnect();
-        }
-    }
-
-    protected <C extends Model> void setDirectAssociationChildren(Class<C> childrenClass, List<? extends DatabaseItem> items) {
-        connect();
-        try {
-            removeDirectAssociationChildren(childrenClass);
-            for (DatabaseItem item : items) {
-                addDirectAssociationChild(item);
-            }
-        } finally {
-            disconnect();
-        }
-    }
-
-    protected <C extends Model> void setDirectAssociationChildren(Class<C> childrenClass, DatabaseItem... items) {
-        connect();
-        try {
-            removeDirectAssociationChildren(childrenClass);
-            for (DatabaseItem item : items) {
-                addDirectAssociationChild(item);
-            }
-        } finally {
-            disconnect();
-        }
-    }
-
-    protected void addDirectAssociationChild(DatabaseItem item) {
-        // todo use a transaction
-        connect();
-        model.add(item.model);
-        item.updateTimestamp();
-        disconnect();
-    }
+//    protected <C extends Model> Model getDirectAssociationParent(String dbPath, Class<C> parentClass) {
+//        connect();
+//        try {
+//            return model.parent(parentClass);
+//        } finally {
+//            disconnect();
+//        }
+//    }
+//
+//    protected void setDirectAssociationParent(DatabaseItem item) {
+//        connect();
+//        item.model.add(model);
+//        save();
+//        disconnect();
+//    }
+//
+//    protected <C extends Model> void removeDirectAssociationParent(Class<C> parentClass) {
+//        connect();
+//        model.parent(parentClass).delete();
+//        save();
+//        disconnect();
+//    }
+//
+//    protected <C extends Model> LazyList<C> getDirectAssociationChildren(Class<C> childClass) {
+//        connect();
+//        try {
+//            return model.getAll(childClass);
+//        } finally {
+//            disconnect();
+//        }
+//    }
+//
+//    protected <C extends Model> LazyList<C> getDirectAssociationChildren(Class<C> childClass, String query, Object... params) {
+//        connect();
+//        try {
+//            return model.get(childClass, query, params);
+//        } finally {
+//            disconnect();
+//        }
+//    }
+//
+//    protected <C extends Model> void removeDirectAssociationChildren(Class<C> childClass) {
+//        // todo use transaction
+//        connect();
+//        try {
+//            List<C> children = getDirectAssociationChildren(childClass);
+//            for (C child : children) {
+//                child.delete();
+//                updateTimestamp(child);
+//            }
+//        } finally {
+//            disconnect();
+//        }
+//    }
+//
+//    protected <C extends Model> void setDirectAssociationChildren(Class<C> childrenClass, List<? extends DatabaseItem> items) {
+//        connect();
+//        try {
+//            removeDirectAssociationChildren(childrenClass);
+//            for (DatabaseItem item : items) {
+//                addDirectAssociationChild(item);
+//            }
+//        } finally {
+//            disconnect();
+//        }
+//    }
+//
+//    protected <C extends Model> void setDirectAssociationChildren(Class<C> childrenClass, DatabaseItem... items) {
+//        connect();
+//        try {
+//            removeDirectAssociationChildren(childrenClass);
+//            for (DatabaseItem item : items) {
+//                addDirectAssociationChild(item);
+//            }
+//        } finally {
+//            disconnect();
+//        }
+//    }
+//
+//    protected void addDirectAssociationChild(DatabaseItem item) {
+//        // todo use a transaction
+//        connect();
+//        model.add(item.model);
+//        item.updateTimestamp();
+//        disconnect();
+//    }
 
     protected <C extends Model> LazyList<C> getReferencedElements(DatabaseMediator.ItemType type, DatabaseMediator.Field field) {
         Object[] ids = getStringList(field).toArray();

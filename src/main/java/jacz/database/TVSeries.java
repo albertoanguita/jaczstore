@@ -1,5 +1,7 @@
 package jacz.database;
 
+import com.sun.org.apache.bcel.internal.generic.FADD;
+import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
 import java.util.*;
@@ -68,27 +70,65 @@ public final class TVSeries extends ProducedCreationItem {
     }
 
     public List<Chapter> getChapters() {
-        return Chapter.buildList(dbPath, getDirectAssociationChildren(jacz.database.models.Chapter.class));
+        LazyList<jacz.database.models.Person> models = getReferencedElements(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.Field.CHAPTER_LIST);
+        return Chapter.buildList(dbPath, models);
     }
 
     public List<Chapter> getChapters(String season) {
-        return Chapter.buildList(dbPath, getDirectAssociationChildren(jacz.database.models.Chapter.class, "season = ?", season));
+        LazyList<jacz.database.models.Person> models = getReferencedElements(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.Field.CHAPTER_LIST);
+        return Chapter.buildList(dbPath, models, season);
+    }
+
+    public List<String> getChaptersIds() {
+        return getReferencedElementsIds(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.Field.CHAPTER_LIST);
     }
 
     public void removeChapters() {
-        removeDirectAssociationChildren(jacz.database.models.Chapter.class);
+        removeReferencedElements(DatabaseMediator.Field.CHAPTER_LIST, true);
+    }
+
+    public void removeChaptersPostponed() {
+        removeReferencedElements(DatabaseMediator.Field.CHAPTER_LIST, false);
+    }
+
+    public void removeChapter(Chapter chapter) {
+        removeReferencedElement(DatabaseMediator.Field.CHAPTER_LIST, chapter, true);
+    }
+
+    public void removeChapterPostponed(Chapter chapter) {
+        removeReferencedElement(DatabaseMediator.Field.CHAPTER_LIST, chapter, false);
     }
 
     public void setChapters(List<Chapter> chapters) {
-        setDirectAssociationChildren(jacz.database.models.Chapter.class, chapters);
+        setReferencedElements(DatabaseMediator.Field.CHAPTER_LIST, chapters, true);
+    }
+
+    public void setChaptersPostponed(List<Chapter> chapters) {
+        setReferencedElements(DatabaseMediator.Field.CHAPTER_LIST, chapters, false);
+    }
+
+    public void setChaptersIds(List<String> chapters) {
+        setReferencedElementsIds(DatabaseMediator.Field.CHAPTER_LIST, chapters, true);
+    }
+
+    public void setChaptersIdsPostponed(List<String> chapters) {
+        setReferencedElementsIds(DatabaseMediator.Field.CHAPTER_LIST, chapters, false);
     }
 
     public void setChapters(Chapter... chapters) {
-        setDirectAssociationChildren(jacz.database.models.Chapter.class, chapters);
+        setReferencedElements(DatabaseMediator.Field.CHAPTER_LIST, true, chapters);
+    }
+
+    public void setChaptersPostponed(Chapter... chapters) {
+        setReferencedElements(DatabaseMediator.Field.CHAPTER_LIST, false, chapters);
     }
 
     public void addChapter(Chapter chapter) {
-        addDirectAssociationChild(chapter);
+        addReferencedElement(DatabaseMediator.Field.CHAPTER_LIST, chapter, true);
+    }
+
+    public void addChapterPostponed(Chapter chapter) {
+        addReferencedElement(DatabaseMediator.Field.CHAPTER_LIST, chapter, false);
     }
 
     @Override

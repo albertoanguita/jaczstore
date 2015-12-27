@@ -40,9 +40,10 @@ public class DatabaseMediator {
         PERSON("people", Person.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.NAME, Field.ALIASES),
         COMPANY("companies", Company.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.NAME, Field.ALIASES),
         VIDEO_FILE("video_files", VideoFile.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.HASH,
-                Field.LENGTH, Field.NAME, Field.MINUTES, Field.RESOLUTION, Field.QUALITY_CODE, Field.LANGUAGES),
+                Field.LENGTH, Field.NAME, Field.MINUTES, Field.RESOLUTION, Field.QUALITY_CODE, Field.LANGUAGES,
+                Field.SUBTITLE_FILE_LIST),
         SUBTITLE_FILE("subtitle_files", SubtitleFile.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP,
-                Field.HASH, Field.LENGTH, Field.NAME, Field.VIDEO_FILE_ID, Field.LANGUAGES),
+                Field.HASH, Field.LENGTH, Field.NAME, Field.LANGUAGES),
         TAG("tags", Tag.class, Field.ID, Field.ITEM_TABLE, Field.ITEM_ID, Field.NAME);
 
         public final String table;
@@ -107,9 +108,9 @@ public class DatabaseMediator {
     private enum Type {
         INTEGER_PK_AUTO("INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT"),
         TEXT("TEXT"),
-        INTEGER("INTEGER"),
-        INTEGER_REF_TV_SERIES("INTEGER REFERENCES tv_series(id)"),
-        INTEGER_REF_VIDEO_FILES("INTEGER REFERENCES video_files(id)");
+        INTEGER("INTEGER");
+//        INTEGER_REF_TV_SERIES("INTEGER REFERENCES tv_series(id)"),
+//        INTEGER_REF_VIDEO_FILES("INTEGER REFERENCES video_files(id)");
 
         private final String value;
 
@@ -366,14 +367,14 @@ public class DatabaseMediator {
         }
     }
 
-    public static boolean mustAutoComplete() {
-        // todo remove
-        try {
-            return DatabaseMediator.AUTOCOMPLETE_DB.matcher(Base.connection().getMetaData().getURL()).matches();
-        } catch (SQLException e) {
-            return false;
-        }
-    }
+//    public static boolean mustAutoComplete() {
+//        // todo remove
+//        try {
+//            return DatabaseMediator.AUTOCOMPLETE_DB.matcher(Base.connection().getMetaData().getURL()).matches();
+//        } catch (SQLException e) {
+//            return false;
+//        }
+//    }
 
     public static void main(String[] args) {
         dropAndCreate("store.db", "a");

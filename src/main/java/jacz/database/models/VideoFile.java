@@ -12,9 +12,7 @@ public class VideoFile extends Model {
 
     @Override
     public void beforeDelete() {
-        if (DatabaseMediator.mustAutoComplete()) {
-            SubtitleFile.deleteRecords(this);
-            DeletedItem.addDeletedItem(this, getTableName());
-        }
+//        SubtitleFile.deleteRecords(this);
+        DeletedItem.addDeletedItem(this, getTableName());
     }
 }

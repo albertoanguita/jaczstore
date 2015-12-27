@@ -14,17 +14,15 @@ public class Chapter extends Model {
 
     @Override
     public void beforeDelete() {
-        if (DatabaseMediator.mustAutoComplete()) {
-            DeletedItem.addDeletedItem(this, getTableName());
-        }
+        DeletedItem.addDeletedItem(this, getTableName());
     }
 
-    static void deleteRecords(Model baseModel) {
-        if (DatabaseMediator.mustAutoComplete()) {
-            List<Chapter> chapterModels = baseModel.getAll(Chapter.class);
-            for (Chapter chapter : chapterModels) {
-                chapter.delete();
-            }
-        }
-    }
+//    static void deleteRecords(Model baseModel) {
+//        if (DatabaseMediator.mustAutoComplete()) {
+//            List<Chapter> chapterModels = baseModel.getAll(Chapter.class);
+//            for (Chapter chapter : chapterModels) {
+//                chapter.delete();
+//            }
+//        }
+//    }
 }

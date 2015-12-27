@@ -45,12 +45,19 @@ public final class Chapter extends CreationItem {
     }
 
     static List<Chapter> buildList(String dbPath, List<? extends Model> models) {
+        return buildList(dbPath, models, null);
+    }
+
+    static List<Chapter> buildList(String dbPath, List<? extends Model> models, String season) {
         DatabaseMediator.connect(dbPath);
         try {
             List<Chapter> chapters = new ArrayList<>();
             for (Model model : models) {
                 if (model != null) {
-                    chapters.add(new Chapter(model, dbPath));
+                    Chapter chapter  = new Chapter(model, dbPath);
+                    if (season == null || season.equals(chapter.getSeason())) {
+                        chapters.add(new Chapter(model, dbPath));
+                    }
                 }
             }
             return chapters;
@@ -59,9 +66,9 @@ public final class Chapter extends CreationItem {
         }
     }
 
-    public TVSeries getTVSeries() {
-        Model model = getDirectAssociationParent(dbPath, DatabaseMediator.ItemType.TV_SERIES.modelClass);
-        return new TVSeries(model, dbPath);
+    public List<TVSeries> getTVSeries() {
+        List<jacz.database.models.TVSeries> modelTVSeries = getElementsContainingMe(DatabaseMediator.ItemType.TV_SERIES, DatabaseMediator.Field.CHAPTER_LIST);
+        return TVSeries.buildList(dbPath, modelTVSeries);
     }
 
     public void setTVSeries(TVSeries tvSeries) {
