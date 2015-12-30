@@ -14,6 +14,10 @@ public final class Person extends NamedItem {
         super(dbPath);
     }
 
+    public Person(String dbPath, Integer id) {
+        super(dbPath, id);
+    }
+
     public Person(Model model, String dbPath) {
         super(model, dbPath);
     }

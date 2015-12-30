@@ -16,6 +16,10 @@ public final class SubtitleFile extends FileWithLanguages {
         super(dbPath);
     }
 
+    public SubtitleFile(String dbPath, Integer id) {
+        super(dbPath, id);
+    }
+
     SubtitleFile(Model model, String dbPath) {
         super(model, dbPath);
     }

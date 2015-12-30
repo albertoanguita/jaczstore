@@ -4,7 +4,7 @@ import jacz.store.old2.Filter;
 import jacz.util.files.FileUtil;
 import jacz.util.io.csv.CSV;
 import jacz.util.io.object_serialization.Serializer;
-import jacz.util.lists.Duple;
+import jacz.util.lists.tuple.Duple;
 
 import java.io.File;
 import java.io.FilenameFilter;

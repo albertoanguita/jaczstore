@@ -3,6 +3,7 @@ package jacz.database;
 import com.neovisionaries.i18n.CountryCode;
 import com.neovisionaries.i18n.LanguageCode;
 import jacz.database.util.GenreCode;
+import jacz.database.util.ImageHash;
 import jacz.database.util.QualityCode;
 import junitx.framework.ListAssert;
 import org.javalite.activejdbc.Base;
@@ -30,7 +31,7 @@ public class Test {
         DatabaseMediator.disconnect("store.db");
 
 
-        Movie movie1 = new Movie("store.db");
+        Movie movie1 = new Movie("store.db", 517);
         Movie movie2 = new Movie("store.db");
         Movie movie3 = new Movie("store.db");
         movie1.setTitle("Predator");
@@ -56,7 +57,7 @@ public class Test {
         movie1.addExternalURL("url2");
         movie1.addGenre(GenreCode.DOCUMENTARY);
         movie1.addGenre(GenreCode.FAMILY);
-        movie1.setImageHash("image");
+        movie1.setImageHash(new ImageHash("image", "jpg"));
         movie1.setMinutes(150);
 
         List<CountryCode> countries = new ArrayList<>();
@@ -74,7 +75,7 @@ public class Test {
         ListAssert.assertEquals(countries, movie1.getCountries());
         ListAssert.assertEquals(externalURLs, movie1.getExternalURLs());
         ListAssert.assertEquals(genres, movie1.getGenres());
-        Assert.assertEquals("image", movie1.getImageHash());
+        Assert.assertEquals(new ImageHash("image", "jpg"), movie1.getImageHash());
         Assert.assertEquals(new Integer(150), movie1.getMinutes());
 
         Person arnold = new Person("store.db");
@@ -199,7 +200,7 @@ public class Test {
         tvSeries1.addExternalURL("url2");
         tvSeries1.addGenre(GenreCode.DOCUMENTARY);
         tvSeries1.addGenre(GenreCode.FAMILY);
-        tvSeries1.setImageHash("image");
+        tvSeries1.setImageHash(new ImageHash("image", "jpg"));
 
         List<CountryCode> countries = new ArrayList<>();
         countries.add(CountryCode.ES);
@@ -216,7 +217,7 @@ public class Test {
         ListAssert.assertEquals(countries, tvSeries1.getCountries());
         ListAssert.assertEquals(externalURLs, tvSeries1.getExternalURLs());
         ListAssert.assertEquals(genres, tvSeries1.getGenres());
-        Assert.assertEquals("image", tvSeries1.getImageHash());
+        Assert.assertEquals(new ImageHash("image", "jpg"), tvSeries1.getImageHash());
 
         tvSeries1 = TVSeries.getTVSeriesById("store.db", 1);
 
@@ -551,12 +552,17 @@ public class Test {
         videoFile.setHash("hash");
         videoFile.setLength(150L);
         videoFile.setName("video1");
+        videoFile.addAdditionalSource("torrent1");
+        videoFile.addAdditionalSource("torrent2");
         videoFile.setMinutes(120);
         videoFile.setResolution(1080);
         videoFile.setQuality(QualityCode.HD);
         videoFile.addLanguage(LanguageCode.es);
         videoFile.addLanguage(LanguageCode.en);
         videoFile.addLanguage(LanguageCode.ru);
+        List<String> additionalSources = new ArrayList<>();
+        additionalSources.add("torrent1");
+        additionalSources.add("torrent2");
         List<LanguageCode> languages = new ArrayList<>();
         languages.add(LanguageCode.es);
         languages.add(LanguageCode.en);
@@ -564,6 +570,7 @@ public class Test {
         Assert.assertEquals("hash", videoFile.getHash());
         Assert.assertEquals(new Long(150L), videoFile.getLength());
         Assert.assertEquals("video1", videoFile.getName());
+        ListAssert.assertEquals(additionalSources, videoFile.getAdditionalSources());
         Assert.assertEquals(new Integer(120), videoFile.getMinutes());
         Assert.assertEquals(new Integer(1080), videoFile.getResolution());
         Assert.assertEquals(QualityCode.HD, videoFile.getQuality());

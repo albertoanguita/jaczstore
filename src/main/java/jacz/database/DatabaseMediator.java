@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * General operations on the store database
@@ -28,7 +27,7 @@ public class DatabaseMediator {
 
     public enum ItemType {
         METADATA("metadata", Metadata.class, Field.ID, Field.VERSION, Field.IDENTIFIER, Field.CREATION_DATE,
-                Field.LAST_ACCESS, Field.LAST_UPDATE, Field.NEXT_TIMESTAMP),
+                Field.LAST_ACCESS, Field.LAST_UPDATE, Field.NEXT_TIMESTAMP, Field.HIGHEST_MANUAL_TIMESTAMP),
         DELETED_ITEM("deleted_items", DeletedItem.class, Field.ID, Field.ITEM_TYPE, Field.ITEM_ID, Field.TIMESTAMP),
         MOVIE("movies", Movie.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.TITLE, Field.ORIGINAL_TITLE,
                 Field.YEAR, Field.CREATOR_LIST, Field.ACTOR_LIST, Field.COMPANY_LIST, Field.COUNTRIES,
@@ -42,11 +41,11 @@ public class DatabaseMediator {
         PERSON("people", Person.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.NAME, Field.ALIASES),
         COMPANY("companies", Company.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.NAME, Field.ALIASES),
         VIDEO_FILE("video_files", VideoFile.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.HASH,
-                Field.LENGTH, Field.NAME, Field.MINUTES, Field.RESOLUTION, Field.QUALITY_CODE, Field.LANGUAGES,
-                Field.SUBTITLE_FILE_LIST),
+                Field.LENGTH, Field.NAME, Field.ADDITIONAL_SOURCES, Field.MINUTES, Field.RESOLUTION,
+                Field.QUALITY_CODE, Field.LANGUAGES, Field.SUBTITLE_FILE_LIST),
         SUBTITLE_FILE("subtitle_files", SubtitleFile.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP,
-                Field.HASH, Field.LENGTH, Field.NAME, Field.LANGUAGES),
-        TAG("tags", Tag.class, Field.ID, Field.ITEM_TABLE, Field.ITEM_ID, Field.NAME);
+                Field.HASH, Field.LENGTH, Field.NAME, Field.ADDITIONAL_SOURCES, Field.LANGUAGES),
+        TAG("tags", Tag.class, Field.ID, Field.ITEM_TYPE, Field.ITEM_ID, Field.NAME);
 
         public final String table;
 
@@ -66,37 +65,36 @@ public class DatabaseMediator {
         ID("id", Type.INTEGER_PK_AUTO),
         VERSION("version", Type.TEXT),
         IDENTIFIER("identifier", Type.TEXT),
-        CREATION_DATE("creationDate", Type.TEXT),
-        LAST_ACCESS("lastAccess", Type.TEXT),
-        LAST_UPDATE("lastUpdate", Type.TEXT),
-        NEXT_TIMESTAMP("nextTimestamp", Type.INTEGER),
+        CREATION_DATE("creation_date", Type.TEXT),
+        LAST_ACCESS("last_access", Type.TEXT),
+        LAST_UPDATE("last_update", Type.TEXT),
+        NEXT_TIMESTAMP("next_timestamp", Type.INTEGER),
+        HIGHEST_MANUAL_TIMESTAMP("highest_manual_timestamp", Type.INTEGER),
         ITEM_TYPE("item_type", Type.TEXT),
-        ITEM_TABLE("item_table", Type.TEXT), // todo change to type???
         ITEM_ID("item_id", Type.INTEGER),
         TIMESTAMP("timestamp", Type.INTEGER),
         TITLE("title", Type.TEXT),
-        ORIGINAL_TITLE("originalTitle", Type.TEXT),
+        ORIGINAL_TITLE("original_title", Type.TEXT),
         YEAR("year", Type.INTEGER),
         CREATOR_LIST("creator_list", Type.TEXT),
         ACTOR_LIST("actor_list", Type.TEXT),
         COMPANY_LIST("company_list", Type.TEXT),
         COUNTRIES("countries", Type.TEXT),
-        EXTERNAL_URLS("externalURLs", Type.TEXT),
+        EXTERNAL_URLS("external_urls", Type.TEXT),
         GENRES("genres", Type.TEXT),
         VIDEO_FILE_LIST("video_file_list", Type.TEXT),
         IMAGE_HASH("image_hash", Type.TEXT),
         MINUTES("minutes", Type.INTEGER),
-//        TV_SERIES_ID("tv_series_id", Type.INTEGER_REF_TV_SERIES),
         CHAPTER_LIST("chapter_list", Type.TEXT),
         SEASON("season", Type.TEXT),
         NAME("name", Type.TEXT),
         ALIASES("aliases", Type.TEXT),
         HASH("hash", Type.TEXT),
         LENGTH("length", Type.INTEGER),
+        ADDITIONAL_SOURCES("additional_sources", Type.TEXT),
         RESOLUTION("resolution", Type.INTEGER),
-        QUALITY_CODE("qualityCode", Type.TEXT),
+        QUALITY_CODE("quality_code", Type.TEXT),
         LANGUAGES("languages", Type.TEXT),
-//        VIDEO_FILE_ID("video_file_id", Type.INTEGER_REF_VIDEO_FILES);
         SUBTITLE_FILE_LIST("subtitle_file_list", Type.TEXT);
 
         public final String value;
@@ -325,16 +323,6 @@ public class DatabaseMediator {
         return newTimestamp;
     }
 
-    public static synchronized long getLastTimestamp(String dbPath) {
-        // todo this is not correct, as copied items do not update the next timestamp value
-        // todo set another field for highest timestamp
-        connect(dbPath);
-        Metadata metadata = getMetadata();
-        long nextTimestamp = metadata.getLong(Field.NEXT_TIMESTAMP.value);
-        disconnect(dbPath);
-        return nextTimestamp - 1;
-    }
-
     public static synchronized long getNewTimestamp() {
         Metadata metadata = getMetadata();
         long newTimestamp = metadata.getLong(Field.NEXT_TIMESTAMP.value);
@@ -342,8 +330,19 @@ public class DatabaseMediator {
         return newTimestamp;
     }
 
-    public static void updateHighestTimestamp(String dbPath, long timestamp) {
-        // todo
+    public static synchronized Long getHighestManualTimestamp(String dbPath) {
+        connect(dbPath);
+        Metadata metadata = getMetadata();
+        Long highestTimestamp = metadata.getLong(Field.HIGHEST_MANUAL_TIMESTAMP.value);
+        disconnect(dbPath);
+        return highestTimestamp;
+    }
+
+    public static void updateHighestManualTimestamp(String dbPath, long timestamp) {
+        connect(dbPath);
+        Metadata metadata = getMetadata();
+        metadata.setLong(Field.HIGHEST_MANUAL_TIMESTAMP.value, timestamp).saveIt();
+        disconnect(dbPath);
     }
 
     private static Metadata getMetadata() {

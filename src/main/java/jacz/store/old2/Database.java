@@ -6,7 +6,7 @@ import jacz.store.old2.db_mediator.DBException;
 import jacz.store.old2.db_mediator.DBMediator;
 import jacz.store.old2.music.AudioAlbum;
 import jacz.store.old2.music.Song;
-import jacz.util.lists.Duple;
+import jacz.util.lists.tuple.Duple;
 
 import java.io.IOException;
 import java.text.ParseException;

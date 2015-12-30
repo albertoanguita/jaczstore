@@ -1,5 +1,6 @@
 package jacz.database;
 
+import jacz.database.util.ListSimilarity;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
@@ -22,13 +23,21 @@ public abstract class DatabaseItem {
     private final Map<DatabaseMediator.Field, Object> pendingChanges;
 
     public DatabaseItem(String dbPath) {
+        this(dbPath, null);
+    }
+
+    public DatabaseItem(String dbPath, Integer id) {
         this.dbPath = dbPath;
         pendingChanges = new HashMap<>();
         try {
+            // todo transaction
             connect();
             this.model = getItemType().modelClass.newInstance();
+            if (id != null) {
+                model.setId(id);
+                model.insert();
+            }
             set(DatabaseMediator.Field.CREATION_DATE, DatabaseMediator.dateFormat.format(new Date()), true);
-            save();
             disconnect();
         } catch (Exception e) {
             // todo fatal error
@@ -114,6 +123,18 @@ public abstract class DatabaseItem {
         set(DatabaseMediator.Field.TIMESTAMP, timestamp, flush);
     }
 
+    public List<String> getTags() {
+        return Tag.getItemTags(dbPath, this, getItemType());
+    }
+
+    public boolean addTag(String tag) {
+        return Tag.addTag(dbPath, this, tag, getItemType());
+    }
+
+    public boolean removeTag(String tag) {
+        return Tag.removeTag(dbPath, this, tag, getItemType());
+    }
+
     protected void set(DatabaseMediator.Field field, Object value, boolean flush) {
         pendingChanges.put(field, value);
         if (flush) {
@@ -138,14 +159,14 @@ public abstract class DatabaseItem {
     public void flushChanges() {
         // todo use a transaction so all changes or none are set
         connect();
+        updateTimestamp();
         for (Map.Entry<DatabaseMediator.Field, Object> change : pendingChanges.entrySet()) {
             model.set(change.getKey().value, change.getValue());
             if (change.getKey() == DatabaseMediator.Field.TIMESTAMP) {
-                DatabaseMediator.updateHighestTimestamp(dbPath, (Long) change.getValue());
+                DatabaseMediator.updateHighestManualTimestamp(dbPath, (Long) change.getValue());
             }
         }
         DatabaseMediator.updateLastUpdateTime(dbPath);
-        updateTimestamp();
         save();
         disconnect();
         pendingChanges.clear();
@@ -156,18 +177,21 @@ public abstract class DatabaseItem {
         return 0f;
     }
 
-    public abstract void merge(DatabaseItem anotherItem);
+    public void merge(DatabaseItem anotherItem) {
+        mergePostponed(anotherItem);
+        flushChanges();
+    }
 
     public abstract void mergePostponed(DatabaseItem anotherItem);
 
-    static float evaluateListSimilarity(ListSimilarity listSimilarity, float confidence) {
-        int min = Math.min(listSimilarity.firstListSize, listSimilarity.secondListSize);
-        if (min != 0) {
-            return confidence * (listSimilarity.commonItems / Math.min(listSimilarity.firstListSize, listSimilarity.secondListSize));
-        } else {
-            return 0;
-        }
-    }
+//    static float evaluateListSimilarity(ListSimilarity listSimilarity, float confidence) {
+//        int min = Math.min(listSimilarity.firstListSize, listSimilarity.secondListSize);
+//        if (min != 0) {
+//            return confidence * (listSimilarity.commonItems / Math.min(listSimilarity.firstListSize, listSimilarity.secondListSize));
+//        } else {
+//            return 0;
+//        }
+//    }
 
     protected void save() {
         connect();
@@ -218,93 +242,6 @@ public abstract class DatabaseItem {
             DatabaseMediator.disconnect(dbPath);
         }
     }
-
-//    protected <C extends Model> Model getDirectAssociationParent(String dbPath, Class<C> parentClass) {
-//        connect();
-//        try {
-//            return model.parent(parentClass);
-//        } finally {
-//            disconnect();
-//        }
-//    }
-//
-//    protected void setDirectAssociationParent(DatabaseItem item) {
-//        connect();
-//        item.model.add(model);
-//        save();
-//        disconnect();
-//    }
-//
-//    protected <C extends Model> void removeDirectAssociationParent(Class<C> parentClass) {
-//        connect();
-//        model.parent(parentClass).delete();
-//        save();
-//        disconnect();
-//    }
-//
-//    protected <C extends Model> LazyList<C> getDirectAssociationChildren(Class<C> childClass) {
-//        connect();
-//        try {
-//            return model.getAll(childClass);
-//        } finally {
-//            disconnect();
-//        }
-//    }
-//
-//    protected <C extends Model> LazyList<C> getDirectAssociationChildren(Class<C> childClass, String query, Object... params) {
-//        connect();
-//        try {
-//            return model.get(childClass, query, params);
-//        } finally {
-//            disconnect();
-//        }
-//    }
-//
-//    protected <C extends Model> void removeDirectAssociationChildren(Class<C> childClass) {
-//        // todo use transaction
-//        connect();
-//        try {
-//            List<C> children = getDirectAssociationChildren(childClass);
-//            for (C child : children) {
-//                child.delete();
-//                updateTimestamp(child);
-//            }
-//        } finally {
-//            disconnect();
-//        }
-//    }
-//
-//    protected <C extends Model> void setDirectAssociationChildren(Class<C> childrenClass, List<? extends DatabaseItem> items) {
-//        connect();
-//        try {
-//            removeDirectAssociationChildren(childrenClass);
-//            for (DatabaseItem item : items) {
-//                addDirectAssociationChild(item);
-//            }
-//        } finally {
-//            disconnect();
-//        }
-//    }
-//
-//    protected <C extends Model> void setDirectAssociationChildren(Class<C> childrenClass, DatabaseItem... items) {
-//        connect();
-//        try {
-//            removeDirectAssociationChildren(childrenClass);
-//            for (DatabaseItem item : items) {
-//                addDirectAssociationChild(item);
-//            }
-//        } finally {
-//            disconnect();
-//        }
-//    }
-//
-//    protected void addDirectAssociationChild(DatabaseItem item) {
-//        // todo use a transaction
-//        connect();
-//        model.add(item.model);
-//        item.updateTimestamp();
-//        disconnect();
-//    }
 
     protected <C extends Model> LazyList<C> getReferencedElements(DatabaseMediator.ItemType type, DatabaseMediator.Field field) {
         Object[] ids = getStringList(field).toArray();

@@ -1,9 +1,14 @@
-package jacz.database;
+package jacz.database.util;
 
+import com.neovisionaries.i18n.CountryCode;
+import jacz.database.DatabaseMediator;
+import jacz.util.AI.inference.Mycin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
- * Stores the similarities of items between two list of items of the same type. Used for match computations.
+ * Stores the similarities of items between two lists of items of the same type. Used for match computations.
  */
 public class ListSimilarity implements Comparable<ListSimilarity> {
 
@@ -22,7 +27,7 @@ public class ListSimilarity implements Comparable<ListSimilarity> {
         this.commonItems = commonItems;
     }
 
-    ListSimilarity(int firstListSize, int secondListSize, int commonItems) {
+    public ListSimilarity(int firstListSize, int secondListSize, int commonItems) {
         this.referencedList = null;
         this.firstListSize = firstListSize;
         this.secondListSize = secondListSize;

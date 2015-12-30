@@ -1,5 +1,7 @@
 package jacz.database;
 
+import jacz.database.util.ItemIntegrator;
+import jacz.database.util.ListSimilarity;
 import jacz.util.AI.inference.Mycin;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
@@ -18,6 +20,10 @@ public final class Movie extends ProducedCreationItem {
 
     public Movie(String dbPath) {
         super(dbPath);
+    }
+
+    public Movie(String dbPath, Integer id) {
+        super(dbPath, id);
     }
 
     public Movie(Model model, String dbPath) {
@@ -126,18 +132,6 @@ public final class Movie extends ProducedCreationItem {
         addReferencedElement(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFile, false);
     }
 
-    public List<String> getTags() {
-        return Tag.getItemTags(dbPath, this, DatabaseMediator.ItemType.MOVIE);
-    }
-
-    public boolean addTag(String tag) {
-        return Tag.addTag(dbPath, this, tag, DatabaseMediator.ItemType.MOVIE);
-    }
-
-    public boolean removeTag(String tag) {
-        return Tag.removeTag(dbPath, this, tag, DatabaseMediator.ItemType.MOVIE);
-    }
-
     @Override
     public float match(DatabaseItem anotherItem, ListSimilarity... listSimilarities) {
         float similarity = super.match(anotherItem, listSimilarities);
@@ -147,12 +141,14 @@ public final class Movie extends ProducedCreationItem {
     }
 
     @Override
-    public void merge(DatabaseItem anotherItem) {
-
-    }
-
-    @Override
     public void mergePostponed(DatabaseItem anotherItem) {
-
+        super.mergePostponed(anotherItem);
+        Movie anotherMovieItem = (Movie) anotherItem;
+        if (getMinutes() == null && anotherMovieItem.getMinutes() != null) {
+            setMinutesPostponed(anotherMovieItem.getMinutes());
+        }
+        for (VideoFile videoFile : anotherMovieItem.getVideoFiles()) {
+            addVideoFilePostponed(videoFile);
+        }
     }
 }

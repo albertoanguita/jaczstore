@@ -14,6 +14,10 @@ public abstract class FileWithLanguages extends File {
         super(dbPath);
     }
 
+    public FileWithLanguages(String dbPath, Integer id) {
+        super(dbPath, id);
+    }
+
     public FileWithLanguages(Model model, String dbPath) {
         super(model, dbPath);
     }
@@ -52,13 +56,6 @@ public abstract class FileWithLanguages extends File {
 
     public boolean addLanguagePostponed(LanguageCode language) {
         return addEnum(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, language, "name", false);
-    }
-
-    @Override
-    public void merge(DatabaseItem anotherItem) {
-        super.merge(anotherItem);
-        FileWithLanguages anotherFileWithLanguages = (FileWithLanguages) anotherItem;
-        addEnums(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, anotherFileWithLanguages.getLanguages(), "name", true);
     }
 
     @Override

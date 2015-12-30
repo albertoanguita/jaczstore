@@ -1,7 +1,7 @@
 package jacz.store.old2.db_mediator;
 
 import jacz.store.old2.Filter;
-import jacz.util.lists.Duple;
+import jacz.util.lists.tuple.Duple;
 
 import java.io.IOException;
 import java.text.ParseException;

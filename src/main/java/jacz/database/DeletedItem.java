@@ -10,6 +10,10 @@ import java.util.List;
  */
 public class DeletedItem extends DatabaseItem {
 
+    public DeletedItem(String dbPath, Integer id) {
+        super(dbPath, id);
+    }
+
     DeletedItem(Model model, String dbPath) {
         super(model, dbPath);
     }
@@ -34,7 +38,7 @@ public class DeletedItem extends DatabaseItem {
     }
 
     @Override
-    protected DatabaseMediator.ItemType getItemType() {
+    public DatabaseMediator.ItemType getItemType() {
         return DatabaseMediator.ItemType.DELETED_ITEM;
     }
 
@@ -44,11 +48,6 @@ public class DeletedItem extends DatabaseItem {
 
     public int getDeletedItemId() {
         return getInteger(DatabaseMediator.Field.ITEM_ID);
-    }
-
-    @Override
-    public void merge(DatabaseItem anotherItem) {
-        // ignore
     }
 
     @Override

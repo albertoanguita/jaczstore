@@ -26,6 +26,10 @@ public final class VideoFile extends FileWithLanguages {
         super(dbPath);
     }
 
+    public VideoFile(String dbPath, Integer id) {
+        super(dbPath, id);
+    }
+
     VideoFile(Model model, String dbPath) {
         super(model, dbPath);
     }
@@ -157,17 +161,17 @@ public final class VideoFile extends FileWithLanguages {
     }
 
     @Override
-    public void merge(DatabaseItem anotherItem) {
-        super.merge(anotherItem);
+    public void mergePostponed(DatabaseItem anotherItem) {
+        super.mergePostponed(anotherItem);
         VideoFile anotherVideoFile = (VideoFile) anotherItem;
         if (getMinutes() == null && anotherVideoFile.getMinutes() != null) {
-            setMinutes(anotherVideoFile.getMinutes());
+            setMinutesPostponed(anotherVideoFile.getMinutes());
         }
         if (getResolution() == null && anotherVideoFile.getResolution() != null) {
-            setResolution(anotherVideoFile.getResolution());
+            setResolutionPostponed(anotherVideoFile.getResolution());
         }
         if (getQuality() == null && anotherVideoFile.getQuality() != null) {
-            setQuality(anotherVideoFile.getQuality());
+            setQualityPostponed(anotherVideoFile.getQuality());
         }
     }
 

@@ -1,11 +1,15 @@
 package jacz.database;
 
 import jacz.database.util.GenreCode;
-import jacz.util.AI.inference.Mycin;
+import jacz.database.util.ImageHash;
+import jacz.database.util.ItemIntegrator;
+import jacz.database.util.ListSimilarity;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Alberto on 16/11/2015.
@@ -18,8 +22,16 @@ public abstract class ProducedCreationItem extends CreationItem {
 
 //    private ImageFile imageFile;
 
+    private static final float GENRES_SIMILARITY_CONFIDENCE = 0.1f;
+
+    private static final float COMPANIES_SIMILARITY_CONFIDENCE = 0.1f;
+
     public ProducedCreationItem(String dbPath) {
         super(dbPath);
+    }
+
+    public ProducedCreationItem(String dbPath, Integer id) {
+        super(dbPath, id);
     }
 
     public ProducedCreationItem(Model model, String dbPath) {
@@ -119,47 +131,41 @@ public abstract class ProducedCreationItem extends CreationItem {
         return addEnum(DatabaseMediator.Field.GENRES, GenreCode.class, genre, "name", false);
     }
 
-    public String getImageHash() {
-        return getString(DatabaseMediator.Field.IMAGE_HASH);
+    public ImageHash getImageHash() {
+        String imageHashStr = getString(DatabaseMediator.Field.IMAGE_HASH);
+        return imageHashStr != null ? ImageHash.deserialize(imageHashStr) : null;
     }
 
-    public void setImageHash(String imageHash) {
-        set(DatabaseMediator.Field.IMAGE_HASH, imageHash, true);
+    public void setImageHash(ImageHash imageHash) {
+        String imageHashStr = imageHash != null ? imageHash.serialize() : null;
+        set(DatabaseMediator.Field.IMAGE_HASH, imageHashStr, true);
     }
 
-    public void setImageHashPostponed(String imageHash) {
-        set(DatabaseMediator.Field.IMAGE_HASH, imageHash, false);
+    public void setImageHashPostponed(ImageHash imageHash) {
+        String imageHashStr = imageHash != null ? imageHash.serialize() : null;
+        set(DatabaseMediator.Field.IMAGE_HASH, imageHashStr, false);
     }
 
     @Override
     public float match(DatabaseItem anotherItem, ListSimilarity... listSimilarities) {
         float similarity = super.match(anotherItem, listSimilarities);
         ProducedCreationItem anotherProducedItem = (ProducedCreationItem) anotherItem;
-        List<GenreCode> genres1 = getGenres();
-        List<GenreCode> genres2 = anotherProducedItem.getGenres();
-        int genreMatches = 0;
-        for (GenreCode genreCode : genres1) {
-            if (genres2.contains(genreCode)) {
-                genreMatches++;
-            }
-        }
-        similarity = Mycin.combine(similarity, evaluateListSimilarity(new ListSimilarity(genres1.size(), genres2.size(), genreMatches), 0.1f));
-        for (ListSimilarity listSimilarity : listSimilarities) {
-            switch (listSimilarity.referencedList) {
-                case COMPANIES:
-                    similarity = Mycin.combine(similarity, evaluateListSimilarity(listSimilarity, 0.1f));
-            }
-        }
+        similarity = ItemIntegrator.addListSimilarity(similarity, getGenres(), anotherProducedItem.getGenres(), GENRES_SIMILARITY_CONFIDENCE);
+        Map<DatabaseMediator.ReferencedList, Float> listAndConfidencesMap = new HashMap<>();
+        listAndConfidencesMap.put(DatabaseMediator.ReferencedList.COMPANIES, COMPANIES_SIMILARITY_CONFIDENCE);
+        ItemIntegrator.addListSimilarity(similarity, listAndConfidencesMap, listSimilarities);
         return similarity;
     }
 
     @Override
-    public void merge(DatabaseItem anotherItem) {
-
-    }
-
-    @Override
     public void mergePostponed(DatabaseItem anotherItem) {
-
+        super.mergePostponed(anotherItem);
+        ProducedCreationItem anotherProducedItem = (ProducedCreationItem) anotherItem;
+        for (GenreCode genreCode : anotherProducedItem.getGenres()) {
+            addGenrePostponed(genreCode);
+        }
+        for (Company company : anotherProducedItem.getProductionCompanies()) {
+            addProductionCompany(company);
+        }
     }
 }

@@ -14,6 +14,10 @@ public final class Company extends NamedItem {
         super(dbPath);
     }
 
+    public Company(String dbPath, Integer id) {
+        super(dbPath, id);
+    }
+
     public Company(Model model, String dbPath) {
         super(model, dbPath);
     }

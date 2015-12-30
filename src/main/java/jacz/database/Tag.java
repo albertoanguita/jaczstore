@@ -6,6 +6,7 @@ import org.javalite.activejdbc.Model;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -14,8 +15,21 @@ import java.util.Set;
  */
 public class Tag {
 
-    public static Set<String> getAllTags() {
-        return null;
+    public static Set<String> getAllTags(String dbPath) {
+        // todo
+        DatabaseMediator.connect(dbPath);
+        List<? extends Model> models = DatabaseItem.getModels(dbPath, DatabaseMediator.ItemType.TAG);
+        try {
+            Set<String> tags = new HashSet<>();
+            for (Model model : models) {
+                if (model != null) {
+                    tags.add(model.getString(DatabaseMediator.Field.NAME.value));
+                }
+            }
+            return tags;
+        } finally {
+            DatabaseMediator.disconnect(dbPath);
+        }
     }
 
     public static List<Movie> getMoviesWithTag(String dbPath, String tag) {
@@ -48,9 +62,9 @@ public class Tag {
         try {
             List<jacz.database.models.Tag> tags =
                     jacz.database.models.Tag.where(
-                            DatabaseMediator.Field.ITEM_TABLE.value + " = ?" +
+                            DatabaseMediator.Field.ITEM_TYPE.value + " = ?" +
                                     " AND " + DatabaseMediator.Field.NAME.value + " = ?",
-                            type.table,
+                            type.name(),
                             tag);
             Object[] ids = new Object[tags.size()];
             for (int i = 0; i < ids.length; i++) {
@@ -81,9 +95,9 @@ public class Tag {
         DatabaseMediator.connect(dbPath);
         try {
             LazyList<jacz.database.models.Tag> tagRelations = jacz.database.models.Tag.where(
-                    DatabaseMediator.Field.ITEM_TABLE.value + " = ?" +
+                    DatabaseMediator.Field.ITEM_TYPE.value + " = ?" +
                             " AND " + DatabaseMediator.Field.ITEM_ID.value + " = ?",
-                    type.table,
+                    type.name(),
                     item.getId());
             List<String> tags = new ArrayList<>();
             for (jacz.database.models.Tag tagRelation : tagRelations) {
@@ -101,7 +115,7 @@ public class Tag {
             jacz.database.models.Tag tagRelation = findTag(tag, type);
             if (tagRelation == null) {
                 tagRelation = new jacz.database.models.Tag();
-                tagRelation.setString(DatabaseMediator.Field.ITEM_TABLE.value, type.table);
+                tagRelation.setString(DatabaseMediator.Field.ITEM_TYPE.value, type.name());
                 tagRelation.setString(DatabaseMediator.Field.ITEM_ID.value, item.getId());
                 tagRelation.setString(DatabaseMediator.Field.NAME.value, tag);
                 tagRelation.saveIt();
@@ -131,9 +145,9 @@ public class Tag {
 
     private static jacz.database.models.Tag findTag(String tag, DatabaseMediator.ItemType type) {
         return jacz.database.models.Tag.findFirst(
-                DatabaseMediator.Field.ITEM_TABLE.value + " = ?" +
+                DatabaseMediator.Field.ITEM_TYPE.value + " = ?" +
                         " AND " + DatabaseMediator.Field.NAME.value + " = ?",
-                type.table,
+                type.name(),
                 tag);
     }
 

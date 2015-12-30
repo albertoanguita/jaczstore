@@ -1,13 +1,18 @@
-package jacz.database;
+package jacz.database.util;
 
+import jacz.database.DatabaseItem;
+import jacz.database.DatabaseMediator;
 import jacz.store.old.ItemContainer;
 import jacz.store.old2.Database;
 import jacz.store.old2.db_mediator.CorruptDataException;
 import jacz.store.old2.db_mediator.DBException;
 import jacz.store.old2.db_mediator.DBMediator;
+import jacz.util.AI.inference.Mycin;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Code for integrating disparate database into a single one
@@ -144,4 +149,38 @@ public class ItemIntegrator {
             return 0f;
         }
     }
+
+    public static <E> float addListSimilarity(float similarity, List<E> list1, List<E> list2, float confidence) {
+        if (list1 == null || list2 == null) {
+            return 0f;
+        }
+        int itemMatches = 0;
+        for (E item : list1) {
+            if (list2.contains(item)) {
+                itemMatches++;
+            }
+        }
+        float listSimilarity = evaluateListSimilarity(new ListSimilarity(list1.size(), list2.size(), itemMatches), confidence);
+        return Mycin.combine(similarity, listSimilarity);
+    }
+
+    public static float addListSimilarity(float similarity, Map<DatabaseMediator.ReferencedList, Float> listAndConfidencesMap, ListSimilarity... listSimilarities) {
+        for (ListSimilarity listSimilarity : listSimilarities) {
+            if (listAndConfidencesMap.containsKey(listSimilarity.referencedList)) {
+                similarity = Mycin.combine(similarity, evaluateListSimilarity(listSimilarity, listAndConfidencesMap.get(listSimilarity.referencedList)));
+            }
+        }
+        return similarity;
+    }
+
+    private static float evaluateListSimilarity(ListSimilarity listSimilarity, float confidence) {
+        int min = Math.min(listSimilarity.firstListSize, listSimilarity.secondListSize);
+        if (min != 0) {
+            return confidence * (listSimilarity.commonItems / Math.min(listSimilarity.firstListSize, listSimilarity.secondListSize));
+        } else {
+            return 0;
+        }
+    }
+
+
 }

@@ -1,5 +1,8 @@
 package jacz.database;
 
+import jacz.database.util.ItemIntegrator;
+import jacz.database.util.ListSimilarity;
+import jacz.util.AI.inference.Mycin;
 import org.javalite.activejdbc.Model;
 
 import java.util.List;
@@ -15,6 +18,10 @@ public abstract class NamedItem extends DatabaseItem {
 
     public NamedItem(String dbPath) {
         super(dbPath);
+    }
+
+    public NamedItem(String dbPath, Integer id) {
+        super(dbPath, id);
     }
 
     public NamedItem(Model model, String dbPath) {
@@ -71,30 +78,21 @@ public abstract class NamedItem extends DatabaseItem {
 
     @Override
     public float match(DatabaseItem anotherItem, ListSimilarity... listSimilarities) {
+        float similarity = super.match(anotherItem, listSimilarities);
+        // compute the highest similarity between all pairs of names (main name and aliases)
         NamedItem anotherNamedItem = (NamedItem) anotherItem;
         List<String> names1 = getAliases();
         names1.add(getName());
         List<String> names2 = anotherNamedItem.getAliases();
         names2.add(anotherNamedItem.getName());
-        float maxSimilarity = -1;
+        float maxNameSimilarity = -1;
         for (String name1 : names1) {
             for (String name2 : names2) {
-                float similarity = ItemIntegrator.personsNameSimilarity(name1, name2);
-                maxSimilarity = similarity > maxSimilarity ? similarity : maxSimilarity;
+                float aSimilarity = ItemIntegrator.personsNameSimilarity(name1, name2);
+                maxNameSimilarity = aSimilarity > maxNameSimilarity ? aSimilarity : maxNameSimilarity;
             }
         }
-        return maxSimilarity;
-    }
-
-    @Override
-    public void merge(DatabaseItem anotherItem) {
-        NamedItem anotherNamedItem = (NamedItem) anotherItem;
-        if (getName() == null && anotherNamedItem.getName() != null) {
-            setName(anotherNamedItem.getName());
-        }
-        for (String alias : anotherNamedItem.getAliases()) {
-            addAlias(alias);
-        }
+        return Mycin.combine(similarity, maxNameSimilarity);
     }
 
     @Override

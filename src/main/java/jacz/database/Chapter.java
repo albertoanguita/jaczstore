@@ -1,5 +1,7 @@
 package jacz.database;
 
+import jacz.database.util.ItemIntegrator;
+import jacz.database.util.ListSimilarity;
 import jacz.util.AI.inference.Mycin;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
@@ -20,6 +22,10 @@ public final class Chapter extends CreationItem {
 
     public Chapter(String dbPath) {
         super(dbPath);
+    }
+
+    public Chapter(String dbPath, Integer id) {
+        super(dbPath, id);
     }
 
     public Chapter(Model model, String dbPath) {
@@ -171,18 +177,20 @@ public final class Chapter extends CreationItem {
     @Override
     public float match(DatabaseItem anotherItem, ListSimilarity... listSimilarities) {
         float similarity = super.match(anotherItem, listSimilarities);
-        Movie anotherMovieItem = (Movie) anotherItem;
-        similarity = Mycin.combine(similarity, ItemIntegrator.durationSimilarity(getMinutes(), anotherMovieItem.getMinutes()));
+        Chapter anotherChapterItem = (Chapter) anotherItem;
+        similarity = Mycin.combine(similarity, ItemIntegrator.durationSimilarity(getMinutes(), anotherChapterItem.getMinutes()));
         return similarity;
     }
 
     @Override
-    public void merge(DatabaseItem anotherItem) {
-
-    }
-
-    @Override
     public void mergePostponed(DatabaseItem anotherItem) {
-
+        super.mergePostponed(anotherItem);
+        Chapter anotherChapterItem = (Chapter) anotherItem;
+        if (getMinutes() == null && anotherChapterItem.getMinutes() != null) {
+            setMinutesPostponed(anotherChapterItem.getMinutes());
+        }
+        for (VideoFile videoFile : anotherChapterItem.getVideoFiles()) {
+            addVideoFilePostponed(videoFile);
+        }
     }
 }

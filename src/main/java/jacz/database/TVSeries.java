@@ -1,6 +1,7 @@
 package jacz.database;
 
-import com.sun.org.apache.bcel.internal.generic.FADD;
+import jacz.database.util.ItemIntegrator;
+import jacz.database.util.ListSimilarity;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
@@ -13,8 +14,14 @@ public final class TVSeries extends ProducedCreationItem {
 
 //    private List<Chapter> chapters;
 
+    private static final float CHAPTERS_SIMILARITY_CONFIDENCE = 1.0f;
+
     public TVSeries(String dbPath) {
         super(dbPath);
+    }
+
+    public TVSeries(String dbPath, Integer id) {
+        super(dbPath, id);
     }
 
     public TVSeries(Model model, String dbPath) {
@@ -134,22 +141,18 @@ public final class TVSeries extends ProducedCreationItem {
     @Override
     public float match(DatabaseItem anotherItem, ListSimilarity... listSimilarities) {
         float similarity = super.match(anotherItem, listSimilarities);
-        for (ListSimilarity listSimilarity : listSimilarities) {
-            switch (listSimilarity.referencedList) {
-                case CHAPTERS:
-                    return evaluateListSimilarity(listSimilarity, 1.0f);
-            }
-        }
+        Map<DatabaseMediator.ReferencedList, Float> listAndConfidencesMap = new HashMap<>();
+        listAndConfidencesMap.put(DatabaseMediator.ReferencedList.CHAPTERS, CHAPTERS_SIMILARITY_CONFIDENCE);
+        ItemIntegrator.addListSimilarity(similarity, listAndConfidencesMap, listSimilarities);
         return similarity;
     }
 
     @Override
-    public void merge(DatabaseItem anotherItem) {
-
-    }
-
-    @Override
     public void mergePostponed(DatabaseItem anotherItem) {
-
+        super.mergePostponed(anotherItem);
+        TVSeries anotherTVSeriesItem = (TVSeries) anotherItem;
+        for (Chapter chapter : anotherTVSeriesItem.getChapters()) {
+            addChapterPostponed(chapter);
+        }
     }
 }

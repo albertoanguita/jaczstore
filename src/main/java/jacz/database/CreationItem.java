@@ -1,11 +1,15 @@
 package jacz.database;
 
 import com.neovisionaries.i18n.CountryCode;
+import jacz.database.util.ItemIntegrator;
+import jacz.database.util.ListSimilarity;
 import jacz.util.AI.inference.Mycin;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Alberto on 16/11/2015.
@@ -26,8 +30,19 @@ public abstract class CreationItem extends DatabaseItem {
 
 //    private List<String> externalURLs;
 
+    private static final float COUNTRIES_SIMILARITY_CONFIDENCE = 0.1f;
+
+    private static final float CREATORS_SIMILARITY_CONFIDENCE = 0.7f;
+
+    private static final float ACTORS_SIMILARITY_CONFIDENCE = 0.9f;
+
+
     public CreationItem(String dbPath) {
         super(dbPath);
+    }
+
+    public CreationItem(String dbPath, Integer id) {
+        super(dbPath, id);
     }
 
     public CreationItem(Model model, String dbPath) {
@@ -262,33 +277,34 @@ public abstract class CreationItem extends DatabaseItem {
         CreationItem anotherCreationItem = (CreationItem) anotherItem;
         similarity = Mycin.combine(similarity, ItemIntegrator.creationsTitleSimilarity(getTitle(), anotherCreationItem.getTitle(), getOriginalTitle(), anotherCreationItem.getOriginalTitle()));
         similarity = Mycin.combine(similarity, ItemIntegrator.eventsYearSimilarity(getYear(), anotherCreationItem.getYear()));
-        List<CountryCode> countries1 = getCountries();
-        List<CountryCode> countries2 = anotherCreationItem.getCountries();
-        int countryMatches = 0;
-        for (CountryCode countryCode : countries1) {
-            if (countries2.contains(countryCode)) {
-                countryMatches++;
-            }
-        }
-        similarity = Mycin.combine(similarity, evaluateListSimilarity(new ListSimilarity(countries1.size(), countries2.size(), countryMatches), 0.1f));
-        for (ListSimilarity listSimilarity : listSimilarities) {
-            switch (listSimilarity.referencedList) {
-                case CREATORS:
-                    similarity = Mycin.combine(similarity, evaluateListSimilarity(listSimilarity, 0.7f));
-                case ACTORS:
-                    similarity = Mycin.combine(similarity, evaluateListSimilarity(listSimilarity, 0.9f));
-            }
-        }
+        similarity = ItemIntegrator.addListSimilarity(similarity, getCountries(), anotherCreationItem.getCountries(), COUNTRIES_SIMILARITY_CONFIDENCE);
+        Map<DatabaseMediator.ReferencedList, Float> listAndConfidencesMap = new HashMap<>();
+        listAndConfidencesMap.put(DatabaseMediator.ReferencedList.CREATORS, CREATORS_SIMILARITY_CONFIDENCE);
+        listAndConfidencesMap.put(DatabaseMediator.ReferencedList.ACTORS, ACTORS_SIMILARITY_CONFIDENCE);
+        ItemIntegrator.addListSimilarity(similarity, listAndConfidencesMap, listSimilarities);
         return similarity;
     }
 
     @Override
-    public void merge(DatabaseItem anotherItem) {
-
-    }
-
-    @Override
     public void mergePostponed(DatabaseItem anotherItem) {
-
+        CreationItem anotherCreationItem = (CreationItem) anotherItem;
+        if (getTitle() == null && anotherCreationItem.getTitle() != null) {
+            setTitlePostponed(anotherCreationItem.getTitle());
+        }
+        if (getOriginalTitle() == null && anotherCreationItem.getOriginalTitle() != null) {
+            setOriginalTitlePostponed(anotherCreationItem.getOriginalTitle());
+        }
+        if (getYear() == null && anotherCreationItem.getYear() != null) {
+            setYearPostponed(anotherCreationItem.getYear());
+        }
+        for (CountryCode countryCode : anotherCreationItem.getCountries()) {
+            addCountryPostponed(countryCode);
+        }
+        for (Person creator : anotherCreationItem.getCreators()) {
+            addCreatorPostponed(creator);
+        }
+        for (Person actor : anotherCreationItem.getActors()) {
+            addActorPostponed(actor);
+        }
     }
 }
