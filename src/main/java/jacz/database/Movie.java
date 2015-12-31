@@ -133,8 +133,8 @@ public final class Movie extends ProducedCreationItem {
     }
 
     @Override
-    public float match(DatabaseItem anotherItem, ListSimilarity... listSimilarities) {
-        float similarity = super.match(anotherItem, listSimilarities);
+    public float match(DatabaseItem anotherItem) {
+        float similarity = super.match(anotherItem);
         Movie anotherMovieItem = (Movie) anotherItem;
         similarity = Mycin.combine(similarity, ItemIntegrator.durationSimilarity(getMinutes(), anotherMovieItem.getMinutes()));
         return similarity;

@@ -164,14 +164,14 @@ public class ItemIntegrator {
         return Mycin.combine(similarity, listSimilarity);
     }
 
-    public static float addListSimilarity(float similarity, Map<DatabaseMediator.ReferencedList, Float> listAndConfidencesMap, ListSimilarity... listSimilarities) {
-        for (ListSimilarity listSimilarity : listSimilarities) {
-            if (listAndConfidencesMap.containsKey(listSimilarity.referencedList)) {
-                similarity = Mycin.combine(similarity, evaluateListSimilarity(listSimilarity, listAndConfidencesMap.get(listSimilarity.referencedList)));
-            }
-        }
-        return similarity;
-    }
+//    public static float addListSimilarity(float similarity, Map<DatabaseMediator.ReferencedList, Float> listAndConfidencesMap, ListSimilarity... listSimilarities) {
+//        for (ListSimilarity listSimilarity : listSimilarities) {
+//            if (listAndConfidencesMap.containsKey(listSimilarity.referencedList)) {
+//                similarity = Mycin.combine(similarity, evaluateListSimilarity(listSimilarity, listAndConfidencesMap.get(listSimilarity.referencedList)));
+//            }
+//        }
+//        return similarity;
+//    }
 
     private static float evaluateListSimilarity(ListSimilarity listSimilarity, float confidence) {
         int min = Math.min(listSimilarity.firstListSize, listSimilarity.secondListSize);

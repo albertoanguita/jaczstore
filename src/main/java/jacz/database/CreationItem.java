@@ -2,14 +2,11 @@ package jacz.database;
 
 import com.neovisionaries.i18n.CountryCode;
 import jacz.database.util.ItemIntegrator;
-import jacz.database.util.ListSimilarity;
 import jacz.util.AI.inference.Mycin;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Alberto on 16/11/2015.
@@ -162,7 +159,7 @@ public abstract class CreationItem extends DatabaseItem {
         return Person.buildList(dbPath, models);
     }
 
-    public List<String> getCreatorsIds() {
+    private List<String> getCreatorsIds() {
         return getReferencedElementsIds(DatabaseMediator.ItemType.PERSON, DatabaseMediator.Field.CREATOR_LIST);
     }
 
@@ -219,7 +216,7 @@ public abstract class CreationItem extends DatabaseItem {
         return Person.buildList(dbPath, models);
     }
 
-    public List<String> getActorsIds() {
+    private List<String> getActorsIds() {
         return getReferencedElementsIds(DatabaseMediator.ItemType.PERSON, DatabaseMediator.Field.ACTOR_LIST);
     }
 
@@ -272,16 +269,14 @@ public abstract class CreationItem extends DatabaseItem {
     }
 
     @Override
-    public float match(DatabaseItem anotherItem, ListSimilarity... listSimilarities) {
-        float similarity = super.match(anotherItem, listSimilarities);
+    public float match(DatabaseItem anotherItem) {
+        float similarity = super.match(anotherItem);
         CreationItem anotherCreationItem = (CreationItem) anotherItem;
         similarity = Mycin.combine(similarity, ItemIntegrator.creationsTitleSimilarity(getTitle(), anotherCreationItem.getTitle(), getOriginalTitle(), anotherCreationItem.getOriginalTitle()));
         similarity = Mycin.combine(similarity, ItemIntegrator.eventsYearSimilarity(getYear(), anotherCreationItem.getYear()));
         similarity = ItemIntegrator.addListSimilarity(similarity, getCountries(), anotherCreationItem.getCountries(), COUNTRIES_SIMILARITY_CONFIDENCE);
-        Map<DatabaseMediator.ReferencedList, Float> listAndConfidencesMap = new HashMap<>();
-        listAndConfidencesMap.put(DatabaseMediator.ReferencedList.CREATORS, CREATORS_SIMILARITY_CONFIDENCE);
-        listAndConfidencesMap.put(DatabaseMediator.ReferencedList.ACTORS, ACTORS_SIMILARITY_CONFIDENCE);
-        ItemIntegrator.addListSimilarity(similarity, listAndConfidencesMap, listSimilarities);
+        similarity = ItemIntegrator.addListSimilarity(similarity, getCreatorsIds(), anotherCreationItem.getCreatorsIds(), CREATORS_SIMILARITY_CONFIDENCE);
+        similarity = ItemIntegrator.addListSimilarity(similarity, getActorsIds(), anotherCreationItem.getActorsIds(), ACTORS_SIMILARITY_CONFIDENCE);
         return similarity;
     }
 

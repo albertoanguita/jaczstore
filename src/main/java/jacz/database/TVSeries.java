@@ -86,7 +86,7 @@ public final class TVSeries extends ProducedCreationItem {
         return Chapter.buildList(dbPath, models, season);
     }
 
-    public List<String> getChaptersIds() {
+    private List<String> getChaptersIds() {
         return getReferencedElementsIds(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.Field.CHAPTER_LIST);
     }
 
@@ -139,11 +139,10 @@ public final class TVSeries extends ProducedCreationItem {
     }
 
     @Override
-    public float match(DatabaseItem anotherItem, ListSimilarity... listSimilarities) {
-        float similarity = super.match(anotherItem, listSimilarities);
-        Map<DatabaseMediator.ReferencedList, Float> listAndConfidencesMap = new HashMap<>();
-        listAndConfidencesMap.put(DatabaseMediator.ReferencedList.CHAPTERS, CHAPTERS_SIMILARITY_CONFIDENCE);
-        ItemIntegrator.addListSimilarity(similarity, listAndConfidencesMap, listSimilarities);
+    public float match(DatabaseItem anotherItem) {
+        float similarity = super.match(anotherItem);
+        TVSeries anotherTVSeriesItem = (TVSeries) anotherItem;
+        similarity = ItemIntegrator.addListSimilarity(similarity, getChaptersIds(), anotherTVSeriesItem.getChaptersIds(), CHAPTERS_SIMILARITY_CONFIDENCE);
         return similarity;
     }
 

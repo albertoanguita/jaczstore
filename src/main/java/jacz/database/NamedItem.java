@@ -77,8 +77,8 @@ public abstract class NamedItem extends DatabaseItem {
     }
 
     @Override
-    public float match(DatabaseItem anotherItem, ListSimilarity... listSimilarities) {
-        float similarity = super.match(anotherItem, listSimilarities);
+    public float match(DatabaseItem anotherItem) {
+        float similarity = super.match(anotherItem);
         // compute the highest similarity between all pairs of names (main name and aliases)
         NamedItem anotherNamedItem = (NamedItem) anotherItem;
         List<String> names1 = getAliases();

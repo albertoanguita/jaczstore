@@ -1,7 +1,6 @@
 package jacz.database;
 
 import jacz.database.util.ItemIntegrator;
-import jacz.database.util.ListSimilarity;
 import jacz.util.AI.inference.Mycin;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
@@ -175,8 +174,8 @@ public final class Chapter extends CreationItem {
     }
 
     @Override
-    public float match(DatabaseItem anotherItem, ListSimilarity... listSimilarities) {
-        float similarity = super.match(anotherItem, listSimilarities);
+    public float match(DatabaseItem anotherItem) {
+        float similarity = super.match(anotherItem);
         Chapter anotherChapterItem = (Chapter) anotherItem;
         similarity = Mycin.combine(similarity, ItemIntegrator.durationSimilarity(getMinutes(), anotherChapterItem.getMinutes()));
         return similarity;

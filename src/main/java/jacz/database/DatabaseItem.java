@@ -1,6 +1,5 @@
 package jacz.database;
 
-import jacz.database.util.ListSimilarity;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
@@ -172,7 +171,7 @@ public abstract class DatabaseItem {
         pendingChanges.clear();
     }
 
-    public float match(DatabaseItem anotherItem, ListSimilarity... listSimilarities) {
+    public float match(DatabaseItem anotherItem) {
         // no fields of this class indicate equality
         return 0f;
     }

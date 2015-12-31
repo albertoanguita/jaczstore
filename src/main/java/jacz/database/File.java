@@ -1,6 +1,5 @@
 package jacz.database;
 
-import jacz.database.util.ListSimilarity;
 import org.javalite.activejdbc.Model;
 
 import java.util.List;
@@ -99,12 +98,12 @@ public abstract class File extends DatabaseItem {
     }
 
     @Override
-    public float match(DatabaseItem anotherItem, ListSimilarity... listSimilarities) {
+    public float match(DatabaseItem anotherItem) {
         File anotherFile = (File) anotherItem;
         if (getHash() != null && anotherFile.getHash() != null && getHash().equals(anotherFile.getHash())) {
             return 1f;
         } else {
-            return super.match(anotherItem, listSimilarities);
+            return super.match(anotherItem);
         }
     }
 

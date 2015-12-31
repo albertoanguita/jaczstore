@@ -3,13 +3,10 @@ package jacz.database;
 import jacz.database.util.GenreCode;
 import jacz.database.util.ImageHash;
 import jacz.database.util.ItemIntegrator;
-import jacz.database.util.ListSimilarity;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Alberto on 16/11/2015.
@@ -43,7 +40,7 @@ public abstract class ProducedCreationItem extends CreationItem {
         return Company.buildList(dbPath, models);
     }
 
-    public List<String> getProductionCompaniesIds() {
+    private List<String> getProductionCompaniesIds() {
         return getReferencedElementsIds(DatabaseMediator.ItemType.COMPANY, DatabaseMediator.Field.COMPANY_LIST);
     }
 
@@ -147,13 +144,11 @@ public abstract class ProducedCreationItem extends CreationItem {
     }
 
     @Override
-    public float match(DatabaseItem anotherItem, ListSimilarity... listSimilarities) {
-        float similarity = super.match(anotherItem, listSimilarities);
+    public float match(DatabaseItem anotherItem) {
+        float similarity = super.match(anotherItem);
         ProducedCreationItem anotherProducedItem = (ProducedCreationItem) anotherItem;
         similarity = ItemIntegrator.addListSimilarity(similarity, getGenres(), anotherProducedItem.getGenres(), GENRES_SIMILARITY_CONFIDENCE);
-        Map<DatabaseMediator.ReferencedList, Float> listAndConfidencesMap = new HashMap<>();
-        listAndConfidencesMap.put(DatabaseMediator.ReferencedList.COMPANIES, COMPANIES_SIMILARITY_CONFIDENCE);
-        ItemIntegrator.addListSimilarity(similarity, listAndConfidencesMap, listSimilarities);
+        similarity = ItemIntegrator.addListSimilarity(similarity, getProductionCompaniesIds(), anotherProducedItem.getProductionCompaniesIds(), COMPANIES_SIMILARITY_CONFIDENCE);
         return similarity;
     }
 
