@@ -57,12 +57,20 @@ public final class Company extends NamedItem {
 
     public List<Movie> getMovies(String dbPath) {
         List<jacz.database.models.Movie> modelMovies = getElementsContainingMe(DatabaseMediator.ItemType.MOVIE, DatabaseMediator.Field.COMPANY_LIST);
-        return Movie.buildList(dbPath, modelMovies);
+        if (modelMovies != null) {
+            return Movie.buildList(dbPath, modelMovies);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public List<TVSeries> getTVSeries(String dbPath) {
         List<jacz.database.models.TVSeries> modelTVSeries = getElementsContainingMe(DatabaseMediator.ItemType.TV_SERIES, DatabaseMediator.Field.COMPANY_LIST);
-        return TVSeries.buildList(dbPath, modelTVSeries);
+        if (modelTVSeries != null) {
+            return TVSeries.buildList(dbPath, modelTVSeries);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     @Override

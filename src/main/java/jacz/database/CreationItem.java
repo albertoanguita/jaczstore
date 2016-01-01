@@ -6,6 +6,7 @@ import jacz.util.AI.inference.Mycin;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +27,8 @@ public abstract class CreationItem extends DatabaseItem {
 //    private List<CountryCode> countries;
 
 //    private List<String> externalURLs;
+
+    private static final String COUNTRIES_NAME_METHOD = "getAlpha2";
 
     private static final float COUNTRIES_SIMILARITY_CONFIDENCE = 0.1f;
 
@@ -107,27 +110,27 @@ public abstract class CreationItem extends DatabaseItem {
     }
 
     public boolean removeCountry(CountryCode country) {
-        return removeEnum(DatabaseMediator.Field.COUNTRIES, CountryCode.class, country, "getAlpha2", true);
+        return removeEnum(DatabaseMediator.Field.COUNTRIES, CountryCode.class, country, COUNTRIES_NAME_METHOD, true);
     }
 
     public boolean removeCountryPostponed(CountryCode country) {
-        return removeEnum(DatabaseMediator.Field.COUNTRIES, CountryCode.class, country, "getAlpha2", false);
+        return removeEnum(DatabaseMediator.Field.COUNTRIES, CountryCode.class, country, COUNTRIES_NAME_METHOD, false);
     }
 
     public void setCountries(List<CountryCode> countries) {
-        setEnums(DatabaseMediator.Field.COUNTRIES, CountryCode.class, countries, "getAlpha2", true);
+        setEnums(DatabaseMediator.Field.COUNTRIES, CountryCode.class, countries, COUNTRIES_NAME_METHOD, true);
     }
 
     public void setCountriesPostponed(List<CountryCode> countries) {
-        setEnums(DatabaseMediator.Field.COUNTRIES, CountryCode.class, countries, "getAlpha2", false);
+        setEnums(DatabaseMediator.Field.COUNTRIES, CountryCode.class, countries, COUNTRIES_NAME_METHOD, false);
     }
 
     public boolean addCountry(CountryCode country) {
-        return addEnum(DatabaseMediator.Field.COUNTRIES, CountryCode.class, country, "getAlpha2", true);
+        return addEnum(DatabaseMediator.Field.COUNTRIES, CountryCode.class, country, COUNTRIES_NAME_METHOD, true);
     }
 
     public boolean addCountryPostponed(CountryCode country) {
-        return addEnum(DatabaseMediator.Field.COUNTRIES, CountryCode.class, country, "getAlpha2", false);
+        return addEnum(DatabaseMediator.Field.COUNTRIES, CountryCode.class, country, COUNTRIES_NAME_METHOD, false);
     }
 
     public List<String> getExternalURLs() {
@@ -168,7 +171,11 @@ public abstract class CreationItem extends DatabaseItem {
 
     public List<Person> getCreators() {
         LazyList<jacz.database.models.Person> models = getReferencedElements(DatabaseMediator.ItemType.PERSON, DatabaseMediator.Field.CREATOR_LIST);
-        return Person.buildList(dbPath, models);
+        if (models != null) {
+            return Person.buildList(dbPath, models);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public List<String> getCreatorsIds() {
@@ -225,7 +232,11 @@ public abstract class CreationItem extends DatabaseItem {
 
     public List<Person> getActors() {
         LazyList<jacz.database.models.Person> models = getReferencedElements(DatabaseMediator.ItemType.PERSON, DatabaseMediator.Field.ACTOR_LIST);
-        return Person.buildList(dbPath, models);
+        if (models != null) {
+            return Person.buildList(dbPath, models);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public List<String> getActorsIds() {

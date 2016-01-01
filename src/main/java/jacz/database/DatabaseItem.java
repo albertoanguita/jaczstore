@@ -38,9 +38,8 @@ public abstract class DatabaseItem {
             }
             set(DatabaseMediator.Field.CREATION_DATE, DatabaseMediator.dateFormat.format(new Date()), true);
             disconnect();
-        } catch (Exception e) {
-            // todo fatal error
-            System.exit(1);
+        } catch (IllegalAccessException | InstantiationException e) {
+            DatabaseMediator.reportError("Error retrieving item with id", dbPath, id, e);
         }
     }
 
@@ -81,16 +80,25 @@ public abstract class DatabaseItem {
 
     public String getString(DatabaseMediator.Field field) {
         updateLastAccessTime();
+        if (pendingChanges.containsKey(field)) {
+            return (String) pendingChanges.get(field);
+        }
         return model.getString(field.value);
     }
 
     public Integer getInteger(DatabaseMediator.Field field) {
         updateLastAccessTime();
+        if (pendingChanges.containsKey(field)) {
+            return (Integer) pendingChanges.get(field);
+        }
         return model.getInteger(field.value);
     }
 
     public Long getLong(DatabaseMediator.Field field) {
         updateLastAccessTime();
+        if (pendingChanges.containsKey(field)) {
+            return (Long) pendingChanges.get(field);
+        }
         return model.getLong(field.value);
     }
 
@@ -208,9 +216,8 @@ public abstract class DatabaseItem {
             models = (List<C>) findAll.invoke(null);
             return models;
         } catch (Exception e) {
-            // todo internal error
-            e.printStackTrace();
-            return null;
+            DatabaseMediator.reportError("Error retrieving models from the database with findAll", dbPath, type, e);
+            return new ArrayList<>();
         } finally {
             DatabaseMediator.disconnect(dbPath);
         }
@@ -225,9 +232,8 @@ public abstract class DatabaseItem {
             models = (List<C>) where.invoke(null, query, params);
             return models;
         } catch (Exception e) {
-            // todo internal error
-            e.printStackTrace();
-            return null;
+            DatabaseMediator.reportError("Error retrieving models from the database with where", dbPath, type, query, params, e);
+            return new ArrayList<>();
         } finally {
             DatabaseMediator.disconnect(dbPath);
         }
@@ -249,14 +255,13 @@ public abstract class DatabaseItem {
         DatabaseMediator.connect(dbPath);
         try {
             Method where = type.modelClass.getMethod("where", String.class, Object[].class);
-            String query = "id = -1";
+            StringBuilder query = new StringBuilder("id = -1");
             for (int i = 0; i < ids.length; i++) {
-                query += " OR id = ?";
+                query.append(" OR id = ?");
             }
-            return (LazyList<C>) where.invoke(null, query, ids);
+            return (LazyList<C>) where.invoke(null, query.toString(), ids);
         } catch (Exception e) {
-            // todo internal error
-            e.printStackTrace();
+            DatabaseMediator.reportError("Error retrieving models from the database with where", dbPath, type, field, ids, e);
             return null;
         } finally {
             DatabaseMediator.disconnect(dbPath);
@@ -326,8 +331,7 @@ public abstract class DatabaseItem {
             String query = field.value + " LIKE ?";
             return (LazyList<C>) where.invoke(null, query, myId);
         } catch (Exception e) {
-            // todo internal error
-            e.printStackTrace();
+            DatabaseMediator.reportError("Error retrieving models from the database with where", dbPath, type, field, myId, e);
             return null;
         } finally {
             DatabaseMediator.disconnect(dbPath);

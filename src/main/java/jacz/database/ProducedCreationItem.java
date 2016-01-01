@@ -6,6 +6,7 @@ import jacz.database.util.ItemIntegrator;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +19,8 @@ public abstract class ProducedCreationItem extends CreationItem {
 //    private List<GenreCode> genres;
 
 //    private ImageFile imageFile;
+
+    private static final String GENRES_NAME_METHOD = "name";
 
     private static final float GENRES_SIMILARITY_CONFIDENCE = 0.1f;
 
@@ -37,7 +40,11 @@ public abstract class ProducedCreationItem extends CreationItem {
 
     public List<Company> getProductionCompanies() {
         LazyList<jacz.database.models.Company> models = getReferencedElements(DatabaseMediator.ItemType.COMPANY, DatabaseMediator.Field.COMPANY_LIST);
-        return Company.buildList(dbPath, models);
+        if (models != null) {
+            return Company.buildList(dbPath, models);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public List<String> getProductionCompaniesIds() {
@@ -105,27 +112,27 @@ public abstract class ProducedCreationItem extends CreationItem {
     }
 
     public boolean removeGenre(GenreCode genre) {
-        return removeEnum(DatabaseMediator.Field.GENRES, GenreCode.class, genre, "name", true);
+        return removeEnum(DatabaseMediator.Field.GENRES, GenreCode.class, genre, GENRES_NAME_METHOD, true);
     }
 
     public boolean removeGenrePostponed(GenreCode genre) {
-        return removeEnum(DatabaseMediator.Field.GENRES, GenreCode.class, genre, "name", false);
+        return removeEnum(DatabaseMediator.Field.GENRES, GenreCode.class, genre, GENRES_NAME_METHOD, false);
     }
 
     public void setGenres(List<GenreCode> genres) {
-        setEnums(DatabaseMediator.Field.GENRES, GenreCode.class, genres, "name", true);
+        setEnums(DatabaseMediator.Field.GENRES, GenreCode.class, genres, GENRES_NAME_METHOD, true);
     }
 
     public void setGenresPostponed(List<GenreCode> genres) {
-        setEnums(DatabaseMediator.Field.GENRES, GenreCode.class, genres, "name", false);
+        setEnums(DatabaseMediator.Field.GENRES, GenreCode.class, genres, GENRES_NAME_METHOD, false);
     }
 
     public boolean addGenre(GenreCode genre) {
-        return addEnum(DatabaseMediator.Field.GENRES, GenreCode.class, genre, "name", true);
+        return addEnum(DatabaseMediator.Field.GENRES, GenreCode.class, genre, GENRES_NAME_METHOD, true);
     }
 
     public boolean addGenrePostponed(GenreCode genre) {
-        return addEnum(DatabaseMediator.Field.GENRES, GenreCode.class, genre, "name", false);
+        return addEnum(DatabaseMediator.Field.GENRES, GenreCode.class, genre, GENRES_NAME_METHOD, false);
     }
 
     public ImageHash getImageHash() {

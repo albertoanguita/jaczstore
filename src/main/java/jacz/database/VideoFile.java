@@ -105,7 +105,11 @@ public final class VideoFile extends FileWithLanguages {
 
     public List<SubtitleFile> getSubtitleFiles() {
         LazyList<jacz.database.models.SubtitleFile> models = getReferencedElements(DatabaseMediator.ItemType.SUBTITLE_FILE, DatabaseMediator.Field.SUBTITLE_FILE_LIST);
-        return SubtitleFile.buildList(dbPath, models);
+        if (models != null) {
+            return SubtitleFile.buildList(dbPath, models);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public List<String> getSubtitleFilesIds() {

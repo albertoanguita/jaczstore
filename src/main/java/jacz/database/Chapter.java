@@ -73,7 +73,11 @@ public final class Chapter extends CreationItem {
 
     public List<TVSeries> getTVSeries() {
         List<jacz.database.models.TVSeries> modelTVSeries = getElementsContainingMe(DatabaseMediator.ItemType.TV_SERIES, DatabaseMediator.Field.CHAPTER_LIST);
-        return TVSeries.buildList(dbPath, modelTVSeries);
+        if (modelTVSeries != null) {
+            return TVSeries.buildList(dbPath, modelTVSeries);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public void setTVSeries(TVSeries tvSeries) {
@@ -118,7 +122,11 @@ public final class Chapter extends CreationItem {
 
     public List<VideoFile> getVideoFiles() {
         LazyList<jacz.database.models.VideoFile> models = getReferencedElements(DatabaseMediator.ItemType.VIDEO_FILE, DatabaseMediator.Field.VIDEO_FILE_LIST);
-        return VideoFile.buildList(dbPath, models);
+        if (models != null) {
+            return VideoFile.buildList(dbPath, models);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public List<String> getVideoFilesIds() {

@@ -14,14 +14,17 @@ public class Company extends Model {
 
     @Override
     public void beforeDelete() {
-        jacz.database.Company company = new jacz.database.Company(this, DatabaseMediator.getDBPath());
-        List<jacz.database.Movie> movies = company.getMovies(DatabaseMediator.getDBPath());
-        for (Movie movie : movies) {
-            movie.removeProductionCompany(company);
-        }
-        List<TVSeries> tvSeries = company.getTVSeries(DatabaseMediator.getDBPath());
-        for (TVSeries aTVSeries : tvSeries) {
-            aTVSeries.removeProductionCompany(company);
+        String dbPath = DatabaseMediator.getDBPath();
+        if (dbPath != null) {
+            jacz.database.Company company = new jacz.database.Company(this, dbPath);
+            List<jacz.database.Movie> movies = company.getMovies(dbPath);
+            for (Movie movie : movies) {
+                movie.removeProductionCompany(company);
+            }
+            List<TVSeries> tvSeries = company.getTVSeries(dbPath);
+            for (TVSeries aTVSeries : tvSeries) {
+                aTVSeries.removeProductionCompany(company);
+            }
         }
         DeletedItem.addDeletedItem(this, getTableName());
     }

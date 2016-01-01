@@ -10,6 +10,9 @@ import jacz.database.models.SubtitleFile;
 import jacz.database.models.TVSeries;
 import jacz.database.models.Tag;
 import jacz.database.models.VideoFile;
+import jacz.util.log.ErrorFactory;
+import jacz.util.log.ErrorHandler;
+import jacz.util.log.ErrorLog;
 import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.Model;
 
@@ -146,6 +149,8 @@ public class DatabaseMediator {
 //    private static final Pattern AUTOCOMPLETE_DB = Pattern.compile("^(.)*store.db$");
 
     private static int connectionCount = 0;
+
+    private static ErrorHandler errorHandler = null;
 
     private static void addTableNameToItemMap(String tableName, ItemType type) {
         tableNameToItemType.put(tableName, type);
@@ -302,13 +307,6 @@ public class DatabaseMediator {
         return metadata.getString(Field.IDENTIFIER.value);
     }
 
-    public static void setDatabaseIdentifier(String dbPath, String identifier) {
-        connect(dbPath);
-        Metadata metadata = getMetadata();
-        metadata.setString(Field.IDENTIFIER.value, identifier).saveIt();
-        disconnect(dbPath);
-    }
-
     public static void updateLastAccessTime(String dbPath) {
         connect(dbPath);
         Metadata metadata = getMetadata();
@@ -381,21 +379,24 @@ public class DatabaseMediator {
             String url = Base.connection().getMetaData().getURL();
             return url.substring(url.indexOf(':') + 1);
         } catch (SQLException e) {
-            // todo
+            reportError("Error obtaining the database path");
             return null;
         }
     }
 
-//    public static boolean mustAutoComplete() {
-//        // todo remove
-//        try {
-//            return DatabaseMediator.AUTOCOMPLETE_DB.matcher(Base.connection().getMetaData().getURL()).matches();
-//        } catch (SQLException e) {
-//            return false;
-//        }
-//    }
-
     public static void main(String[] args) {
         dropAndCreate("store.db", "a");
+    }
+
+    public static void registerErrorHandler(ErrorHandler errorHandler) {
+        DatabaseMediator.errorHandler = errorHandler;
+    }
+
+    public static void reportError(String message, Object... data) {
+        if (errorHandler != null) {
+            ErrorFactory.reportError(errorHandler, message, data);
+        } else {
+            ErrorLog.reportError("DATABASE_API", message, data);
+        }
     }
 }

@@ -1,7 +1,6 @@
 package jacz.database;
 
 import jacz.database.util.ItemIntegrator;
-import jacz.database.util.ListSimilarity;
 import jacz.util.AI.inference.Mycin;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
@@ -77,7 +76,11 @@ public final class Movie extends ProducedCreationItem {
 
     public List<VideoFile> getVideoFiles() {
         LazyList<jacz.database.models.VideoFile> models = getReferencedElements(DatabaseMediator.ItemType.VIDEO_FILE, DatabaseMediator.Field.VIDEO_FILE_LIST);
-        return VideoFile.buildList(dbPath, models);
+        if (models != null) {
+            return VideoFile.buildList(dbPath, models);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public List<String> getVideoFilesIds() {

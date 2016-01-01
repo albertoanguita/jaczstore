@@ -70,31 +70,55 @@ public final class Person extends NamedItem {
 
     public List<Movie> getMoviesAsActor(String dbPath) {
         List<jacz.database.models.Movie> modelMovies = getElementsContainingMe(DatabaseMediator.ItemType.MOVIE, DatabaseMediator.Field.ACTOR_LIST);
-        return Movie.buildList(dbPath, modelMovies);
+        if (modelMovies != null) {
+            return Movie.buildList(dbPath, modelMovies);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public List<Movie> getMoviesAsDirector(String dbPath) {
         List<jacz.database.models.Movie> modelMovies = getElementsContainingMe(DatabaseMediator.ItemType.MOVIE, DatabaseMediator.Field.CREATOR_LIST);
-        return Movie.buildList(dbPath, modelMovies);
+        if (modelMovies != null) {
+            return Movie.buildList(dbPath, modelMovies);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public List<TVSeries> getTVSeriesAsActor(String dbPath) {
         List<jacz.database.models.TVSeries> modelTVSeries = getElementsContainingMe(DatabaseMediator.ItemType.TV_SERIES, DatabaseMediator.Field.ACTOR_LIST);
-        return TVSeries.buildList(dbPath, modelTVSeries);
+        if (modelTVSeries != null) {
+            return TVSeries.buildList(dbPath, modelTVSeries);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public List<TVSeries> getTVSeriesAsCreator(String dbPath) {
         List<jacz.database.models.TVSeries> modelTVSeries = getElementsContainingMe(DatabaseMediator.ItemType.TV_SERIES, DatabaseMediator.Field.CREATOR_LIST);
-        return TVSeries.buildList(dbPath, modelTVSeries);
+        if (modelTVSeries != null) {
+            return TVSeries.buildList(dbPath, modelTVSeries);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public List<Chapter> getChaptersAsActor(String dbPath) {
         List<jacz.database.models.Chapter> modelChapters = getElementsContainingMe(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.Field.ACTOR_LIST);
-        return Chapter.buildList(dbPath, modelChapters);
+        if (modelChapters != null) {
+            return Chapter.buildList(dbPath, modelChapters);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public List<Chapter> getChaptersAsDirector(String dbPath) {
         List<jacz.database.models.Chapter> modelChapters = getElementsContainingMe(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.Field.CREATOR_LIST);
-        return Chapter.buildList(dbPath, modelChapters);
+        if (modelChapters != null) {
+            return Chapter.buildList(dbPath, modelChapters);
+        } else {
+            return new ArrayList<>();
+        }
     }
 }

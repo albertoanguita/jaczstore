@@ -6,9 +6,11 @@ import org.javalite.activejdbc.Model;
 import java.util.List;
 
 /**
- * todo remove strings
+ *
  */
 public abstract class FileWithLanguages extends File {
+
+    private static final String LANGUAGES_NAME_METHOD = "name";
 
     public FileWithLanguages(String dbPath) {
         super(dbPath);
@@ -35,33 +37,33 @@ public abstract class FileWithLanguages extends File {
     }
 
     public boolean removeLanguage(LanguageCode language) {
-        return removeEnum(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, language, "name", true);
+        return removeEnum(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, language, LANGUAGES_NAME_METHOD, true);
     }
 
     public boolean removeLanguagePostponed(LanguageCode language) {
-        return removeEnum(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, language, "name", false);
+        return removeEnum(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, language, LANGUAGES_NAME_METHOD, false);
     }
 
     public void setLanguages(List<LanguageCode> languages) {
-        setEnums(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, languages, "name", true);
+        setEnums(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, languages, LANGUAGES_NAME_METHOD, true);
     }
 
     public void setLanguagesPostponed(List<LanguageCode> languages) {
-        setEnums(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, languages, "name", false);
+        setEnums(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, languages, LANGUAGES_NAME_METHOD, false);
     }
 
     public boolean addLanguage(LanguageCode language) {
-        return addEnum(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, language, "name", true);
+        return addEnum(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, language, LANGUAGES_NAME_METHOD, true);
     }
 
     public boolean addLanguagePostponed(LanguageCode language) {
-        return addEnum(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, language, "name", false);
+        return addEnum(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, language, LANGUAGES_NAME_METHOD, false);
     }
 
     @Override
     public void mergePostponed(DatabaseItem anotherItem) {
         super.mergePostponed(anotherItem);
         FileWithLanguages anotherFileWithLanguages = (FileWithLanguages) anotherItem;
-        addEnums(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, anotherFileWithLanguages.getLanguages(), "name", false);
+        addEnums(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, anotherFileWithLanguages.getLanguages(), LANGUAGES_NAME_METHOD, false);
     }
 }
