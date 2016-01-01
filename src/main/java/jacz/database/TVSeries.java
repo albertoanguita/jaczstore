@@ -1,7 +1,6 @@
 package jacz.database;
 
 import jacz.database.util.ItemIntegrator;
-import jacz.database.util.ListSimilarity;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
@@ -86,7 +85,7 @@ public final class TVSeries extends ProducedCreationItem {
         return Chapter.buildList(dbPath, models, season);
     }
 
-    private List<String> getChaptersIds() {
+    public List<String> getChaptersIds() {
         return getReferencedElementsIds(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.Field.CHAPTER_LIST);
     }
 

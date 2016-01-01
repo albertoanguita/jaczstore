@@ -151,7 +151,9 @@ public abstract class DatabaseItem {
 
     private void reset(boolean flush) {
         for (DatabaseMediator.Field field : getItemType().fields) {
-            set(field, null, flush);
+            if (field.canBeReset()) {
+                set(field, null, flush);
+            }
         }
     }
 

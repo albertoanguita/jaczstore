@@ -30,14 +30,14 @@ public class DatabaseMediator {
                 Field.LAST_ACCESS, Field.LAST_UPDATE, Field.NEXT_TIMESTAMP, Field.HIGHEST_MANUAL_TIMESTAMP),
         DELETED_ITEM("deleted_items", DeletedItem.class, Field.ID, Field.ITEM_TYPE, Field.ITEM_ID, Field.TIMESTAMP),
         MOVIE("movies", Movie.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.TITLE, Field.ORIGINAL_TITLE,
-                Field.YEAR, Field.CREATOR_LIST, Field.ACTOR_LIST, Field.COMPANY_LIST, Field.COUNTRIES,
+                Field.YEAR, Field.SYNOPSIS, Field.CREATOR_LIST, Field.ACTOR_LIST, Field.COMPANY_LIST, Field.COUNTRIES,
                 Field.EXTERNAL_URLS, Field.GENRES, Field.VIDEO_FILE_LIST, Field.IMAGE_HASH, Field.MINUTES),
         TV_SERIES("tv_series", TVSeries.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.TITLE,
-                Field.ORIGINAL_TITLE, Field.YEAR, Field.CREATOR_LIST, Field.ACTOR_LIST, Field.COMPANY_LIST,
+                Field.ORIGINAL_TITLE, Field.YEAR, Field.SYNOPSIS, Field.CREATOR_LIST, Field.ACTOR_LIST, Field.COMPANY_LIST,
                 Field.COUNTRIES, Field.EXTERNAL_URLS, Field.GENRES, Field.IMAGE_HASH, Field.CHAPTER_LIST),
         CHAPTER("chapters", Chapter.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.TITLE,
-                Field.ORIGINAL_TITLE, Field.YEAR, Field.CREATOR_LIST, Field.ACTOR_LIST, Field.COUNTRIES,
-                Field.EXTERNAL_URLS, Field.SEASON, Field.VIDEO_FILE_LIST, Field.MINUTES),
+                Field.ORIGINAL_TITLE, Field.YEAR, Field.SYNOPSIS, Field.CREATOR_LIST, Field.ACTOR_LIST,
+                Field.COUNTRIES, Field.EXTERNAL_URLS, Field.SEASON, Field.VIDEO_FILE_LIST, Field.MINUTES),
         PERSON("people", Person.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.NAME, Field.ALIASES),
         COMPANY("companies", Company.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.NAME, Field.ALIASES),
         VIDEO_FILE("video_files", VideoFile.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.HASH,
@@ -76,6 +76,7 @@ public class DatabaseMediator {
         TITLE("title", Type.TEXT),
         ORIGINAL_TITLE("original_title", Type.TEXT),
         YEAR("year", Type.INTEGER),
+        SYNOPSIS("synopsis", Type.TEXT),
         CREATOR_LIST("creator_list", Type.TEXT),
         ACTOR_LIST("actor_list", Type.TEXT),
         COMPANY_LIST("company_list", Type.TEXT),
@@ -104,6 +105,12 @@ public class DatabaseMediator {
         Field(String value, Type type) {
             this.value = value;
             this.type = type;
+        }
+
+        boolean canBeReset() {
+            return this != DatabaseMediator.Field.ID &&
+                    this != DatabaseMediator.Field.CREATION_DATE &&
+                    this != DatabaseMediator.Field.TIMESTAMP;
         }
     }
 

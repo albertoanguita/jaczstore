@@ -40,7 +40,7 @@ public abstract class ProducedCreationItem extends CreationItem {
         return Company.buildList(dbPath, models);
     }
 
-    private List<String> getProductionCompaniesIds() {
+    public List<String> getProductionCompaniesIds() {
         return getReferencedElementsIds(DatabaseMediator.ItemType.COMPANY, DatabaseMediator.Field.COMPANY_LIST);
     }
 

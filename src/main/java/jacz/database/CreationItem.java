@@ -82,6 +82,18 @@ public abstract class CreationItem extends DatabaseItem {
         set(DatabaseMediator.Field.YEAR, year, false);
     }
 
+    public String getSynopsis() {
+        return getString(DatabaseMediator.Field.SYNOPSIS);
+    }
+
+    public void setSynopsis(String synopsis) {
+        set(DatabaseMediator.Field.SYNOPSIS, synopsis, true);
+    }
+
+    public void setSynopsisPostponed(String synopsis) {
+        set(DatabaseMediator.Field.SYNOPSIS, synopsis, false);
+    }
+
     public List<CountryCode> getCountries() {
         return getEnums(DatabaseMediator.Field.COUNTRIES, CountryCode.class);
     }
@@ -159,7 +171,7 @@ public abstract class CreationItem extends DatabaseItem {
         return Person.buildList(dbPath, models);
     }
 
-    private List<String> getCreatorsIds() {
+    public List<String> getCreatorsIds() {
         return getReferencedElementsIds(DatabaseMediator.ItemType.PERSON, DatabaseMediator.Field.CREATOR_LIST);
     }
 
@@ -216,7 +228,7 @@ public abstract class CreationItem extends DatabaseItem {
         return Person.buildList(dbPath, models);
     }
 
-    private List<String> getActorsIds() {
+    public List<String> getActorsIds() {
         return getReferencedElementsIds(DatabaseMediator.ItemType.PERSON, DatabaseMediator.Field.ACTOR_LIST);
     }
 
