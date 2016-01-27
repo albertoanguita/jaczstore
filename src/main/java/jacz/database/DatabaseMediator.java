@@ -18,10 +18,7 @@ import org.javalite.activejdbc.Model;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * General operations on the store database
@@ -65,68 +62,175 @@ public class DatabaseMediator {
     }
 
     public enum Field {
-        ID("id", Type.INTEGER_PK_AUTO),
-        VERSION("version", Type.TEXT),
-        IDENTIFIER("identifier", Type.TEXT),
-        CREATION_DATE("creation_date", Type.TEXT),
-        LAST_ACCESS("last_access", Type.TEXT),
-        LAST_UPDATE("last_update", Type.TEXT),
-        NEXT_TIMESTAMP("next_timestamp", Type.INTEGER),
-        HIGHEST_MANUAL_TIMESTAMP("highest_manual_timestamp", Type.INTEGER),
-        ITEM_TYPE("item_type", Type.TEXT),
-        ITEM_ID("item_id", Type.INTEGER),
-        TIMESTAMP("timestamp", Type.INTEGER),
-        TITLE("title", Type.TEXT),
-        ORIGINAL_TITLE("original_title", Type.TEXT),
-        YEAR("year", Type.INTEGER),
-        SYNOPSIS("synopsis", Type.TEXT),
-        CREATOR_LIST("creator_list", Type.TEXT),
-        ACTOR_LIST("actor_list", Type.TEXT),
-        COMPANY_LIST("company_list", Type.TEXT),
-        COUNTRIES("countries", Type.TEXT),
-        EXTERNAL_URLS("external_urls", Type.TEXT),
-        GENRES("genres", Type.TEXT),
-        VIDEO_FILE_LIST("video_file_list", Type.TEXT),
-        IMAGE_HASH("image_hash", Type.TEXT),
-        MINUTES("minutes", Type.INTEGER),
-        CHAPTER_LIST("chapter_list", Type.TEXT),
-        SEASON("season", Type.TEXT),
-        NAME("name", Type.TEXT),
-        ALIASES("aliases", Type.TEXT),
-        HASH("hash", Type.TEXT),
-        LENGTH("length", Type.INTEGER),
-        ADDITIONAL_SOURCES("additional_sources", Type.TEXT),
-        RESOLUTION("resolution", Type.INTEGER),
-        QUALITY_CODE("quality_code", Type.TEXT),
-        LANGUAGES("languages", Type.TEXT),
-        SUBTITLE_FILE_LIST("subtitle_file_list", Type.TEXT);
+        ID("id", DBType.ID),
+        VERSION("version", DBType.TEXT),
+        IDENTIFIER("identifier", DBType.TEXT),
+        CREATION_DATE("creation_date", DBType.DATE),
+        LAST_ACCESS("last_access", DBType.DATE),
+        LAST_UPDATE("last_update", DBType.DATE),
+        NEXT_TIMESTAMP("next_timestamp", DBType.INTEGER),
+        HIGHEST_MANUAL_TIMESTAMP("highest_manual_timestamp", DBType.INTEGER),
+        ITEM_TYPE("item_type", DBType.TEXT),
+        ITEM_ID("item_id", DBType.INTEGER),
+        TIMESTAMP("timestamp", DBType.LONG),
+        TITLE("title", DBType.TEXT),
+        ORIGINAL_TITLE("original_title", DBType.TEXT),
+        YEAR("year", DBType.INTEGER),
+        SYNOPSIS("synopsis", DBType.TEXT),
+        CREATOR_LIST("creator_list", DBType.ID_LIST),
+        ACTOR_LIST("actor_list", DBType.ID_LIST),
+        COMPANY_LIST("company_list", DBType.ID_LIST),
+        COUNTRIES("countries", DBType.COUNTRY_LIST),
+        EXTERNAL_URLS("external_urls", DBType.STRING_LIST),
+        GENRES("genres", DBType.GENRE_LIST),
+        VIDEO_FILE_LIST("video_file_list", DBType.ID_LIST),
+        IMAGE_HASH("image_hash", DBType.TEXT),
+        MINUTES("minutes", DBType.INTEGER),
+        CHAPTER_LIST("chapter_list", DBType.ID_LIST),
+        SEASON("season", DBType.TEXT),
+        NAME("name", DBType.TEXT),
+        ALIASES("aliases", DBType.STRING_LIST),
+        HASH("hash", DBType.TEXT),
+        LENGTH("length", DBType.LONG),
+        ADDITIONAL_SOURCES("additional_sources", DBType.STRING_LIST),
+        RESOLUTION("resolution", DBType.INTEGER),
+        QUALITY_CODE("quality_code", DBType.QUALITY),
+        LANGUAGES("languages", DBType.LANGUAGE_LIST),
+        SUBTITLE_FILE_LIST("subtitle_file_list", DBType.ID_LIST);
 
         public final String value;
 
-        public final Type type;
+        public final DBType dbType;
 
-        Field(String value, Type type) {
+        Field(String value, DBType dbType) {
             this.value = value;
-            this.type = type;
+            this.dbType = dbType;
         }
 
+//    public enum Field {
+//        ID("id", DBType.ID),
+//        VERSION("version", DBType.TEXT),
+//        IDENTIFIER("identifier", DBType.TEXT),
+//        CREATION_DATE("creation_date", DBType.TEXT),
+//        LAST_ACCESS("last_access", DBType.TEXT),
+//        LAST_UPDATE("last_update", DBType.TEXT),
+//        NEXT_TIMESTAMP("next_timestamp", DBType.INTEGER),
+//        HIGHEST_MANUAL_TIMESTAMP("highest_manual_timestamp", DBType.INTEGER),
+//        ITEM_TYPE("item_type", DBType.TEXT),
+//        ITEM_ID("item_id", DBType.INTEGER),
+//        TIMESTAMP("timestamp", DBType.INTEGER),
+//        TITLE("title", DBType.TEXT),
+//        ORIGINAL_TITLE("original_title", DBType.TEXT),
+//        YEAR("year", DBType.INTEGER),
+//        SYNOPSIS("synopsis", DBType.TEXT),
+//        CREATOR_LIST("creator_list", DBType.TEXT),
+//        ACTOR_LIST("actor_list", DBType.TEXT),
+//        COMPANY_LIST("company_list", DBType.TEXT),
+//        COUNTRIES("countries", DBType.TEXT),
+//        EXTERNAL_URLS("external_urls", DBType.TEXT),
+//        GENRES("genres", DBType.TEXT),
+//        VIDEO_FILE_LIST("video_file_list", DBType.TEXT),
+//        IMAGE_HASH("image_hash", DBType.TEXT),
+//        MINUTES("minutes", DBType.INTEGER),
+//        CHAPTER_LIST("chapter_list", DBType.TEXT),
+//        SEASON("season", DBType.TEXT),
+//        NAME("name", DBType.TEXT),
+//        ALIASES("aliases", DBType.TEXT),
+//        HASH("hash", DBType.TEXT),
+//        LENGTH("length", DBType.INTEGER),
+//        ADDITIONAL_SOURCES("additional_sources", DBType.TEXT),
+//        RESOLUTION("resolution", DBType.INTEGER),
+//        QUALITY_CODE("quality_code", DBType.TEXT),
+//        LANGUAGES("languages", DBType.TEXT),
+//        SUBTITLE_FILE_LIST("subtitle_file_list", DBType.TEXT);
+//
+//        public final String value;
+//
+//        public final DBType dbType;
+//
+//        Field(String value, DBType dbType) {
+//            this.value = value;
+//            this.dbType = dbType;
+//        }
+//
         boolean canBeReset() {
             return this != DatabaseMediator.Field.ID &&
                     this != DatabaseMediator.Field.CREATION_DATE &&
                     this != DatabaseMediator.Field.TIMESTAMP;
         }
+
+        boolean canBeCompared() {
+            return this != DatabaseMediator.Field.ID &&
+                    this != DatabaseMediator.Field.VERSION &&
+                    this != DatabaseMediator.Field.IDENTIFIER &&
+                    this != DatabaseMediator.Field.CREATION_DATE &&
+                    this != DatabaseMediator.Field.LAST_ACCESS &&
+                    this != DatabaseMediator.Field.LAST_UPDATE &&
+                    this != DatabaseMediator.Field.NEXT_TIMESTAMP &&
+                    this != DatabaseMediator.Field.HIGHEST_MANUAL_TIMESTAMP;
+        }
+
+        ItemType getReferencedType() {
+            switch (this) {
+
+                case CREATOR_LIST:
+                    return ItemType.PERSON;
+                case ACTOR_LIST:
+                    return ItemType.PERSON;
+                case COMPANY_LIST:
+                    return ItemType.COMPANY;
+                case VIDEO_FILE_LIST:
+                    return ItemType.VIDEO_FILE;
+                case CHAPTER_LIST:
+                    return ItemType.CHAPTER;
+                case SUBTITLE_FILE_LIST:
+                    return ItemType.SUBTITLE_FILE;
+                default:
+                    return null;
+            }
+        }
+
+        ReferencedList getReferencedList() {
+            switch (this) {
+
+                case CREATOR_LIST:
+                    return ReferencedList.CREATORS;
+                case ACTOR_LIST:
+                    return ReferencedList.ACTORS;
+                case COMPANY_LIST:
+                    return ReferencedList.COMPANIES;
+                case VIDEO_FILE_LIST:
+                    return ReferencedList.CHAPTERS;
+                case CHAPTER_LIST:
+                    return ReferencedList.VIDEO_FILES;
+                case SUBTITLE_FILE_LIST:
+                    return ReferencedList.SUBTITLE_FILES;
+                default:
+                    return null;
+            }
+        }
     }
 
-    private enum Type {
-        INTEGER_PK_AUTO("INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT"),
+    enum DBType {
+        ID("INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT"),
         TEXT("TEXT"),
-        INTEGER("INTEGER");
+        INTEGER("INTEGER"),
+        LONG("INTEGER"),
+        DATE("TEXT"),
+        QUALITY("TEXT"),
+        ID_LIST("TEXT"),
+        STRING_LIST("TEXT"),
+        GENRE_LIST("TEXT"),
+        LANGUAGE_LIST("TEXT"),
+        COUNTRY_LIST("TEXT");
+
+
 //        INTEGER_REF_TV_SERIES("INTEGER REFERENCES tv_series(id)"),
 //        INTEGER_REF_VIDEO_FILES("INTEGER REFERENCES video_files(id)");
 
         private final String value;
 
-        Type(String value) {
+        DBType(String value) {
             this.value = value;
         }
     }
@@ -135,7 +239,43 @@ public class DatabaseMediator {
         CREATORS,
         ACTORS,
         COMPANIES,
-        CHAPTERS
+        CHAPTERS,
+        VIDEO_FILES,
+        SUBTITLE_FILES
+    }
+
+    public static class ReferencedElements {
+
+        private final Map<DatabaseMediator.ItemType, Map<DatabaseMediator.ReferencedList, List<Integer>>> referencedElements;
+
+        public ReferencedElements() {
+            referencedElements = new HashMap<>();
+        }
+
+        public void add(DatabaseMediator.ItemType type, DatabaseMediator.ReferencedList referencedList, List<Integer> ids) {
+            if (!referencedElements.containsKey(type)) {
+                referencedElements.put(type, new HashMap<DatabaseMediator.ReferencedList, List<Integer>>());
+            }
+            referencedElements.get(type).put(referencedList, ids);
+        }
+
+        public List<Integer> get(DatabaseMediator.ItemType type, DatabaseMediator.ReferencedList referencedList) {
+            return referencedElements.get(type).get(referencedList);
+        }
+
+        public void mapIds(Map<DatabaseMediator.ItemType, Map<Integer, Integer>> mapping) {
+
+        }
+
+//        public List<List<String>> getIdLists() {
+//            List<List<String>> idLists = new ArrayList<>();
+//            for (Map<DatabaseMediator.ReferencedList, List<String>> referencedList : referencedElements.values()) {
+//                for (List<String> oneIdList : referencedList.values()) {
+//                    idLists.add(oneIdList);
+//                }
+//            }
+//            return idLists;
+//        }
     }
 
     private static final String VERSION_0_1 = "0.1";
@@ -206,7 +346,7 @@ public class DatabaseMediator {
     private static void createTable(ItemType itemType) {
         StringBuilder create = new StringBuilder("CREATE TABLE ").append(itemType.table).append("(");
         for (Field field : itemType.fields) {
-            create.append(field.value).append(" ").append(field.type.value).append(",");
+            create.append(field.value).append(" ").append(field.dbType.value).append(",");
         }
         // replace last comma with a ')'
         create.replace(create.length() - 1, create.length(), ")");

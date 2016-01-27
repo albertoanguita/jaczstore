@@ -178,8 +178,8 @@ public abstract class CreationItem extends DatabaseItem {
         }
     }
 
-    public List<String> getCreatorsIds() {
-        return getReferencedElementsIds(DatabaseMediator.ItemType.PERSON, DatabaseMediator.Field.CREATOR_LIST);
+    public List<Integer> getCreatorsIds() {
+        return getReferencedElementsIds(DatabaseMediator.Field.CREATOR_LIST);
     }
 
     public <C extends Model> void removeCreators() {
@@ -206,11 +206,11 @@ public abstract class CreationItem extends DatabaseItem {
         setReferencedElements(DatabaseMediator.Field.CREATOR_LIST, persons, false);
     }
 
-    public void setCreatorsIds(List<String> persons) {
+    public void setCreatorsIds(List<Integer> persons) {
         setReferencedElementsIds(DatabaseMediator.Field.CREATOR_LIST, persons, true);
     }
 
-    public void setCreatorsIdsPostponed(List<String> persons) {
+    public void setCreatorsIdsPostponed(List<Integer> persons) {
         setReferencedElementsIds(DatabaseMediator.Field.CREATOR_LIST, persons, false);
     }
 
@@ -239,8 +239,8 @@ public abstract class CreationItem extends DatabaseItem {
         }
     }
 
-    public List<String> getActorsIds() {
-        return getReferencedElementsIds(DatabaseMediator.ItemType.PERSON, DatabaseMediator.Field.ACTOR_LIST);
+    public List<Integer> getActorsIds() {
+        return getReferencedElementsIds(DatabaseMediator.Field.ACTOR_LIST);
     }
 
     public <C extends Model> void removeActors() {
@@ -267,11 +267,11 @@ public abstract class CreationItem extends DatabaseItem {
         setReferencedElements(DatabaseMediator.Field.ACTOR_LIST, persons, false);
     }
 
-    public void setActorsIds(List<String> persons) {
+    public void setActorsIds(List<Integer> persons) {
         setReferencedElementsIds(DatabaseMediator.Field.ACTOR_LIST, persons, true);
     }
 
-    public void setActorsIdsPostponed(List<String> persons) {
+    public void setActorsIdsPostponed(List<Integer> persons) {
         setReferencedElementsIds(DatabaseMediator.Field.ACTOR_LIST, persons, false);
     }
 
@@ -304,7 +304,7 @@ public abstract class CreationItem extends DatabaseItem {
     }
 
     @Override
-    public void mergePostponed(DatabaseItem anotherItem) {
+    public void mergeBasicPostponed(DatabaseItem anotherItem) {
         CreationItem anotherCreationItem = (CreationItem) anotherItem;
         if (getTitle() == null && anotherCreationItem.getTitle() != null) {
             setTitlePostponed(anotherCreationItem.getTitle());
@@ -318,11 +318,23 @@ public abstract class CreationItem extends DatabaseItem {
         for (CountryCode countryCode : anotherCreationItem.getCountries()) {
             addCountryPostponed(countryCode);
         }
-        for (Person creator : anotherCreationItem.getCreators()) {
-            addCreatorPostponed(creator);
+    }
+
+    @Override
+    public DatabaseMediator.ReferencedElements getReferencedElements() {
+        DatabaseMediator.ReferencedElements referencedElements = super.getReferencedElements();
+        referencedElements.add(DatabaseMediator.ItemType.PERSON, DatabaseMediator.ReferencedList.CREATORS, getCreatorsIds());
+        referencedElements.add(DatabaseMediator.ItemType.PERSON, DatabaseMediator.ReferencedList.ACTORS, getActorsIds());
+        return referencedElements;
+    }
+
+    @Override
+    public void mergeReferencedElementsPostponed(DatabaseMediator.ReferencedElements referencedElements) {
+        for (Integer creatorId : referencedElements.get(DatabaseMediator.ItemType.PERSON, DatabaseMediator.ReferencedList.CREATORS)) {
+            addReferencedElementId(DatabaseMediator.Field.CREATOR_LIST, creatorId, false);
         }
-        for (Person actor : anotherCreationItem.getActors()) {
-            addActorPostponed(actor);
+        for (Integer actorId : referencedElements.get(DatabaseMediator.ItemType.PERSON, DatabaseMediator.ReferencedList.ACTORS)) {
+            addReferencedElementId(DatabaseMediator.Field.ACTOR_LIST, actorId, false);
         }
     }
 }

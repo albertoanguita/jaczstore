@@ -12,8 +12,6 @@ import java.util.List;
  */
 public final class VideoFile extends FileWithLanguages {
 
-//    private String name;
-//
 //    private Integer minutes;
 //
 //    private QualityCode quality;
@@ -92,7 +90,7 @@ public final class VideoFile extends FileWithLanguages {
     }
 
     public QualityCode getQuality() {
-        return QualityCode.valueOf(getString(DatabaseMediator.Field.QUALITY_CODE));
+        return getQuality(DatabaseMediator.Field.QUALITY_CODE);
     }
 
     public void setQuality(QualityCode quality) {
@@ -112,8 +110,8 @@ public final class VideoFile extends FileWithLanguages {
         }
     }
 
-    public List<String> getSubtitleFilesIds() {
-        return getReferencedElementsIds(DatabaseMediator.ItemType.SUBTITLE_FILE, DatabaseMediator.Field.SUBTITLE_FILE_LIST);
+    public List<Integer> getSubtitleFilesIds() {
+        return getReferencedElementsIds(DatabaseMediator.Field.SUBTITLE_FILE_LIST);
     }
 
     public void removeSubtitleFiles() {
@@ -140,11 +138,11 @@ public final class VideoFile extends FileWithLanguages {
         setReferencedElements(DatabaseMediator.Field.SUBTITLE_FILE_LIST, subtitleFiles, false);
     }
 
-    public void setSubtitleFilesIds(List<String> subtitleFilesIds) {
+    public void setSubtitleFilesIds(List<Integer> subtitleFilesIds) {
         setReferencedElementsIds(DatabaseMediator.Field.SUBTITLE_FILE_LIST, subtitleFilesIds, true);
     }
 
-    public void setSubtitleFilesIdsPostponed(List<String> subtitleFilesIds) {
+    public void setSubtitleFilesIdsPostponed(List<Integer> subtitleFilesIds) {
         setReferencedElementsIds(DatabaseMediator.Field.SUBTITLE_FILE_LIST, subtitleFilesIds, false);
     }
 
@@ -165,7 +163,7 @@ public final class VideoFile extends FileWithLanguages {
     }
 
     @Override
-    public void mergePostponed(DatabaseItem anotherItem) {
+    public void mergeBasicPostponed(DatabaseItem anotherItem) {
         super.mergePostponed(anotherItem);
         VideoFile anotherVideoFile = (VideoFile) anotherItem;
         if (getMinutes() == null && anotherVideoFile.getMinutes() != null) {
@@ -179,6 +177,21 @@ public final class VideoFile extends FileWithLanguages {
         }
     }
 
+
+    @Override
+    public DatabaseMediator.ReferencedElements getReferencedElements() {
+        DatabaseMediator.ReferencedElements referencedElements = super.getReferencedElements();
+        referencedElements.add(DatabaseMediator.ItemType.SUBTITLE_FILE, DatabaseMediator.ReferencedList.SUBTITLE_FILES, getSubtitleFilesIds());
+        return referencedElements;
+    }
+
+    @Override
+    public void mergeReferencedElementsPostponed(DatabaseMediator.ReferencedElements referencedElements) {
+        super.mergeReferencedElementsPostponed(referencedElements);
+        for (Integer subtitleFileId : referencedElements.get(DatabaseMediator.ItemType.SUBTITLE_FILE, DatabaseMediator.ReferencedList.SUBTITLE_FILES)) {
+            addReferencedElementId(DatabaseMediator.Field.SUBTITLE_FILE_LIST, subtitleFileId, false);
+        }
+    }
     @Override
     public void delete() {
         // video files cannot be deleted. This way we avoid inconsistencies of references to video files pointing

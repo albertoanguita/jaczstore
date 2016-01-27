@@ -93,8 +93,8 @@ public final class TVSeries extends ProducedCreationItem {
         }
     }
 
-    public List<String> getChaptersIds() {
-        return getReferencedElementsIds(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.Field.CHAPTER_LIST);
+    public List<Integer> getChaptersIds() {
+        return getReferencedElementsIds(DatabaseMediator.Field.CHAPTER_LIST);
     }
 
     public void removeChapters() {
@@ -121,11 +121,11 @@ public final class TVSeries extends ProducedCreationItem {
         setReferencedElements(DatabaseMediator.Field.CHAPTER_LIST, chapters, false);
     }
 
-    public void setChaptersIds(List<String> chapters) {
+    public void setChaptersIds(List<Integer> chapters) {
         setReferencedElementsIds(DatabaseMediator.Field.CHAPTER_LIST, chapters, true);
     }
 
-    public void setChaptersIdsPostponed(List<String> chapters) {
+    public void setChaptersIdsPostponed(List<Integer> chapters) {
         setReferencedElementsIds(DatabaseMediator.Field.CHAPTER_LIST, chapters, false);
     }
 
@@ -154,11 +154,17 @@ public final class TVSeries extends ProducedCreationItem {
     }
 
     @Override
-    public void mergePostponed(DatabaseItem anotherItem) {
-        super.mergePostponed(anotherItem);
-        TVSeries anotherTVSeriesItem = (TVSeries) anotherItem;
-        for (Chapter chapter : anotherTVSeriesItem.getChapters()) {
-            addChapterPostponed(chapter);
+    public DatabaseMediator.ReferencedElements getReferencedElements() {
+        DatabaseMediator.ReferencedElements referencedElements = super.getReferencedElements();
+        referencedElements.add(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.ReferencedList.CHAPTERS, getChaptersIds());
+        return referencedElements;
+    }
+
+    @Override
+    public void mergeReferencedElementsPostponed(DatabaseMediator.ReferencedElements referencedElements) {
+        super.mergeReferencedElementsPostponed(referencedElements);
+        for (Integer chapterId : referencedElements.get(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.ReferencedList.CHAPTERS)) {
+            addReferencedElementId(DatabaseMediator.Field.CHAPTER_LIST, chapterId, false);
         }
     }
 }

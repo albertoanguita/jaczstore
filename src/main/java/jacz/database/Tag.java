@@ -34,27 +34,47 @@ public class Tag {
 
     public static List<Movie> getMoviesWithTag(String dbPath, String tag) {
         LazyList<? extends Model> movies = getModelsWithTag(dbPath, tag, DatabaseMediator.ItemType.MOVIE);
-        return Movie.buildList(dbPath, movies);
+        if (movies != null) {
+            return Movie.buildList(dbPath, movies);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public static List<TVSeries> getTVSeriesWithTag(String dbPath, String tag) {
         LazyList<? extends Model> tvSeries = getModelsWithTag(dbPath, tag, DatabaseMediator.ItemType.TV_SERIES);
-        return TVSeries.buildList(dbPath, tvSeries);
+        if (tvSeries != null) {
+            return TVSeries.buildList(dbPath, tvSeries);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public static List<Chapter> getChaptersWithTag(String dbPath, String tag) {
         LazyList<? extends Model> chapters = getModelsWithTag(dbPath, tag, DatabaseMediator.ItemType.CHAPTER);
-        return Chapter.buildList(dbPath, chapters);
+        if (chapters != null) {
+            return Chapter.buildList(dbPath, chapters);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public static List<Person> getPeopleWithTag(String dbPath, String tag) {
         LazyList<? extends Model> people = getModelsWithTag(dbPath, tag, DatabaseMediator.ItemType.PERSON);
-        return Person.buildList(dbPath, people);
+        if (people != null) {
+            return Person.buildList(dbPath, people);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public static List<Company> getCompaniesWithTag(String dbPath, String tag) {
         LazyList<? extends Model> companies = getModelsWithTag(dbPath, tag, DatabaseMediator.ItemType.COMPANY);
-        return Company.buildList(dbPath, companies);
+        if (companies != null) {
+            return Company.buildList(dbPath, companies);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     private static LazyList<? extends Model> getModelsWithTag(String dbPath, String tag, DatabaseMediator.ItemType type) {
@@ -74,21 +94,14 @@ public class Tag {
             for (int i = 0; i < ids.length; i++) {
                 query += " OR id = ?";
             }
-
             Method where = type.modelClass.getMethod("where", String.class, Object[].class);
-            LazyList<? extends Model> models = (LazyList<? extends Model>) where.invoke(null, query, ids);
-            return models;
-        } catch (InvocationTargetException e) {
-            // todo check errors
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            return  (LazyList<? extends Model>) where.invoke(null, query, ids);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            DatabaseMediator.reportError("Error retrieving models with tag", dbPath, tag, type, e);
+            return null;
         } finally {
             DatabaseMediator.disconnect(dbPath);
         }
-        return null;
     }
 
     public static List<String> getItemTags(String dbPath, DatabaseItem item, DatabaseMediator.ItemType type) {

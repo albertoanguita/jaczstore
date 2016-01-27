@@ -47,8 +47,8 @@ public abstract class ProducedCreationItem extends CreationItem {
         }
     }
 
-    public List<String> getProductionCompaniesIds() {
-        return getReferencedElementsIds(DatabaseMediator.ItemType.COMPANY, DatabaseMediator.Field.COMPANY_LIST);
+    public List<Integer> getProductionCompaniesIds() {
+        return getReferencedElementsIds(DatabaseMediator.Field.COMPANY_LIST);
     }
 
     public <C extends Model> void removeProductionCompanies() {
@@ -75,11 +75,11 @@ public abstract class ProducedCreationItem extends CreationItem {
         setReferencedElements(DatabaseMediator.Field.COMPANY_LIST, companies, false);
     }
 
-    public void setProductionCompaniesIds(List<String> companies) {
+    public void setProductionCompaniesIds(List<Integer> companies) {
         setReferencedElementsIds(DatabaseMediator.Field.COMPANY_LIST, companies, true);
     }
 
-    public void setProductionCompaniesIdsPostponed(List<String> companies) {
+    public void setProductionCompaniesIdsPostponed(List<Integer> companies) {
         setReferencedElementsIds(DatabaseMediator.Field.COMPANY_LIST, companies, false);
     }
 
@@ -160,14 +160,26 @@ public abstract class ProducedCreationItem extends CreationItem {
     }
 
     @Override
-    public void mergePostponed(DatabaseItem anotherItem) {
-        super.mergePostponed(anotherItem);
+    public void mergeBasicPostponed(DatabaseItem anotherItem) {
+        super.mergeBasicPostponed(anotherItem);
         ProducedCreationItem anotherProducedItem = (ProducedCreationItem) anotherItem;
         for (GenreCode genreCode : anotherProducedItem.getGenres()) {
             addGenrePostponed(genreCode);
         }
-        for (Company company : anotherProducedItem.getProductionCompanies()) {
-            addProductionCompany(company);
+    }
+
+    @Override
+    public DatabaseMediator.ReferencedElements getReferencedElements() {
+        DatabaseMediator.ReferencedElements referencedElements = super.getReferencedElements();
+        referencedElements.add(DatabaseMediator.ItemType.COMPANY, DatabaseMediator.ReferencedList.COMPANIES, getProductionCompaniesIds());
+        return referencedElements;
+    }
+
+    @Override
+    public void mergeReferencedElementsPostponed(DatabaseMediator.ReferencedElements referencedElements) {
+        super.mergeReferencedElementsPostponed(referencedElements);
+        for (Integer companyId : referencedElements.get(DatabaseMediator.ItemType.COMPANY, DatabaseMediator.ReferencedList.COMPANIES)) {
+            addReferencedElementId(DatabaseMediator.Field.COMPANY_LIST, companyId, false);
         }
     }
 }

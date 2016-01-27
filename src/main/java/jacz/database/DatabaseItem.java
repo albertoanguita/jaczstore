@@ -1,5 +1,10 @@
 package jacz.database;
 
+import com.neovisionaries.i18n.CountryCode;
+import com.neovisionaries.i18n.LanguageCode;
+import jacz.database.util.GenreCode;
+import jacz.database.util.QualityCode;
+import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
@@ -29,17 +34,20 @@ public abstract class DatabaseItem {
         this.dbPath = dbPath;
         pendingChanges = new HashMap<>();
         try {
-            // todo transaction
             connect();
+            openTransaction();
             this.model = getItemType().modelClass.newInstance();
             if (id != null) {
                 model.setId(id);
                 model.insert();
             }
             set(DatabaseMediator.Field.CREATION_DATE, DatabaseMediator.dateFormat.format(new Date()), true);
-            disconnect();
+            commitTransaction();
         } catch (IllegalAccessException | InstantiationException e) {
             DatabaseMediator.reportError("Error retrieving item with id", dbPath, id, e);
+            rollbackTransaction();
+        } finally {
+            disconnect();
         }
     }
 
@@ -78,7 +86,7 @@ public abstract class DatabaseItem {
         }
     }
 
-    public String getString(DatabaseMediator.Field field) {
+    String getString(DatabaseMediator.Field field) {
         updateLastAccessTime();
         if (pendingChanges.containsKey(field)) {
             return (String) pendingChanges.get(field);
@@ -86,7 +94,7 @@ public abstract class DatabaseItem {
         return model.getString(field.value);
     }
 
-    public Integer getInteger(DatabaseMediator.Field field) {
+    Integer getInteger(DatabaseMediator.Field field) {
         updateLastAccessTime();
         if (pendingChanges.containsKey(field)) {
             return (Integer) pendingChanges.get(field);
@@ -94,12 +102,25 @@ public abstract class DatabaseItem {
         return model.getInteger(field.value);
     }
 
-    public Long getLong(DatabaseMediator.Field field) {
+    Long getLong(DatabaseMediator.Field field) {
         updateLastAccessTime();
         if (pendingChanges.containsKey(field)) {
             return (Long) pendingChanges.get(field);
         }
         return model.getLong(field.value);
+    }
+
+    Date getDate(DatabaseMediator.Field field) {
+        try {
+            return DatabaseMediator.dateFormat.parse(getString(field));
+        } catch (ParseException e) {
+            // error reading the stored date
+            return null;
+        }
+    }
+
+    QualityCode getQuality(DatabaseMediator.Field field) {
+        return QualityCode.valueOf(getString(field));
     }
 
     public void updateLastAccessTime() {
@@ -166,8 +187,8 @@ public abstract class DatabaseItem {
     }
 
     public void flushChanges() {
-        // todo use a transaction so all changes or none are set
         connect();
+        openTransaction();
         updateTimestamp();
         for (Map.Entry<DatabaseMediator.Field, Object> change : pendingChanges.entrySet()) {
             model.set(change.getKey().value, change.getValue());
@@ -177,6 +198,7 @@ public abstract class DatabaseItem {
         }
         DatabaseMediator.updateLastUpdateTime(dbPath);
         save();
+        commitTransaction();
         disconnect();
         pendingChanges.clear();
     }
@@ -191,7 +213,18 @@ public abstract class DatabaseItem {
         flushChanges();
     }
 
-    public abstract void mergePostponed(DatabaseItem anotherItem);
+    public final void mergePostponed(DatabaseItem anotherItem) {
+        mergeBasicPostponed(anotherItem);
+        mergeReferencedElementsPostponed(getReferencedElements());
+    }
+
+    public abstract void mergeBasicPostponed(DatabaseItem anotherItem);
+
+    public DatabaseMediator.ReferencedElements getReferencedElements() {
+        return new DatabaseMediator.ReferencedElements();
+    }
+
+    public void mergeReferencedElementsPostponed(DatabaseMediator.ReferencedElements referencedElements) {}
 
 //    static float evaluateListSimilarity(ListSimilarity listSimilarity, float confidence) {
 //        int min = Math.min(listSimilarity.firstListSize, listSimilarity.secondListSize);
@@ -268,8 +301,16 @@ public abstract class DatabaseItem {
         }
     }
 
-    protected List<String> getReferencedElementsIds(DatabaseMediator.ItemType type, DatabaseMediator.Field field) {
-        return getStringList(field);
+//    protected List<String> getReferencedElementsIds(DatabaseMediator.ItemType type, DatabaseMediator.Field field) {
+//        return getStringList(field);
+//    }
+
+    protected List<Integer> getReferencedElementsIds(DatabaseMediator.Field field) {
+        List<Integer> idList = new ArrayList<>();
+        for (String id : getStringList(field)) {
+            idList.add((Integer.parseInt(id)));
+        }
+        return idList;
     }
 
     protected void removeReferencedElements(DatabaseMediator.Field field, boolean flush) {
@@ -307,7 +348,7 @@ public abstract class DatabaseItem {
         setStringList(field, idList, flush);
     }
 
-    protected void setReferencedElementsIds(DatabaseMediator.Field field, List<String> idList, boolean flush) {
+    protected void setReferencedElementsIds(DatabaseMediator.Field field, List<Integer> idList, boolean flush) {
         setStringList(field, idList, flush);
     }
 
@@ -320,7 +361,12 @@ public abstract class DatabaseItem {
     }
 
     protected <C extends Model> boolean addReferencedElement(DatabaseMediator.Field field, DatabaseItem item, boolean flush) {
-        return addStringValue(field, item.getId().toString(), flush);
+//        return addStringValue(field, item.getId().toString(), flush);
+        return addReferencedElementId(field, item.getId(), flush);
+    }
+
+    protected <C extends Model> boolean addReferencedElementId(DatabaseMediator.Field field, Integer itemId, boolean flush) {
+        return addStringValue(field, itemId.toString(), flush);
     }
 
     protected <C extends Model> LazyList<C> getElementsContainingMe(DatabaseMediator.ItemType type, DatabaseMediator.Field field) {
@@ -354,7 +400,7 @@ public abstract class DatabaseItem {
         return removed;
     }
 
-    protected void setStringList(DatabaseMediator.Field field, List<String> stringList, boolean flush) {
+    protected void setStringList(DatabaseMediator.Field field, List<?> stringList, boolean flush) {
         set(field, serializeList(stringList), flush);
     }
 
@@ -371,21 +417,15 @@ public abstract class DatabaseItem {
     protected <E> List<E> getEnums(DatabaseMediator.Field field, Class<E> enum_) {
         try {
             Method valueOf = enum_.getMethod("valueOf", String.class);
-            String strList = getString(field);
             List<E> enumValues = new ArrayList<>();
-            for (String str : deserializeList(strList)) {
+            for (String str : getStringList(field)) {
                 enumValues.add((E) valueOf.invoke(null, str));
             }
             return enumValues;
-        } catch (IllegalAccessException e) {
-            // todo
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            DatabaseMediator.reportError("Error retrieving enums from the database with valueOf", dbPath, field, enum_, e);
+            return new ArrayList<>();
         }
-        return null;
     }
 
     protected <E> boolean removeEnum(DatabaseMediator.Field field, Class<E> enum_, E value, String getNameMethod, boolean flush) {
@@ -403,13 +443,8 @@ public abstract class DatabaseItem {
                 strList.add((String) getName.invoke(value));
             }
             set(field, serializeList(strList), flush);
-        } catch (NoSuchMethodException e) {
-            // todo
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            DatabaseMediator.reportError("Error retrieving enums from the database with user provided getNameMethod", dbPath, field, enum_, values, getNameMethod, flush, e);
         }
     }
 
@@ -441,13 +476,13 @@ public abstract class DatabaseItem {
         set(field, null, flush);
     }
 
-    protected String serializeList(List<String> list) {
+    protected String serializeList(List<?> list) {
         if (list.isEmpty()) {
             return "";
         } else {
             StringBuilder serList = new StringBuilder(LIST_SEPARATOR);
-            for (String item : list) {
-                serList.append(item).append(LIST_SEPARATOR);
+            for (Object item : list) {
+                serList.append(item.toString()).append(LIST_SEPARATOR);
             }
             return serList.toString();
         }
@@ -463,6 +498,133 @@ public abstract class DatabaseItem {
         return list;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        //noinspection SimplifiableIfStatement
+        if (!(o instanceof DatabaseItem)) return false;
+
+        return equals(o, getReferencedElements());
+    }
+
+    public boolean equals(Object o, DatabaseMediator.ReferencedElements referencedElements) {
+        if (this == o) return true;
+        if (!(o instanceof DatabaseItem)) return false;
+
+        DatabaseItem that = (DatabaseItem) o;
+
+        for (DatabaseMediator.Field field : getItemType().fields) {
+            if (field.canBeCompared()) {
+                switch (field.dbType) {
+
+                    case ID:
+                        // cannot happen
+                        return false;
+                    case TEXT:
+                        String str1 = getString(field);
+                        String str2 = that.getString(field);
+                        if (onlyOneDefined(str1, str2)) {
+                            return false;
+                        }
+                        if (bothDefined(str1, str2) && !str1.equals(str2)) {
+                            return false;
+                        }
+                        break;
+                    case INTEGER:
+                        Integer int1 = getInteger(field);
+                        Integer int2 = that.getInteger(field);
+                        if (onlyOneDefined(int1, int2)) {
+                            return false;
+                        }
+                        if (bothDefined(int1, int2) && !int1.equals(int2)) {
+                            return false;
+                        }
+                        break;
+                    case LONG:
+                        Long long1 = getLong(field);
+                        Long long2 = that.getLong(field);
+                        if (onlyOneDefined(long1, long2)) {
+                            return false;
+                        }
+                        if (bothDefined(long1, long2) && !long1.equals(long2)) {
+                            return false;
+                        }
+                        break;
+                    case DATE:
+                        Date date1 = getDate(field);
+                        Date date2 = that.getDate(field);
+                        if (onlyOneDefined(date1, date2)) {
+                            return false;
+                        }
+                        if (bothDefined(date1, date2) && !date1.equals(date2)) {
+                            return false;
+                        }
+                        break;
+                    case QUALITY:
+                        QualityCode quality1 = getQuality(field);
+                        QualityCode quality2 = that.getQuality(field);
+                        if (onlyOneDefined(quality1, quality2)) {
+                            return false;
+                        }
+                        if (bothDefined(quality1, quality2) && !quality1.equals(quality2)) {
+                            return false;
+                        }
+                        break;
+                    case ID_LIST:
+                        // referenced elements are taken from the corresponding argument instead of from 'that'
+                        List<Integer> idList1 = getReferencedElementsIds(field);
+                        List<Integer> idList2 = referencedElements.get(field.getReferencedType(), field.getReferencedList());
+                        if (!idList1.equals(idList2)) {
+                            return false;
+                        }
+                        break;
+                    case STRING_LIST:
+                        List<String> strList1 = getStringList(field);
+                        List<String> strList2 = that.getStringList(field);
+                        if (!strList1.equals(strList2)) {
+                            return false;
+                        }
+                        break;
+                    case GENRE_LIST:
+                        List<GenreCode> genreList1 = getEnums(DatabaseMediator.Field.GENRES, GenreCode.class);
+                        List<GenreCode> genreList2 = that.getEnums(DatabaseMediator.Field.GENRES, GenreCode.class);
+                        if (!genreList1.equals(genreList2)) {
+                            return false;
+                        }
+                        break;
+                    case LANGUAGE_LIST:
+                        List<LanguageCode> languageList1 = getEnums(DatabaseMediator.Field.LANGUAGES, LanguageCode.class);
+                        List<LanguageCode> languageList2 = that.getEnums(DatabaseMediator.Field.LANGUAGES, LanguageCode.class);
+                        if (!languageList1.equals(languageList2)) {
+                            return false;
+                        }
+                        break;
+                    case COUNTRY_LIST:
+                        List<CountryCode> countryList1 = getEnums(DatabaseMediator.Field.COUNTRIES, CountryCode.class);
+                        List<CountryCode> countryList2 = that.getEnums(DatabaseMediator.Field.COUNTRIES, CountryCode.class);
+                        if (!countryList1.equals(countryList2)) {
+                            return false;
+                        }
+                        break;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean onlyOneDefined(Object o1, Object o2) {
+        return (o1 != null && o2 == null) || (o1 == null && o2 != null);
+    }
+
+    private boolean bothDefined(Object o1, Object o2) {
+        return (o1 != null && o2 != null);
+    }
+
+    @Override
+    public int hashCode() {
+        return pendingChanges.hashCode();
+    }
+
     public void delete() {
         connect();
         model.delete();
@@ -471,6 +633,18 @@ public abstract class DatabaseItem {
 
     protected void connect() {
         DatabaseMediator.connect(dbPath);
+    }
+
+    protected void openTransaction() {
+        Base.openTransaction();
+    }
+
+    protected void commitTransaction() {
+        Base.commitTransaction();
+    }
+
+    protected void rollbackTransaction() {
+        Base.rollbackTransaction();
     }
 
     protected void disconnect() {

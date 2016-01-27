@@ -1,11 +1,7 @@
 package jacz.database.util;
 
-import com.neovisionaries.i18n.CountryCode;
 import jacz.database.DatabaseMediator;
-import jacz.util.AI.inference.Mycin;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * Stores the similarities of items between two lists of items of the same type. Used for match computations.

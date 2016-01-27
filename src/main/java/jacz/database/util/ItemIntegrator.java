@@ -1,18 +1,9 @@
 package jacz.database.util;
 
 import jacz.database.DatabaseItem;
-import jacz.database.DatabaseMediator;
-import jacz.store.old.ItemContainer;
-import jacz.store.old2.Database;
-import jacz.store.old2.db_mediator.CorruptDataException;
-import jacz.store.old2.db_mediator.DBException;
-import jacz.store.old2.db_mediator.DBMediator;
 import jacz.util.AI.inference.Mycin;
 
-import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Code for integrating disparate database into a single one
@@ -24,46 +15,46 @@ public class ItemIntegrator {
      */
     private static final float THRESHOLD = 0.95f;
 
-    public static Database integrateDatabases(DBMediator integratedDBMediator, boolean loadInMemory, Collection<Database> databases) throws DBException, IOException, CorruptDataException {
-        // we merge the database one by one into a "central" database
-        Database integratedDatabase = new Database(integratedDBMediator);
-        for (Database oneDatabase : databases) {
-            integrateDatabase(integratedDatabase, oneDatabase);
-        }
-        return integratedDatabase;
-    }
-
-    private static void integrateDatabase(Database integratedDatabase, Database oneDatabase) {
-        // each item of oneDatabase is checked against each item of the integrated database, searching for a match
-        // a match is determined by applying Mycin inference over a set of factors
-        // we start by the most independent items (Persons, Creators...)
-//        integrateLibrary(integratedDatabase.getPersonLibrary(), oneDatabase.getPersonLibrary());
-//        integrateLibrary(integratedDatabase.getCreatorLibrary(), oneDatabase.getCreatorLibrary());
-//        integrateLibrary(integratedDatabase.getSongLibrary(), oneDatabase.getSongLibrary());
-//        integrateLibrary(integratedDatabase.getAudioAlbumLibrary(), oneDatabase.getAudioAlbumLibrary());
-    }
-
-    private static <T extends jacz.store.old2.common.LibraryItem> void integrateLibrary(ItemContainer<T> integratedLibrary, ItemContainer<T> anotherLibrary) {
-//        for (Map.Entry<String, T> onePerson : anotherLibrary.getAllItems()) {
-//            boolean matchFound = false;
-//            String integratedIdentifier = null;
-//            String anotherIdentifier = null;
-//            for (Map.Entry<String, T> integratedPerson : integratedLibrary.getAllItems()) {
-//                if (isMatch(integratedPerson.getValue(), onePerson.getValue())) {
-//                    // match found. Stop search and merge elements
-//                    matchFound = true;
-//                    integratedIdentifier = integratedPerson.getKey();
-//                    anotherIdentifier = onePerson.getKey();
-//                    break;
-//                }
-//            }
-//            if (matchFound) {
-//                // values must be merged
-//                integratedLibrary.getItem(integratedIdentifier).merge(anotherLibrary.getItem(anotherIdentifier));
-//                // todo we should now compare the new item with the rest of existing items to check if it must be further merged
-//            }
+//    public static Database integrateDatabases(DBMediator integratedDBMediator, boolean loadInMemory, Collection<Database> databases) throws DBException, IOException, CorruptDataException {
+//        // we merge the database one by one into a "central" database
+//        Database integratedDatabase = new Database(integratedDBMediator);
+//        for (Database oneDatabase : databases) {
+//            integrateDatabase(integratedDatabase, oneDatabase);
 //        }
-    }
+//        return integratedDatabase;
+//    }
+//
+//    private static void integrateDatabase(Database integratedDatabase, Database oneDatabase) {
+//        // each item of oneDatabase is checked against each item of the integrated database, searching for a match
+//        // a match is determined by applying Mycin inference over a set of factors
+//        // we start by the most independent items (Persons, Creators...)
+////        integrateLibrary(integratedDatabase.getPersonLibrary(), oneDatabase.getPersonLibrary());
+////        integrateLibrary(integratedDatabase.getCreatorLibrary(), oneDatabase.getCreatorLibrary());
+////        integrateLibrary(integratedDatabase.getSongLibrary(), oneDatabase.getSongLibrary());
+////        integrateLibrary(integratedDatabase.getAudioAlbumLibrary(), oneDatabase.getAudioAlbumLibrary());
+//    }
+//
+//    private static <T extends jacz.store.old2.common.LibraryItem> void integrateLibrary(ItemContainer<T> integratedLibrary, ItemContainer<T> anotherLibrary) {
+////        for (Map.Entry<String, T> onePerson : anotherLibrary.getAllItems()) {
+////            boolean matchFound = false;
+////            String integratedIdentifier = null;
+////            String anotherIdentifier = null;
+////            for (Map.Entry<String, T> integratedPerson : integratedLibrary.getAllItems()) {
+////                if (isMatch(integratedPerson.getValue(), onePerson.getValue())) {
+////                    // match found. Stop search and merge elements
+////                    matchFound = true;
+////                    integratedIdentifier = integratedPerson.getKey();
+////                    anotherIdentifier = onePerson.getKey();
+////                    break;
+////                }
+////            }
+////            if (matchFound) {
+////                // values must be merged
+////                integratedLibrary.getItem(integratedIdentifier).merge(anotherLibrary.getItem(anotherIdentifier));
+////                // todo we should now compare the new item with the rest of existing items to check if it must be further merged
+////            }
+////        }
+//    }
 
     private static boolean isMatch(DatabaseItem item1, DatabaseItem item2) {
         return item1.match(item2) >= THRESHOLD;

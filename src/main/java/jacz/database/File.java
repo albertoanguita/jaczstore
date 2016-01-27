@@ -1,5 +1,6 @@
 package jacz.database;
 
+import jacz.database.util.GenreCode;
 import org.javalite.activejdbc.Model;
 
 import java.util.List;
@@ -108,13 +109,19 @@ public abstract class File extends DatabaseItem {
     }
 
     @Override
-    public void mergePostponed(DatabaseItem anotherItem) {
+    public void mergeBasicPostponed(DatabaseItem anotherItem) {
         File anotherFile = (File) anotherItem;
+        if (getHash() == null && anotherFile.getHash() != null) {
+            setHashPostponed(anotherFile.getHash());
+        }
         if (getLength() == null && anotherFile.getLength() != null) {
             setLengthPostponed(anotherFile.getLength());
         }
         if (getName() == null && anotherFile.getName() != null) {
             setNamePostponed(anotherFile.getName());
+        }
+        for (String additionalSource : anotherFile.getAdditionalSources()) {
+            addAdditionalSource(additionalSource);
         }
     }
 }

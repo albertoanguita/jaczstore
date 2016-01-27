@@ -51,7 +51,7 @@ public class DeletedItem extends DatabaseItem {
     }
 
     @Override
-    public void mergePostponed(DatabaseItem anotherItem) {
+    public void mergeBasicPostponed(DatabaseItem anotherItem) {
         // ignore
     }
 }

@@ -83,8 +83,8 @@ public final class Movie extends ProducedCreationItem {
         }
     }
 
-    public List<String> getVideoFilesIds() {
-        return getReferencedElementsIds(DatabaseMediator.ItemType.VIDEO_FILE, DatabaseMediator.Field.VIDEO_FILE_LIST);
+    public List<Integer> getVideoFilesIds() {
+        return getReferencedElementsIds(DatabaseMediator.Field.VIDEO_FILE_LIST);
     }
 
     public <C extends Model> void removeVideoFiles() {
@@ -111,11 +111,11 @@ public final class Movie extends ProducedCreationItem {
         setReferencedElements(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFiles, false);
     }
 
-    public void setVideoFilesIds(List<String> videoFilesIds) {
+    public void setVideoFilesIds(List<Integer> videoFilesIds) {
         setReferencedElementsIds(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFilesIds, true);
     }
 
-    public void setVideoFilesIdsPostponed(List<String> videoFilesIds) {
+    public void setVideoFilesIdsPostponed(List<Integer> videoFilesIds) {
         setReferencedElementsIds(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFilesIds, false);
     }
 
@@ -144,14 +144,26 @@ public final class Movie extends ProducedCreationItem {
     }
 
     @Override
-    public void mergePostponed(DatabaseItem anotherItem) {
-        super.mergePostponed(anotherItem);
+    public void mergeBasicPostponed(DatabaseItem anotherItem) {
+        super.mergeBasicPostponed(anotherItem);
         Movie anotherMovieItem = (Movie) anotherItem;
         if (getMinutes() == null && anotherMovieItem.getMinutes() != null) {
             setMinutesPostponed(anotherMovieItem.getMinutes());
         }
-        for (VideoFile videoFile : anotherMovieItem.getVideoFiles()) {
-            addVideoFilePostponed(videoFile);
+    }
+
+    @Override
+    public DatabaseMediator.ReferencedElements getReferencedElements() {
+        DatabaseMediator.ReferencedElements referencedElements = super.getReferencedElements();
+        referencedElements.add(DatabaseMediator.ItemType.VIDEO_FILE, DatabaseMediator.ReferencedList.VIDEO_FILES, getVideoFilesIds());
+        return referencedElements;
+    }
+
+    @Override
+    public void mergeReferencedElementsPostponed(DatabaseMediator.ReferencedElements referencedElements) {
+        super.mergeReferencedElementsPostponed(referencedElements);
+        for (Integer videoFileId : referencedElements.get(DatabaseMediator.ItemType.VIDEO_FILE, DatabaseMediator.ReferencedList.VIDEO_FILES)) {
+            addReferencedElementId(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFileId, false);
         }
     }
 }

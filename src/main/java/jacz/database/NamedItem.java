@@ -96,7 +96,7 @@ public abstract class NamedItem extends DatabaseItem {
     }
 
     @Override
-    public void mergePostponed(DatabaseItem anotherItem) {
+    public void mergeBasicPostponed(DatabaseItem anotherItem) {
         NamedItem anotherNamedItem = (NamedItem) anotherItem;
         if (getName() == null && anotherNamedItem.getName() != null) {
             setNamePostponed(anotherNamedItem.getName());
