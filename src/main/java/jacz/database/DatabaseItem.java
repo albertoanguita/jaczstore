@@ -204,12 +204,17 @@ public abstract class DatabaseItem {
     }
 
     public float match(DatabaseItem anotherItem) {
-        // no fields of this class indicate equality
+        // no fields at this level indicate equality
         return 0f;
     }
 
     public void merge(DatabaseItem anotherItem) {
-        mergePostponed(anotherItem);
+        merge(anotherItem, getReferencedElements());
+    }
+
+    public void merge(DatabaseItem anotherItem, DatabaseMediator.ReferencedElements referencedElements) {
+        mergeBasicPostponed(anotherItem);
+        mergeReferencedElementsPostponed(referencedElements);
         flushChanges();
     }
 

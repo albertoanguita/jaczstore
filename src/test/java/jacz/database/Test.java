@@ -5,6 +5,7 @@ import com.neovisionaries.i18n.LanguageCode;
 import jacz.database.util.GenreCode;
 import jacz.database.util.ImageHash;
 import jacz.database.util.QualityCode;
+import jacz.util.concurrency.ThreadUtil;
 import junitx.framework.ListAssert;
 import org.javalite.activejdbc.Base;
 import org.junit.Assert;
@@ -20,6 +21,7 @@ public class Test {
 
     @org.junit.Test
     public void testMovies() {
+        ThreadUtil.safeSleep(10000);
         DatabaseMediator.dropAndCreate("store.db", "a");
 
         DatabaseMediator.connect("store.db");
@@ -174,6 +176,7 @@ public class Test {
 
     @org.junit.Test
     public void testTVSeries() {
+        ThreadUtil.safeSleep(10000);
         DatabaseMediator.dropAndCreate("store.db", "a");
 
         TVSeries tvSeries1 = new TVSeries("store.db");

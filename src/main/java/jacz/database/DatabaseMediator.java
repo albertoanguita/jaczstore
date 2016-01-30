@@ -263,19 +263,16 @@ public class DatabaseMediator {
             return referencedElements.get(type).get(referencedList);
         }
 
-        public void mapIds(Map<DatabaseMediator.ItemType, Map<Integer, Integer>> mapping) {
-
+        public void mapIds(Map<DatabaseMediator.ItemType, Map<Integer, Integer>> typeMappings) {
+            for (Map.Entry<DatabaseMediator.ItemType, Map<DatabaseMediator.ReferencedList, List<Integer>>> referencedElementsEntry : referencedElements.entrySet()) {
+                Map<Integer, Integer> mapping = typeMappings.get(referencedElementsEntry.getKey());
+                for (List<Integer> idList : referencedElementsEntry.getValue().values()) {
+                    for (int i = 0; i < idList.size(); i++) {
+                        idList.set(i, mapping.get(idList.get(i)));
+                    }
+                }
+            }
         }
-
-//        public List<List<String>> getIdLists() {
-//            List<List<String>> idLists = new ArrayList<>();
-//            for (Map<DatabaseMediator.ReferencedList, List<String>> referencedList : referencedElements.values()) {
-//                for (List<String> oneIdList : referencedList.values()) {
-//                    idLists.add(oneIdList);
-//                }
-//            }
-//            return idLists;
-//        }
     }
 
     private static final String VERSION_0_1 = "0.1";
