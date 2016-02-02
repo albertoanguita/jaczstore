@@ -164,7 +164,7 @@ public final class VideoFile extends FileWithLanguages {
 
     @Override
     public void mergeBasicPostponed(DatabaseItem anotherItem) {
-        super.mergePostponed(anotherItem);
+        super.mergeBasicPostponed(anotherItem);
         VideoFile anotherVideoFile = (VideoFile) anotherItem;
         if (getMinutes() == null && anotherVideoFile.getMinutes() != null) {
             setMinutesPostponed(anotherVideoFile.getMinutes());

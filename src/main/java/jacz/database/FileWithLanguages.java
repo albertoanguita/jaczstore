@@ -62,7 +62,7 @@ public abstract class FileWithLanguages extends File {
 
     @Override
     public void mergeBasicPostponed(DatabaseItem anotherItem) {
-        super.mergePostponed(anotherItem);
+        super.mergeBasicPostponed(anotherItem);
         FileWithLanguages anotherFileWithLanguages = (FileWithLanguages) anotherItem;
         addEnums(DatabaseMediator.Field.LANGUAGES, LanguageCode.class, anotherFileWithLanguages.getLanguages(), LANGUAGES_NAME_METHOD, false);
     }

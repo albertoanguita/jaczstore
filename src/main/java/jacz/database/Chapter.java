@@ -112,11 +112,11 @@ public final class Chapter extends CreationItem {
         return getInteger(DatabaseMediator.Field.MINUTES);
     }
 
-    public void setMinutes(int minutes) {
+    public void setMinutes(Integer minutes) {
         set(DatabaseMediator.Field.MINUTES, minutes, true);
     }
 
-    public void setMinutesPostponed(int minutes) {
+    public void setMinutesPostponed(Integer minutes) {
         set(DatabaseMediator.Field.MINUTES, minutes, false);
     }
 
@@ -191,7 +191,7 @@ public final class Chapter extends CreationItem {
 
     @Override
     public void mergeBasicPostponed(DatabaseItem anotherItem) {
-        super.mergePostponed(anotherItem);
+        super.mergeBasicPostponed(anotherItem);
         Chapter anotherChapterItem = (Chapter) anotherItem;
         if (getMinutes() == null && anotherChapterItem.getMinutes() != null) {
             setMinutesPostponed(anotherChapterItem.getMinutes());
