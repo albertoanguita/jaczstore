@@ -163,6 +163,9 @@ public abstract class ProducedCreationItem extends CreationItem {
     public void mergeBasicPostponed(DatabaseItem anotherItem) {
         super.mergeBasicPostponed(anotherItem);
         ProducedCreationItem anotherProducedItem = (ProducedCreationItem) anotherItem;
+        if (getImageHash() == null && anotherProducedItem.getImageHash() != null) {
+            setImageHashPostponed(anotherProducedItem.getImageHash());
+        }
         for (GenreCode genreCode : anotherProducedItem.getGenres()) {
             addGenrePostponed(genreCode);
         }

@@ -71,6 +71,7 @@ public final class Chapter extends CreationItem {
         }
     }
 
+    // todo must test this method
     public List<TVSeries> getTVSeries() {
         List<jacz.database.models.TVSeries> modelTVSeries = getElementsContainingMe(DatabaseMediator.ItemType.TV_SERIES, DatabaseMediator.Field.CHAPTER_LIST);
         if (modelTVSeries != null) {
@@ -80,21 +81,21 @@ public final class Chapter extends CreationItem {
         }
     }
 
-    public void setTVSeries(TVSeries tvSeries) {
-        tvSeries.addChapter(this);
-    }
-
-    public void setTVSeriesPostponed(TVSeries tvSeries) {
-
-    }
-
-    public void setTVSeriesId(Integer tvSeriesId) {
-        setTVSeries(TVSeries.getTVSeriesById(dbPath, tvSeriesId));
-    }
-
-    public void setTVSeriesIdPostponed(Integer tvSeriesId) {
-        setTVSeriesPostponed(TVSeries.getTVSeriesById(dbPath, tvSeriesId));
-    }
+//    public void setTVSeries(TVSeries tvSeries) {
+//        tvSeries.addChapter(this);
+//    }
+//
+//    public void setTVSeriesPostponed(TVSeries tvSeries) {
+//
+//    }
+//
+//    public void setTVSeriesId(Integer tvSeriesId) {
+//        setTVSeries(TVSeries.getTVSeriesById(dbPath, tvSeriesId));
+//    }
+//
+//    public void setTVSeriesIdPostponed(Integer tvSeriesId) {
+//        setTVSeriesPostponed(TVSeries.getTVSeriesById(dbPath, tvSeriesId));
+//    }
 
     public String getSeason() {
         return getString(DatabaseMediator.Field.SEASON);
@@ -196,8 +197,8 @@ public final class Chapter extends CreationItem {
         if (getMinutes() == null && anotherChapterItem.getMinutes() != null) {
             setMinutesPostponed(anotherChapterItem.getMinutes());
         }
-        for (VideoFile videoFile : anotherChapterItem.getVideoFiles()) {
-            addVideoFilePostponed(videoFile);
+        if (getSeason() == null && anotherChapterItem.getSeason() != null) {
+            setSeasonPostponed(anotherChapterItem.getSeason());
         }
     }
 

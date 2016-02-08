@@ -94,11 +94,13 @@ public final class VideoFile extends FileWithLanguages {
     }
 
     public void setQuality(QualityCode quality) {
-        set(DatabaseMediator.Field.QUALITY_CODE, quality.name(), true);
+        String qualityValue = quality != null ? quality.name() : null;
+        set(DatabaseMediator.Field.QUALITY_CODE, qualityValue, true);
     }
 
     public void setQualityPostponed(QualityCode quality) {
-        set(DatabaseMediator.Field.QUALITY_CODE, quality.name(), false);
+        String qualityValue = quality != null ? quality.name() : null;
+        set(DatabaseMediator.Field.QUALITY_CODE, qualityValue, false);
     }
 
     public List<SubtitleFile> getSubtitleFiles() {

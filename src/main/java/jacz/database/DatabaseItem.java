@@ -74,7 +74,6 @@ public abstract class DatabaseItem {
     }
 
     public Integer getId() {
-        updateLastAccessTime();
         return (Integer) model.getId();
     }
 
@@ -89,7 +88,6 @@ public abstract class DatabaseItem {
     }
 
     String getString(DatabaseMediator.Field field) {
-        updateLastAccessTime();
         if (pendingChanges.containsKey(field)) {
             return (String) pendingChanges.get(field);
         }
@@ -97,7 +95,6 @@ public abstract class DatabaseItem {
     }
 
     Integer getInteger(DatabaseMediator.Field field) {
-        updateLastAccessTime();
         if (pendingChanges.containsKey(field)) {
             return (Integer) pendingChanges.get(field);
         }
@@ -105,7 +102,6 @@ public abstract class DatabaseItem {
     }
 
     Long getLong(DatabaseMediator.Field field) {
-        updateLastAccessTime();
         if (pendingChanges.containsKey(field)) {
             return (Long) pendingChanges.get(field);
         }
@@ -122,13 +118,9 @@ public abstract class DatabaseItem {
     }
 
     QualityCode getQuality(DatabaseMediator.Field field) {
-        return QualityCode.valueOf(getString(field));
+        String fieldValue = getString(field);
+        return fieldValue != null ? QualityCode.valueOf(getString(field)) : null;
     }
-
-    public void updateLastAccessTime() {
-        DatabaseMediator.updateLastAccessTime(dbPath);
-    }
-
 
     private void updateTimestamp() {
         updateTimestamp(model);

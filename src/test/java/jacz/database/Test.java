@@ -6,6 +6,8 @@ import jacz.database.util.GenreCode;
 import jacz.database.util.ImageHash;
 import jacz.database.util.QualityCode;
 import jacz.util.concurrency.ThreadUtil;
+import jacz.util.concurrency.task_executor.ParallelTask;
+import jacz.util.concurrency.task_executor.ParallelTaskExecutor;
 import junitx.framework.ListAssert;
 import org.javalite.activejdbc.Base;
 import org.junit.Assert;
@@ -20,8 +22,44 @@ import java.util.List;
 public class Test {
 
     @org.junit.Test
+    public void parallelTest() {
+        DatabaseMediator.dropAndCreate("store.db", "a");
+
+        new Movie("store.db");
+        new Movie("store.db");
+        new Movie("store.db");
+
+        ThreadUtil.safeSleep(1000);
+        System.out.println("Start test...");
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println();
+
+        ParallelTaskExecutor.executeTask(new ParallelTask() {
+            @Override
+            public void performTask() {
+                for (int i = 0; i < 1000; i++) {
+                    Movie.getMovies("store.db");
+                }
+            }
+        });
+
+        ParallelTaskExecutor.executeTask(new ParallelTask() {
+            @Override
+            public void performTask() {
+                for (int i = 0; i < 1000; i++) {
+                    Movie.getMovies("store2.db");
+                }
+            }
+        });
+
+        ThreadUtil.safeSleep(4000);
+    }
+
+
+    @org.junit.Test
     public void testMovies() {
-        ThreadUtil.safeSleep(10000);
         DatabaseMediator.dropAndCreate("store.db", "a");
 
         DatabaseMediator.connect("store.db");
@@ -176,7 +214,6 @@ public class Test {
 
     @org.junit.Test
     public void testTVSeries() {
-        ThreadUtil.safeSleep(10000);
         DatabaseMediator.dropAndCreate("store.db", "a");
 
         TVSeries tvSeries1 = new TVSeries("store.db");

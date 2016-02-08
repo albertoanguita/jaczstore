@@ -315,8 +315,14 @@ public abstract class CreationItem extends DatabaseItem {
         if (getYear() == null && anotherCreationItem.getYear() != null) {
             setYearPostponed(anotherCreationItem.getYear());
         }
+        if (getSynopsis() == null && anotherCreationItem.getSynopsis() != null) {
+            setSynopsisPostponed(anotherCreationItem.getSynopsis());
+        }
         for (CountryCode countryCode : anotherCreationItem.getCountries()) {
             addCountryPostponed(countryCode);
+        }
+        for (String externalURL : anotherCreationItem.getExternalURLs()) {
+            addExternalURLPostponed(externalURL);
         }
     }
 

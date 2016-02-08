@@ -25,9 +25,18 @@ import java.util.*;
  */
 public class DatabaseMediator {
 
+    private static final ThreadLocal<ArrayDeque<String>> connectionsStack = new ThreadLocal();
+
+    public static ArrayDeque<String> getConnectionsStack() {
+        if(connectionsStack.get() == null) {
+            connectionsStack.set(new ArrayDeque<>());
+        }
+        return connectionsStack.get();
+    }
+
     public enum ItemType {
         METADATA("metadata", Metadata.class, Field.ID, Field.VERSION, Field.IDENTIFIER, Field.CREATION_DATE,
-                Field.LAST_ACCESS, Field.LAST_UPDATE, Field.NEXT_TIMESTAMP, Field.HIGHEST_MANUAL_TIMESTAMP),
+                Field.LAST_UPDATE, Field.NEXT_TIMESTAMP, Field.HIGHEST_MANUAL_TIMESTAMP),
         DELETED_ITEM("deleted_items", DeletedItem.class, Field.ID, Field.ITEM_TYPE, Field.ITEM_ID, Field.TIMESTAMP),
         MOVIE("movies", Movie.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.TITLE, Field.ORIGINAL_TITLE,
                 Field.YEAR, Field.SYNOPSIS, Field.CREATOR_LIST, Field.ACTOR_LIST, Field.COMPANY_LIST, Field.COUNTRIES,
@@ -66,7 +75,6 @@ public class DatabaseMediator {
         VERSION("version", DBType.TEXT),
         IDENTIFIER("identifier", DBType.TEXT),
         CREATION_DATE("creation_date", DBType.DATE),
-        LAST_ACCESS("last_access", DBType.DATE),
         LAST_UPDATE("last_update", DBType.DATE),
         NEXT_TIMESTAMP("next_timestamp", DBType.INTEGER),
         HIGHEST_MANUAL_TIMESTAMP("highest_manual_timestamp", DBType.INTEGER),
@@ -107,7 +115,7 @@ public class DatabaseMediator {
             this.dbType = dbType;
         }
 
-//    public enum Field {
+        //    public enum Field {
 //        ID("id", DBType.ID),
 //        VERSION("version", DBType.TEXT),
 //        IDENTIFIER("identifier", DBType.TEXT),
@@ -164,7 +172,6 @@ public class DatabaseMediator {
                     this != DatabaseMediator.Field.VERSION &&
                     this != DatabaseMediator.Field.IDENTIFIER &&
                     this != DatabaseMediator.Field.CREATION_DATE &&
-                    this != DatabaseMediator.Field.LAST_ACCESS &&
                     this != DatabaseMediator.Field.LAST_UPDATE &&
                     this != DatabaseMediator.Field.NEXT_TIMESTAMP &&
                     this != DatabaseMediator.Field.HIGHEST_MANUAL_TIMESTAMP;
@@ -254,7 +261,7 @@ public class DatabaseMediator {
 
         public void add(DatabaseMediator.ItemType type, DatabaseMediator.ReferencedList referencedList, List<Integer> ids) {
             if (!referencedElements.containsKey(type)) {
-                referencedElements.put(type, new HashMap<DatabaseMediator.ReferencedList, List<Integer>>());
+                referencedElements.put(type, new HashMap<>());
             }
             referencedElements.get(type).put(referencedList, ids);
         }
@@ -332,7 +339,6 @@ public class DatabaseMediator {
                 .set(Field.VERSION.value, version)
                 .set(Field.IDENTIFIER.value, identifier)
                 .set(Field.CREATION_DATE.value, nowString)
-                .set(Field.LAST_ACCESS.value, nowString)
                 .set(Field.LAST_UPDATE.value, nowString)
                 .set(Field.NEXT_TIMESTAMP.value, 1L)
                 .saveIt();
@@ -444,13 +450,6 @@ public class DatabaseMediator {
         return metadata.getString(Field.IDENTIFIER.value);
     }
 
-    public static void updateLastAccessTime(String dbPath) {
-        connect(dbPath);
-        Metadata metadata = getMetadata();
-        metadata.set(Field.LAST_ACCESS.value, dateFormat.format(new Date())).saveIt();
-        disconnect(dbPath);
-    }
-
     public static void updateLastUpdateTime(String dbPath) {
         connect(dbPath);
         Metadata metadata = getMetadata();
@@ -458,7 +457,7 @@ public class DatabaseMediator {
         disconnect(dbPath);
     }
 
-    public static synchronized long getNewTimestamp(String dbPath) {
+    public static long getNewTimestamp(String dbPath) {
         connect(dbPath);
         long newTimestamp = getNewTimestamp();
         disconnect(dbPath);
@@ -466,16 +465,21 @@ public class DatabaseMediator {
     }
 
     public static synchronized long getNewTimestamp() {
+        // todo if called from deleted item, no connection is made!!!!!!!!!!!!!!!!!!!!!!
         Metadata metadata = getMetadata();
         long newTimestamp = metadata.getLong(Field.NEXT_TIMESTAMP.value);
         metadata.setLong(Field.NEXT_TIMESTAMP.value, newTimestamp + 1).saveIt();
         return newTimestamp;
     }
 
-    public static synchronized Long getHighestManualTimestamp(String dbPath) {
+    public static Long getHighestManualTimestamp(String dbPath) {
         connect(dbPath);
-        Metadata metadata = getMetadata();
-        Long highestTimestamp = metadata.getLong(Field.HIGHEST_MANUAL_TIMESTAMP.value);
+        Long highestTimestamp;
+        // synchronized blocks must be inside connect blocks to avoid cases of interlocks
+        synchronized (DatabaseMediator.class) {
+            Metadata metadata = getMetadata();
+            highestTimestamp = metadata.getLong(Field.HIGHEST_MANUAL_TIMESTAMP.value);
+        }
         disconnect(dbPath);
         return highestTimestamp;
     }
@@ -492,22 +496,28 @@ public class DatabaseMediator {
     }
 
     public static void connect(String dbPath) {
-        ConcurrentDataAccessControl.getInstance().getConcurrencyController().beginActivity(dbPath);
-        synchronized (DatabaseMediator.class) {
-            if (connectionCount == 0) {
-                Base.open("org.sqlite.JDBC", "jdbc:sqlite:" + dbPath, "", "");
+        String currentConnection = getConnectionsStack().peek();
+        if (currentConnection == null || !currentConnection.equals(dbPath)) {
+            // we must perform a connection to dbPath
+            if (Base.hasConnection()) {
+                // first disconnect
+                Base.close();
             }
-            connectionCount++;
+            Base.open("org.sqlite.JDBC", "jdbc:sqlite:" + dbPath, "", "");
         }
+        getConnectionsStack().push(dbPath);
     }
 
     public static void disconnect(String dbPath) {
-        ConcurrentDataAccessControl.getInstance().getConcurrencyController().endActivity(dbPath);
-        synchronized (DatabaseMediator.class) {
-            connectionCount--;
-            if (connectionCount == 0) {
-                Base.close();
-            }
+        dbPath = getConnectionsStack().pop();
+        if (!getConnectionsStack().isEmpty() && !getConnectionsStack().peek().equals(dbPath)) {
+            // we must disconnect and reconnect to the new top of the connection stack
+            Base.close();
+            Base.open("org.sqlite.JDBC", "jdbc:sqlite:" + getConnectionsStack().peek(), "", "");
+        } else if (getConnectionsStack().isEmpty()) {
+            // todo: maybe in the future we can maintain this last connection. Must investigate if it would
+            // get closed after thread is GC
+            Base.close();
         }
     }
 
