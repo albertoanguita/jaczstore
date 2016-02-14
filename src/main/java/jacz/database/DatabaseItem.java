@@ -82,7 +82,7 @@ public abstract class DatabaseItem {
             return DatabaseMediator.dateFormat.parse(getString(DatabaseMediator.Field.CREATION_DATE));
         } catch (ParseException e) {
             // error reading the stored date
-            // todo set new date and return it
+            // todo return a fixed date
             return null;
         }
     }

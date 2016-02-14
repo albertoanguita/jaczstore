@@ -9,7 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Alberto on 12/09/2015.
+ * Each chapter must belong to one and only one tv series
+ * <p/>
+ * Once we attach a chapter to a tv series, it will belong to that tv series for ever. It cannot be moved to another
+ * tv series (it would not make much sense, and it is complex in terms of maintaining coherence)
  */
 public final class Chapter extends CreationItem {
 
@@ -59,7 +62,7 @@ public final class Chapter extends CreationItem {
             List<Chapter> chapters = new ArrayList<>();
             for (Model model : models) {
                 if (model != null) {
-                    Chapter chapter  = new Chapter(model, dbPath);
+                    Chapter chapter = new Chapter(model, dbPath);
                     if (season == null || season.equals(chapter.getSeason())) {
                         chapters.add(new Chapter(model, dbPath));
                     }

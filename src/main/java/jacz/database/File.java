@@ -1,6 +1,5 @@
 package jacz.database;
 
-import jacz.database.util.GenreCode;
 import org.javalite.activejdbc.Model;
 
 import java.util.List;

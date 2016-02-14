@@ -465,7 +465,6 @@ public class DatabaseMediator {
     }
 
     public static synchronized long getNewTimestamp() {
-        // todo if called from deleted item, no connection is made!!!!!!!!!!!!!!!!!!!!!!
         Metadata metadata = getMetadata();
         long newTimestamp = metadata.getLong(Field.NEXT_TIMESTAMP.value);
         metadata.setLong(Field.NEXT_TIMESTAMP.value, newTimestamp + 1).saveIt();
