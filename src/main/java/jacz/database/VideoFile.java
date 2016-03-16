@@ -20,8 +20,12 @@ public final class VideoFile extends FileWithLanguages {
 //
 //    private List<SubtitleFile> subtitleFiles;
 
-    public VideoFile(String dbPath) {
+    VideoFile(String dbPath) {
         super(dbPath);
+    }
+
+    public VideoFile(String dbPath, String hash) {
+        super(dbPath, hash);
     }
 
     public VideoFile(String dbPath, Integer id) {

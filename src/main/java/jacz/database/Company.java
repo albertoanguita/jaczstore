@@ -10,8 +10,12 @@ import java.util.List;
  */
 public final class Company extends NamedItem {
 
-    public Company(String dbPath) {
+    Company(String dbPath) {
         super(dbPath);
+    }
+
+    public Company(String dbPath, String name) {
+        super(dbPath, name);
     }
 
     public Company(String dbPath, Integer id) {

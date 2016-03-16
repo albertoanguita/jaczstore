@@ -30,6 +30,10 @@ public abstract class ProducedCreationItem extends CreationItem {
         super(dbPath);
     }
 
+    public ProducedCreationItem(String dbPath, String title) {
+        super(dbPath, title);
+    }
+
     public ProducedCreationItem(String dbPath, Integer id) {
         super(dbPath, id);
     }

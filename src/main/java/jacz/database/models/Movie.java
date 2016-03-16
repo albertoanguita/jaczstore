@@ -1,6 +1,5 @@
 package jacz.database.models;
 
-import jacz.database.DatabaseMediator;
 import org.javalite.activejdbc.Model;
 
 /**

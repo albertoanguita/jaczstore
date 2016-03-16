@@ -29,10 +29,18 @@ public abstract class DatabaseItem {
     private final Map<DatabaseMediator.Field, Object> pendingChanges;
 
     public DatabaseItem(String dbPath) {
-        this(dbPath, null);
+        this(dbPath, null, new HashMap<>());
+    }
+
+    public DatabaseItem(String dbPath, Map<DatabaseMediator.Field, Object> initialValues) {
+        this(dbPath, null, initialValues);
     }
 
     public DatabaseItem(String dbPath, Integer id) {
+        this(dbPath, id, null);
+    }
+
+    public DatabaseItem(String dbPath, Integer id, Map<DatabaseMediator.Field, Object> initialValues) {
         this.dbPath = dbPath;
         pendingChanges = new HashMap<>();
         try {
@@ -43,7 +51,13 @@ public abstract class DatabaseItem {
                 model.setId(id);
                 model.insert();
             }
-            set(DatabaseMediator.Field.CREATION_DATE, DatabaseMediator.dateFormat.format(new Date()), true);
+            set(DatabaseMediator.Field.CREATION_DATE, DatabaseMediator.dateFormat.format(new Date()), false);
+            if (initialValues != null) {
+                for (Map.Entry<DatabaseMediator.Field, Object> initialValue : initialValues.entrySet()) {
+                    set(initialValue.getKey(), initialValue.getValue(), false);
+                }
+            }
+            flushChanges();
             commitTransaction();
         } catch (IllegalAccessException | InstantiationException e) {
             DatabaseMediator.reportError("Error retrieving item with id", dbPath, id, e);

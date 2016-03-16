@@ -10,6 +10,8 @@ import jacz.database.models.SubtitleFile;
 import jacz.database.models.TVSeries;
 import jacz.database.models.Tag;
 import jacz.database.models.VideoFile;
+import jacz.database.util.ImageHash;
+import jacz.storage.ActiveJDBCController;
 import jacz.util.log.ErrorFactory;
 import jacz.util.log.ErrorHandler;
 import jacz.util.log.ErrorLog;
@@ -25,14 +27,14 @@ import java.util.*;
  */
 public class DatabaseMediator {
 
-    private static final ThreadLocal<ArrayDeque<String>> connectionsStack = new ThreadLocal();
-
-    public static ArrayDeque<String> getConnectionsStack() {
-        if(connectionsStack.get() == null) {
-            connectionsStack.set(new ArrayDeque<>());
-        }
-        return connectionsStack.get();
-    }
+//    private static final ThreadLocal<ArrayDeque<String>> connectionsStack = new ThreadLocal();
+//
+//    public static ArrayDeque<String> getConnectionsStack() {
+//        if (connectionsStack.get() == null) {
+//            connectionsStack.set(new ArrayDeque<>());
+//        }
+//        return connectionsStack.get();
+//    }
 
     public enum ItemType {
         METADATA("metadata", Metadata.class, Field.ID, Field.VERSION, Field.IDENTIFIER, Field.CREATION_DATE,
@@ -67,6 +69,10 @@ public class DatabaseMediator {
             DatabaseMediator.addTableNameToItemMap(table, this);
             this.modelClass = modelClass;
             this.fields = fields;
+        }
+
+        public boolean hasImageHash() {
+            return this == MOVIE || this == TV_SERIES;
         }
     }
 
@@ -274,8 +280,20 @@ public class DatabaseMediator {
             for (Map.Entry<DatabaseMediator.ItemType, Map<DatabaseMediator.ReferencedList, List<Integer>>> referencedElementsEntry : referencedElements.entrySet()) {
                 Map<Integer, Integer> mapping = typeMappings.get(referencedElementsEntry.getKey());
                 for (List<Integer> idList : referencedElementsEntry.getValue().values()) {
-                    for (int i = 0; i < idList.size(); i++) {
-                        idList.set(i, mapping.get(idList.get(i)));
+                    if (mapping != null) {
+                        // we have a mapping for this item type. only the elements contained in the mapping are mapped. The rest are removed
+                        int i = 0;
+                        while (i < idList.size()) {
+                            if (mapping.containsKey(idList.get(i))) {
+                                idList.set(i, mapping.get(idList.get(i)));
+                                i++;
+                            } else {
+                                idList.remove(i);
+                            }
+                        }
+                    } else {
+                        // there is no mapping at all for this item type -> clear all lists
+                        idList.clear();
                     }
                 }
             }
@@ -288,7 +306,8 @@ public class DatabaseMediator {
 
     private static final Map<String, ItemType> tableNameToItemType = new HashMap<>();
 
-    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("Y/M/d-HH:mm:ss:SSS");
+    // todo remove, use millis
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("y/M/d-HH:mm:ss:SSS");
 
 //    private static final Pattern AUTOCOMPLETE_DB = Pattern.compile("^(.)*store.db$");
 
@@ -443,6 +462,21 @@ public class DatabaseMediator {
         }
     }
 
+    public static Set<ImageHash> getAllImageHashes(String dbPath) {
+        connect(dbPath);
+        Set<ImageHash> imageHashes = new HashSet<>();
+        List<ProducedCreationItem> producedCreationItems = new ArrayList<>();
+        producedCreationItems.addAll(jacz.database.Movie.getMovies(dbPath));
+        producedCreationItems.addAll(jacz.database.TVSeries.getTVSeries(dbPath));
+        for (ProducedCreationItem producedCreationItem : producedCreationItems) {
+            if (producedCreationItem.getImageHash() != null) {
+                imageHashes.add(producedCreationItem.getImageHash());
+            }
+        }
+        disconnect(dbPath);
+        return imageHashes;
+    }
+
     public static String getDatabaseIdentifier(String dbPath) {
         connect(dbPath);
         Metadata metadata = getMetadata();
@@ -495,29 +529,11 @@ public class DatabaseMediator {
     }
 
     public static void connect(String dbPath) {
-        String currentConnection = getConnectionsStack().peek();
-        if (currentConnection == null || !currentConnection.equals(dbPath)) {
-            // we must perform a connection to dbPath
-            if (Base.hasConnection()) {
-                // first disconnect
-                Base.close();
-            }
-            Base.open("org.sqlite.JDBC", "jdbc:sqlite:" + dbPath, "", "");
-        }
-        getConnectionsStack().push(dbPath);
+        ActiveJDBCController.connect(dbPath);
     }
 
     public static void disconnect(String dbPath) {
-        dbPath = getConnectionsStack().pop();
-        if (!getConnectionsStack().isEmpty() && !getConnectionsStack().peek().equals(dbPath)) {
-            // we must disconnect and reconnect to the new top of the connection stack
-            Base.close();
-            Base.open("org.sqlite.JDBC", "jdbc:sqlite:" + getConnectionsStack().peek(), "", "");
-        } else if (getConnectionsStack().isEmpty()) {
-            // todo: maybe in the future we can maintain this last connection. Must investigate if it would
-            // get closed after thread is GC
-            Base.close();
-        }
+        ActiveJDBCController.disconnect(dbPath);
     }
 
     public static String getDBPath() {

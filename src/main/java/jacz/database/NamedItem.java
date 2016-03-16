@@ -1,11 +1,12 @@
 package jacz.database;
 
 import jacz.database.util.ItemIntegrator;
-import jacz.database.util.ListSimilarity;
 import jacz.util.AI.inference.Mycin;
 import org.javalite.activejdbc.Model;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Alberto on 12/09/2015.
@@ -18,6 +19,16 @@ public abstract class NamedItem extends DatabaseItem {
 
     public NamedItem(String dbPath) {
         super(dbPath);
+    }
+
+    public NamedItem(String dbPath, String name) {
+        super(dbPath, buildInitialValues(name));
+    }
+
+    private static Map<DatabaseMediator.Field, Object> buildInitialValues(String name) {
+        Map<DatabaseMediator.Field, Object> initialValues = new HashMap<>();
+        initialValues.put(DatabaseMediator.Field.NAME, name);
+        return  initialValues;
     }
 
     public NamedItem(String dbPath, Integer id) {

@@ -16,6 +16,10 @@ public abstract class FileWithLanguages extends File {
         super(dbPath);
     }
 
+    public FileWithLanguages(String dbPath, String hash) {
+        super(dbPath, hash);
+    }
+
     public FileWithLanguages(String dbPath, Integer id) {
         super(dbPath, id);
     }

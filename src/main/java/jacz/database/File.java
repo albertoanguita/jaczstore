@@ -2,7 +2,9 @@ package jacz.database;
 
 import org.javalite.activejdbc.Model;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Alberto on 12/09/2015.
@@ -15,6 +17,16 @@ public abstract class File extends DatabaseItem {
 
     public File(String dbPath) {
         super(dbPath);
+    }
+
+    public File(String dbPath, String hash) {
+        super(dbPath, buildInitialValues(hash));
+    }
+
+    private static Map<DatabaseMediator.Field, Object> buildInitialValues(String hash) {
+        Map<DatabaseMediator.Field, Object> initialValues = new HashMap<>();
+        initialValues.put(DatabaseMediator.Field.HASH, hash);
+        return  initialValues;
     }
 
     public File(String dbPath, Integer id) {

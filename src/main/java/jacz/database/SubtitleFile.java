@@ -12,8 +12,12 @@ public final class SubtitleFile extends FileWithLanguages {
 
 //    private LanguageCode language;
 
-    public SubtitleFile(String dbPath) {
+    SubtitleFile(String dbPath) {
         super(dbPath);
+    }
+
+    public SubtitleFile(String dbPath, String hash) {
+        super(dbPath, hash);
     }
 
     public SubtitleFile(String dbPath, Integer id) {

@@ -17,8 +17,12 @@ public final class Movie extends ProducedCreationItem {
 
 //    private List<VideoFile> videoFiles;
 
-    public Movie(String dbPath) {
+    Movie(String dbPath) {
         super(dbPath);
+    }
+
+    public Movie(String dbPath, String title) {
+        super(dbPath, title);
     }
 
     public Movie(String dbPath, Integer id) {

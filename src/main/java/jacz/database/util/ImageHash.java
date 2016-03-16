@@ -57,4 +57,12 @@ public class ImageHash implements Serializable {
         result = 31 * result + extension.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "ImageHash{" +
+                "hash='" + hash + '\'' +
+                ", extension='" + extension + '\'' +
+                '}';
+    }
 }

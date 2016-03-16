@@ -1,7 +1,7 @@
 package jacz.database.util;
 
-import jacz.database.DatabaseItem;
 import jacz.util.AI.inference.Mycin;
+import jacz.util.numeric.NumericUtil;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public class ItemIntegrator {
     /**
      * Threshold for considering two items equal
      */
-    private static final float THRESHOLD = 0.95f;
+    public static final float THRESHOLD = 0.9f;
 
 
     public static float genericNameSimilarity(String name1, String name2) {
@@ -61,12 +61,12 @@ public class ItemIntegrator {
         if (originalTitle1 != null && title2 != null) {
             title2WithOriginalTitle1 = titlesSimilarity(title2, originalTitle1);
         }
-        return Math.max(titlesSimilarity, Math.max(title1WithOriginalTitle2, title2WithOriginalTitle1));
+        return NumericUtil.max(titlesSimilarity, title1WithOriginalTitle2, title2WithOriginalTitle1);
     }
 
     public static float titlesSimilarity(String title1, String title2) {
         if (title1.equalsIgnoreCase(title2)) {
-            return 0.8f;
+            return 0.9f;
         } else {
             return -0.1f;
         }

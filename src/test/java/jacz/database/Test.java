@@ -6,7 +6,6 @@ import jacz.database.util.GenreCode;
 import jacz.database.util.ImageHash;
 import jacz.database.util.QualityCode;
 import jacz.util.concurrency.ThreadUtil;
-import jacz.util.concurrency.task_executor.ParallelTask;
 import jacz.util.concurrency.task_executor.ParallelTaskExecutor;
 import junitx.framework.ListAssert;
 import org.javalite.activejdbc.Base;
@@ -36,18 +35,18 @@ public class Test {
         System.out.println();
         System.out.println();
 
-        ParallelTaskExecutor.executeTask(new ParallelTask() {
+        ParallelTaskExecutor.executeTask(new Runnable() {
             @Override
-            public void performTask() {
+            public void run() {
                 for (int i = 0; i < 1000; i++) {
                     Movie.getMovies("store.db");
                 }
             }
         });
 
-        ParallelTaskExecutor.executeTask(new ParallelTask() {
+        ParallelTaskExecutor.executeTask(new Runnable() {
             @Override
-            public void performTask() {
+            public void run() {
                 for (int i = 0; i < 1000; i++) {
                     Movie.getMovies("store2.db");
                 }
@@ -590,8 +589,9 @@ public class Test {
     public void testVideoFiles() {
         DatabaseMediator.dropAndCreate("store.db", "a");
 
-        VideoFile videoFile = new VideoFile("store.db");
-        videoFile.setHash("hash");
+        VideoFile videoFile = new VideoFile("store.db", "hash");
+        videoFile.setName("acc");
+        Assert.assertEquals("acc", videoFile.getName());
         videoFile.setLength(150L);
         videoFile.setName("video1");
         videoFile.addAdditionalSource("torrent1");

@@ -22,8 +22,12 @@ public final class Chapter extends CreationItem {
 
 //    private List<VideoFile> videoFiles;
 
-    public Chapter(String dbPath) {
+    Chapter(String dbPath) {
         super(dbPath);
+    }
+
+    public Chapter(String dbPath, String title) {
+        super(dbPath, title);
     }
 
     public Chapter(String dbPath, Integer id) {

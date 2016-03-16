@@ -1,9 +1,7 @@
 package jacz.database;
 
 import jacz.util.concurrency.ThreadUtil;
-import jacz.util.concurrency.task_executor.ParallelTask;
 import jacz.util.concurrency.task_executor.ParallelTaskExecutor;
-import org.javalite.activejdbc.Base;
 
 /**
  * Created by Alberto on 05/02/2016.
@@ -54,36 +52,36 @@ public class TestParallel {
         System.out.println();
         System.out.println();
 
-        ParallelTaskExecutor.executeTask(new ParallelTask() {
+        ParallelTaskExecutor.executeTask(new Runnable() {
             @Override
-            public void performTask() {
+            public void run() {
                 for (int i = 0; i < 1000; i++) {
                     Movie.getMovies("store.db");
                 }
             }
         });
 
-        ParallelTaskExecutor.executeTask(new ParallelTask() {
+        ParallelTaskExecutor.executeTask(new Runnable() {
             @Override
-            public void performTask() {
+            public void run() {
                 for (int i = 0; i < 1000; i++) {
                     Movie.getMovies("store.db");
                 }
             }
         });
 
-        ParallelTaskExecutor.executeTask(new ParallelTask() {
+        ParallelTaskExecutor.executeTask(new Runnable() {
             @Override
-            public void performTask() {
+            public void run() {
                 for (int i = 0; i < 1000; i++) {
                     Movie.getMovies("store2.db");
                 }
             }
         });
 
-        ParallelTaskExecutor.executeTask(new ParallelTask() {
+        ParallelTaskExecutor.executeTask(new Runnable() {
             @Override
-            public void performTask() {
+            public void run() {
                 for (int i = 0; i < 1000; i++) {
                     Movie.getMovies("store2.db");
                 }

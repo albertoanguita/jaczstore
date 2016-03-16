@@ -7,7 +7,9 @@ import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Alberto on 16/11/2015.
@@ -39,6 +41,16 @@ public abstract class CreationItem extends DatabaseItem {
 
     public CreationItem(String dbPath) {
         super(dbPath);
+    }
+
+    public CreationItem(String dbPath, String title) {
+        super(dbPath, buildInitialValues(title));
+    }
+
+    private static Map<DatabaseMediator.Field, Object> buildInitialValues(String title) {
+        Map<DatabaseMediator.Field, Object> initialValues = new HashMap<>();
+        initialValues.put(DatabaseMediator.Field.TITLE, title);
+        return  initialValues;
     }
 
     public CreationItem(String dbPath, Integer id) {

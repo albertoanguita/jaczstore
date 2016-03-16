@@ -15,8 +15,12 @@ public final class TVSeries extends ProducedCreationItem {
 
     private static final float CHAPTERS_SIMILARITY_CONFIDENCE = 1.0f;
 
-    public TVSeries(String dbPath) {
+    TVSeries(String dbPath) {
         super(dbPath);
+    }
+
+    public TVSeries(String dbPath, String title) {
+        super(dbPath, title);
     }
 
     public TVSeries(String dbPath, Integer id) {

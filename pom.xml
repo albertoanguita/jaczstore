@@ -44,6 +44,9 @@
                 <goals>
                   <goal>jar</goal>
                 </goals>
+                <configuration>
+                    <additionalparam>-Xdoclint:none</additionalparam>
+                </configuration>
               </execution>
             </executions>
           </plugin>
@@ -102,6 +105,11 @@
         <groupId>org.javalite</groupId>
         <artifactId>activejdbc</artifactId>
         <version>1.4.11</version>
+    </dependency>
+    <dependency>
+        <groupId>jacz.storage</groupId>
+        <artifactId>activejdbc-controller</artifactId>
+        <version>0.1a</version>
     </dependency>
     <dependency>
     	<groupId>org.slf4j</groupId>
