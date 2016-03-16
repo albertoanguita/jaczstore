@@ -119,57 +119,57 @@ public class Test {
         Assert.assertEquals(new ImageHash("image", "jpg"), movie1.getImageHash());
         Assert.assertEquals(new Integer(150), movie1.getMinutes());
 
-        Person arnold = new Person("store.db");
-        arnold.setName("Arnold");
-        Person silvester = new Person("store.db");
-        silvester.setName("Silvester");
-        Person christian = new Person("store.db");
-        christian.setName("Christian");
-        Person george = new Person("store.db");
-        george.setName("George");
+//        Person arnold = new Person("store.db");
+//        arnold.setName("Arnold");
+//        Person silvester = new Person("store.db");
+//        silvester.setName("Silvester");
+//        Person christian = new Person("store.db");
+//        christian.setName("Christian");
+//        Person george = new Person("store.db");
+//        george.setName("George");
 
         Movie movie = new Movie("store.db");
         movie.setTitle("Predator");
 
-        movie.addCreator(arnold);
-        movie.addCreator(silvester);
-        movie.addActor(christian);
-        movie.addActor(george);
-        List<Person> actors = movie.getActors();
-        List<Person> directors = movie.getCreators();
+        movie.addCreator("Arnold");
+        movie.addCreator("Silvester");
+        movie.addActor("Christian");
+        movie.addActor("George");
+        List<String> actors = movie.getActors();
+        List<String> directors = movie.getCreators();
         Assert.assertEquals(2, actors.size());
         Assert.assertEquals(2, directors.size());
-        Assert.assertEquals("Christian", actors.get(0).getName());
-        Assert.assertEquals("George", actors.get(1).getName());
-        Assert.assertEquals("Arnold", directors.get(0).getName());
-        Assert.assertEquals("Silvester", directors.get(1).getName());
-        movie.removeCreator(arnold);
-        movie.removeActor(christian);
+        Assert.assertEquals("Christian", actors.get(0));
+        Assert.assertEquals("George", actors.get(1));
+        Assert.assertEquals("Arnold", directors.get(0));
+        Assert.assertEquals("Silvester", directors.get(1));
+        movie.removeCreator("Arnold");
+        movie.removeActor("Christian");
         actors = movie.getActors();
         directors = movie.getCreators();
         Assert.assertEquals(1, actors.size());
         Assert.assertEquals(1, directors.size());
-        Assert.assertEquals("George", actors.get(0).getName());
-        Assert.assertEquals("Silvester", directors.get(0).getName());
+        Assert.assertEquals("George", actors.get(0));
+        Assert.assertEquals("Silvester", directors.get(0));
         movie.removeCreators();
         movie.removeActors();
         Assert.assertEquals(0, movie.getCreators().size());
         Assert.assertEquals(0, movie.getActors().size());
 
-        Company hbo = new Company("store.db");
-        hbo.setName("HBO");
-        Company pixar = new Company("store.db");
-        pixar.setName("Pixar");
-        movie.addProductionCompany(hbo);
-        movie.addProductionCompany(pixar);
-        List<Company> companies = movie.getProductionCompanies();
+//        Company hbo = new Company("store.db");
+//        hbo.setName("HBO");
+//        Company pixar = new Company("store.db");
+//        pixar.setName("Pixar");
+        movie.addProductionCompany("HBO");
+        movie.addProductionCompany("Pixar");
+        List<String> companies = movie.getProductionCompanies();
         Assert.assertEquals(2, companies.size());
-        Assert.assertEquals("HBO", companies.get(0).getName());
-        Assert.assertEquals("Pixar", companies.get(1).getName());
-        movie.removeProductionCompany(hbo);
+        Assert.assertEquals("HBO", companies.get(0));
+        Assert.assertEquals("Pixar", companies.get(1));
+        movie.removeProductionCompany("HBO");
         companies = movie.getProductionCompanies();
         Assert.assertEquals(1, companies.size());
-        Assert.assertEquals("Pixar", companies.get(0).getName());
+        Assert.assertEquals("Pixar", companies.get(0));
         movie.removeProductionCompanies();
         Assert.assertEquals(0, movie.getProductionCompanies().size());
 
@@ -262,57 +262,57 @@ public class Test {
 
         tvSeries1 = TVSeries.getTVSeriesById("store.db", 1);
 
-        Person arnold = new Person("store.db");
-        arnold.setName("Arnold");
-        Person silvester = new Person("store.db");
-        silvester.setName("Silvester");
-        Person christian = new Person("store.db");
-        christian.setName("Christian");
-        Person george = new Person("store.db");
-        george.setName("George");
+//        Person arnold = new Person("store.db");
+//        arnold.setName("Arnold");
+//        Person silvester = new Person("store.db");
+//        silvester.setName("Silvester");
+//        Person christian = new Person("store.db");
+//        christian.setName("Christian");
+//        Person george = new Person("store.db");
+//        george.setName("George");
 
         TVSeries tvSeries = new TVSeries("store.db");
         tvSeries1.setTitle("Predator");
 
-        tvSeries.addCreator(arnold);
-        tvSeries.addCreator(silvester);
-        tvSeries.addActor(christian);
-        tvSeries.addActor(george);
-        List<Person> actors = tvSeries.getActors();
-        List<Person> directors = tvSeries.getCreators();
+        tvSeries.addCreator("Arnold");
+        tvSeries.addCreator("Silvester");
+        tvSeries.addActor("Christian");
+        tvSeries.addActor("George");
+        List<String> actors = tvSeries.getActors();
+        List<String> directors = tvSeries.getCreators();
         Assert.assertEquals(2, actors.size());
         Assert.assertEquals(2, directors.size());
-        Assert.assertEquals("Christian", actors.get(0).getName());
-        Assert.assertEquals("George", actors.get(1).getName());
-        Assert.assertEquals("Arnold", directors.get(0).getName());
-        Assert.assertEquals("Silvester", directors.get(1).getName());
-        tvSeries.removeCreator(arnold);
-        tvSeries.removeActor(christian);
+        Assert.assertEquals("Christian", actors.get(0));
+        Assert.assertEquals("George", actors.get(1));
+        Assert.assertEquals("Arnold", directors.get(0));
+        Assert.assertEquals("Silvester", directors.get(1));
+        tvSeries.removeCreator("Arnold");
+        tvSeries.removeActor("Christian");
         actors = tvSeries.getActors();
         directors = tvSeries.getCreators();
         Assert.assertEquals(1, actors.size());
         Assert.assertEquals(1, directors.size());
-        Assert.assertEquals("George", actors.get(0).getName());
-        Assert.assertEquals("Silvester", directors.get(0).getName());
+        Assert.assertEquals("George", actors.get(0));
+        Assert.assertEquals("Silvester", directors.get(0));
         tvSeries.removeCreators();
         tvSeries.removeActors();
         Assert.assertEquals(0, tvSeries.getCreators().size());
         Assert.assertEquals(0, tvSeries.getActors().size());
 
-        Company hbo = new Company("store.db");
-        hbo.setName("HBO");
-        Company pixar = new Company("store.db");
-        pixar.setName("Pixar");
-        tvSeries.addProductionCompany(hbo);
-        tvSeries.addProductionCompany(pixar);
-        List<Company> companies = tvSeries.getProductionCompanies();
+//        Company hbo = new Company("store.db");
+//        hbo.setName("HBO");
+//        Company pixar = new Company("store.db");
+//        pixar.setName("Pixar");
+        tvSeries.addProductionCompany("HBO");
+        tvSeries.addProductionCompany("Pixar");
+        List<String> companies = tvSeries.getProductionCompanies();
         Assert.assertEquals(2, companies.size());
-        Assert.assertEquals("HBO", companies.get(0).getName());
-        Assert.assertEquals("Pixar", companies.get(1).getName());
-        tvSeries.removeProductionCompany(hbo);
+        Assert.assertEquals("HBO", companies.get(0));
+        Assert.assertEquals("Pixar", companies.get(1));
+        tvSeries.removeProductionCompany("HBO");
         companies = tvSeries.getProductionCompanies();
         Assert.assertEquals(1, companies.size());
-        Assert.assertEquals("Pixar", companies.get(0).getName());
+        Assert.assertEquals("Pixar", companies.get(0));
         tvSeries.removeProductionCompanies();
         Assert.assertEquals(0, tvSeries.getProductionCompanies().size());
 
@@ -387,38 +387,38 @@ public class Test {
         tvSeries.delete();
         Assert.assertEquals(2, Chapter.getChapters("store.db").size());
 
-        Person arnold = new Person("store.db");
-        arnold.setName("Arnold");
-        Person silvester = new Person("store.db");
-        silvester.setName("Silvester");
-        Person christian = new Person("store.db");
-        christian.setName("Christian");
-        Person george = new Person("store.db");
-        george.setName("George");
+//        Person arnold = new Person("store.db");
+//        arnold.setName("Arnold");
+//        Person silvester = new Person("store.db");
+//        silvester.setName("Silvester");
+//        Person christian = new Person("store.db");
+//        christian.setName("Christian");
+//        Person george = new Person("store.db");
+//        george.setName("George");
 
         Chapter chapter = new Chapter("store.db");
         chapter.setTitle("Predator");
 
-        chapter.addCreator(arnold);
-        chapter.addCreator(silvester);
-        chapter.addActor(christian);
-        chapter.addActor(george);
-        List<Person> actors = chapter.getActors();
-        List<Person> directors = chapter.getCreators();
+        chapter.addCreator("Arnold");
+        chapter.addCreator("Silvester");
+        chapter.addActor("Christian");
+        chapter.addActor("George");
+        List<String> actors = chapter.getActors();
+        List<String> directors = chapter.getCreators();
         Assert.assertEquals(2, actors.size());
         Assert.assertEquals(2, directors.size());
-        Assert.assertEquals("Christian", actors.get(0).getName());
-        Assert.assertEquals("George", actors.get(1).getName());
-        Assert.assertEquals("Arnold", directors.get(0).getName());
-        Assert.assertEquals("Silvester", directors.get(1).getName());
-        chapter.removeCreator(arnold);
-        chapter.removeActor(christian);
+        Assert.assertEquals("Christian", actors.get(0));
+        Assert.assertEquals("George", actors.get(1));
+        Assert.assertEquals("Arnold", directors.get(0));
+        Assert.assertEquals("Silvester", directors.get(1));
+        chapter.removeCreator("Arnold");
+        chapter.removeActor("Christian");
         actors = chapter.getActors();
         directors = chapter.getCreators();
         Assert.assertEquals(1, actors.size());
         Assert.assertEquals(1, directors.size());
-        Assert.assertEquals("George", actors.get(0).getName());
-        Assert.assertEquals("Silvester", directors.get(0).getName());
+        Assert.assertEquals("George", actors.get(0));
+        Assert.assertEquals("Silvester", directors.get(0));
         chapter.removeCreators();
         chapter.removeActors();
         Assert.assertEquals(0, chapter.getCreators().size());
@@ -442,148 +442,148 @@ public class Test {
         Assert.assertEquals(0, chapter.getVideoFiles().size());
     }
 
-    @org.junit.Test
-    public void testPeople() {
-        DatabaseMediator.dropAndCreate("store.db", "a");
-
-        Person arnold = new Person("store.db");
-        arnold.setName("Arnold");
-        arnold.addAlias("Arnold S.");
-        Person silvester = new Person("store.db");
-        silvester.setName("Silvester");
-        silvester.addAlias("Silvester S.");
-        Person christian = new Person("store.db");
-        christian.setName("Christian");
-        christian.addAlias("Christian B.");
-        christian.addAlias("Christian Bale");
-        Person george = new Person("store.db");
-        george.setName("George");
-        george.addAlias("George C.");
-        george.addAlias("George Cl.");
-        george.addAlias("George Clooney");
-
-        List<String> aliases = new ArrayList<>();
-        aliases.add("Arnold S.");
-        Assert.assertEquals("Arnold", arnold.getName());
-        ListAssert.assertEquals(aliases, arnold.getAliases());
-
-        aliases.clear();
-        aliases.add("Silvester S.");
-        Assert.assertEquals("Silvester", silvester.getName());
-        ListAssert.assertEquals(aliases, silvester.getAliases());
-
-        aliases.clear();
-        aliases.add("Christian B.");
-        aliases.add("Christian Bale");
-        Assert.assertEquals("Christian", christian.getName());
-        ListAssert.assertEquals(aliases, christian.getAliases());
-
-        aliases.clear();
-        aliases.add("George C.");
-        aliases.add("George Cl.");
-        aliases.add("George Clooney");
-        Assert.assertEquals("George", george.getName());
-        ListAssert.assertEquals(aliases, george.getAliases());
-
-        Movie movie = new Movie("store.db");
-        movie.setTitle("Predator");
-        movie.addCreator(arnold);
-        movie.addActor(silvester);
-        movie.addActor(christian);
-
-        TVSeries tvSeries = new TVSeries("store.db");
-        tvSeries.setTitle("Breaking bad");
-        tvSeries.addCreator(arnold);
-        tvSeries.addCreator(christian);
-        tvSeries.addActor(silvester);
-        tvSeries.addActor(george);
-
-        Chapter chapter = new Chapter("store.db");
-        chapter.setTitle("The white walkers");
-        chapter.addActor(arnold);
-        chapter.addActor(christian);
-        chapter.addCreator(silvester);
-        chapter.addCreator(george);
-
-        Assert.assertEquals(4, Person.getPeople("store.db").size());
-
-        Assert.assertEquals(0, arnold.getMoviesAsActor("store.db").size());
-        Assert.assertEquals("Predator", arnold.getMoviesAsDirector("store.db").get(0).getTitle());
-        Assert.assertEquals("Predator", silvester.getMoviesAsActor("store.db").get(0).getTitle());
-        Assert.assertEquals(0, silvester.getMoviesAsDirector("store.db").size());
-        Assert.assertEquals("Predator", christian.getMoviesAsActor("store.db").get(0).getTitle());
-        Assert.assertEquals(0, christian.getMoviesAsDirector("store.db").size());
-        Assert.assertEquals(0, george.getMoviesAsActor("store.db").size());
-        Assert.assertEquals(0, george.getMoviesAsDirector("store.db").size());
-
-        Assert.assertEquals(0, arnold.getTVSeriesAsActor("store.db").size());
-        Assert.assertEquals("Breaking bad", arnold.getTVSeriesAsCreator("store.db").get(0).getTitle());
-        Assert.assertEquals("Breaking bad", silvester.getTVSeriesAsActor("store.db").get(0).getTitle());
-        Assert.assertEquals(0, silvester.getTVSeriesAsCreator("store.db").size());
-        Assert.assertEquals(0, christian.getTVSeriesAsActor("store.db").size());
-        Assert.assertEquals("Breaking bad", christian.getTVSeriesAsCreator("store.db").get(0).getTitle());
-        Assert.assertEquals("Breaking bad", george.getTVSeriesAsActor("store.db").get(0).getTitle());
-        Assert.assertEquals(0, george.getTVSeriesAsCreator("store.db").size());
-
-        Assert.assertEquals("The white walkers", arnold.getChaptersAsActor("store.db").get(0).getTitle());
-        Assert.assertEquals(0, arnold.getChaptersAsDirector("store.db").size());
-        Assert.assertEquals(0, silvester.getChaptersAsActor("store.db").size());
-        Assert.assertEquals("The white walkers", silvester.getChaptersAsDirector("store.db").get(0).getTitle());
-        Assert.assertEquals("The white walkers", christian.getChaptersAsActor("store.db").get(0).getTitle());
-        Assert.assertEquals(0, christian.getChaptersAsDirector("store.db").size());
-        Assert.assertEquals(0, george.getChaptersAsActor("store.db").size());
-        Assert.assertEquals("The white walkers", george.getChaptersAsDirector("store.db").get(0).getTitle());
-
-        movie.delete();
-        tvSeries.delete();
-        chapter.delete();
-
-        Assert.assertEquals(4, Person.getPeople("store.db").size());
-    }
-
-    @org.junit.Test
-    public void testCompanies() {
-        DatabaseMediator.dropAndCreate("store.db", "a");
-
-        Company hbo = new Company("store.db");
-        hbo.setName("HBO");
-        hbo.addAlias("H.B.O.");
-        Company pixar = new Company("store.db");
-        pixar.setName("Pixar");
-        pixar.addAlias("Disney Pixar");
-        pixar.addAlias("Pixar Inc.");
-
-        Movie movie = new Movie("store.db");
-        movie.setTitle("Predator");
-        movie.addProductionCompany(hbo);
-
-        TVSeries tvSeries = new TVSeries("store.db");
-        tvSeries.setTitle("Breaking bad");
-        tvSeries.addProductionCompany(pixar);
-
-        Assert.assertEquals(2, Company.getCompanies("store.db").size());
-        Assert.assertEquals(1, hbo.getMovies("store.db").size());
-        Assert.assertEquals("Predator", hbo.getMovies("store.db").get(0).getTitle());
-        Assert.assertEquals(0, hbo.getTVSeries("store.db").size());
-        Assert.assertEquals(0, pixar.getMovies("store.db").size());
-        Assert.assertEquals(1, pixar.getTVSeries("store.db").size());
-        Assert.assertEquals("Breaking bad", pixar.getTVSeries("store.db").get(0).getTitle());
-
-        movie.delete();
-
-        Assert.assertEquals(2, Company.getCompanies("store.db").size());
-
-        List<String> aliases = new ArrayList<>();
-        aliases.add("H.B.O.");
-        Assert.assertEquals("HBO", hbo.getName());
-        ListAssert.assertEquals(aliases, hbo.getAliases());
-
-        aliases.clear();
-        aliases.add("Disney Pixar");
-        aliases.add("Pixar Inc.");
-        Assert.assertEquals("Pixar", pixar.getName());
-        ListAssert.assertEquals(aliases, pixar.getAliases());
-    }
+//    @org.junit.Test
+//    public void testPeople() {
+//        DatabaseMediator.dropAndCreate("store.db", "a");
+//
+//        Person arnold = new Person("store.db");
+//        arnold.setName("Arnold");
+//        arnold.addAlias("Arnold S.");
+//        Person silvester = new Person("store.db");
+//        silvester.setName("Silvester");
+//        silvester.addAlias("Silvester S.");
+//        Person christian = new Person("store.db");
+//        christian.setName("Christian");
+//        christian.addAlias("Christian B.");
+//        christian.addAlias("Christian Bale");
+//        Person george = new Person("store.db");
+//        george.setName("George");
+//        george.addAlias("George C.");
+//        george.addAlias("George Cl.");
+//        george.addAlias("George Clooney");
+//
+//        List<String> aliases = new ArrayList<>();
+//        aliases.add("Arnold S.");
+//        Assert.assertEquals("Arnold", arnold.getName());
+//        ListAssert.assertEquals(aliases, arnold.getAliases());
+//
+//        aliases.clear();
+//        aliases.add("Silvester S.");
+//        Assert.assertEquals("Silvester", silvester.getName());
+//        ListAssert.assertEquals(aliases, silvester.getAliases());
+//
+//        aliases.clear();
+//        aliases.add("Christian B.");
+//        aliases.add("Christian Bale");
+//        Assert.assertEquals("Christian", christian.getName());
+//        ListAssert.assertEquals(aliases, christian.getAliases());
+//
+//        aliases.clear();
+//        aliases.add("George C.");
+//        aliases.add("George Cl.");
+//        aliases.add("George Clooney");
+//        Assert.assertEquals("George", george.getName());
+//        ListAssert.assertEquals(aliases, george.getAliases());
+//
+//        Movie movie = new Movie("store.db");
+//        movie.setTitle("Predator");
+//        movie.addCreator(arnold);
+//        movie.addActor(silvester);
+//        movie.addActor(christian);
+//
+//        TVSeries tvSeries = new TVSeries("store.db");
+//        tvSeries.setTitle("Breaking bad");
+//        tvSeries.addCreator(arnold);
+//        tvSeries.addCreator(christian);
+//        tvSeries.addActor(silvester);
+//        tvSeries.addActor(george);
+//
+//        Chapter chapter = new Chapter("store.db");
+//        chapter.setTitle("The white walkers");
+//        chapter.addActor(arnold);
+//        chapter.addActor(christian);
+//        chapter.addCreator(silvester);
+//        chapter.addCreator(george);
+//
+//        Assert.assertEquals(4, Person.getPeople("store.db").size());
+//
+//        Assert.assertEquals(0, arnold.getMoviesAsActor("store.db").size());
+//        Assert.assertEquals("Predator", arnold.getMoviesAsDirector("store.db").get(0).getTitle());
+//        Assert.assertEquals("Predator", silvester.getMoviesAsActor("store.db").get(0).getTitle());
+//        Assert.assertEquals(0, silvester.getMoviesAsDirector("store.db").size());
+//        Assert.assertEquals("Predator", christian.getMoviesAsActor("store.db").get(0).getTitle());
+//        Assert.assertEquals(0, christian.getMoviesAsDirector("store.db").size());
+//        Assert.assertEquals(0, george.getMoviesAsActor("store.db").size());
+//        Assert.assertEquals(0, george.getMoviesAsDirector("store.db").size());
+//
+//        Assert.assertEquals(0, arnold.getTVSeriesAsActor("store.db").size());
+//        Assert.assertEquals("Breaking bad", arnold.getTVSeriesAsCreator("store.db").get(0).getTitle());
+//        Assert.assertEquals("Breaking bad", silvester.getTVSeriesAsActor("store.db").get(0).getTitle());
+//        Assert.assertEquals(0, silvester.getTVSeriesAsCreator("store.db").size());
+//        Assert.assertEquals(0, christian.getTVSeriesAsActor("store.db").size());
+//        Assert.assertEquals("Breaking bad", christian.getTVSeriesAsCreator("store.db").get(0).getTitle());
+//        Assert.assertEquals("Breaking bad", george.getTVSeriesAsActor("store.db").get(0).getTitle());
+//        Assert.assertEquals(0, george.getTVSeriesAsCreator("store.db").size());
+//
+//        Assert.assertEquals("The white walkers", arnold.getChaptersAsActor("store.db").get(0).getTitle());
+//        Assert.assertEquals(0, arnold.getChaptersAsDirector("store.db").size());
+//        Assert.assertEquals(0, silvester.getChaptersAsActor("store.db").size());
+//        Assert.assertEquals("The white walkers", silvester.getChaptersAsDirector("store.db").get(0).getTitle());
+//        Assert.assertEquals("The white walkers", christian.getChaptersAsActor("store.db").get(0).getTitle());
+//        Assert.assertEquals(0, christian.getChaptersAsDirector("store.db").size());
+//        Assert.assertEquals(0, george.getChaptersAsActor("store.db").size());
+//        Assert.assertEquals("The white walkers", george.getChaptersAsDirector("store.db").get(0).getTitle());
+//
+//        movie.delete();
+//        tvSeries.delete();
+//        chapter.delete();
+//
+//        Assert.assertEquals(4, Person.getPeople("store.db").size());
+//    }
+//
+//    @org.junit.Test
+//    public void testCompanies() {
+//        DatabaseMediator.dropAndCreate("store.db", "a");
+//
+//        Company hbo = new Company("store.db");
+//        hbo.setName("HBO");
+//        hbo.addAlias("H.B.O.");
+//        Company pixar = new Company("store.db");
+//        pixar.setName("Pixar");
+//        pixar.addAlias("Disney Pixar");
+//        pixar.addAlias("Pixar Inc.");
+//
+//        Movie movie = new Movie("store.db");
+//        movie.setTitle("Predator");
+//        movie.addProductionCompany(hbo);
+//
+//        TVSeries tvSeries = new TVSeries("store.db");
+//        tvSeries.setTitle("Breaking bad");
+//        tvSeries.addProductionCompany(pixar);
+//
+//        Assert.assertEquals(2, Company.getCompanies("store.db").size());
+//        Assert.assertEquals(1, hbo.getMovies("store.db").size());
+//        Assert.assertEquals("Predator", hbo.getMovies("store.db").get(0).getTitle());
+//        Assert.assertEquals(0, hbo.getTVSeries("store.db").size());
+//        Assert.assertEquals(0, pixar.getMovies("store.db").size());
+//        Assert.assertEquals(1, pixar.getTVSeries("store.db").size());
+//        Assert.assertEquals("Breaking bad", pixar.getTVSeries("store.db").get(0).getTitle());
+//
+//        movie.delete();
+//
+//        Assert.assertEquals(2, Company.getCompanies("store.db").size());
+//
+//        List<String> aliases = new ArrayList<>();
+//        aliases.add("H.B.O.");
+//        Assert.assertEquals("HBO", hbo.getName());
+//        ListAssert.assertEquals(aliases, hbo.getAliases());
+//
+//        aliases.clear();
+//        aliases.add("Disney Pixar");
+//        aliases.add("Pixar Inc.");
+//        Assert.assertEquals("Pixar", pixar.getName());
+//        ListAssert.assertEquals(aliases, pixar.getAliases());
+//    }
 
     @org.junit.Test
     public void testVideoFiles() {

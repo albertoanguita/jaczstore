@@ -59,23 +59,23 @@ public class Tag {
         }
     }
 
-    public static List<Person> getPeopleWithTag(String dbPath, String tag) {
-        LazyList<? extends Model> people = getModelsWithTag(dbPath, tag, DatabaseMediator.ItemType.PERSON);
-        if (people != null) {
-            return Person.buildList(dbPath, people);
-        } else {
-            return new ArrayList<>();
-        }
-    }
-
-    public static List<Company> getCompaniesWithTag(String dbPath, String tag) {
-        LazyList<? extends Model> companies = getModelsWithTag(dbPath, tag, DatabaseMediator.ItemType.COMPANY);
-        if (companies != null) {
-            return Company.buildList(dbPath, companies);
-        } else {
-            return new ArrayList<>();
-        }
-    }
+//    public static List<Person> getPeopleWithTag(String dbPath, String tag) {
+//        LazyList<? extends Model> people = getModelsWithTag(dbPath, tag, DatabaseMediator.ItemType.PERSON);
+//        if (people != null) {
+//            return Person.buildList(dbPath, people);
+//        } else {
+//            return new ArrayList<>();
+//        }
+//    }
+//
+//    public static List<Company> getCompaniesWithTag(String dbPath, String tag) {
+//        LazyList<? extends Model> companies = getModelsWithTag(dbPath, tag, DatabaseMediator.ItemType.COMPANY);
+//        if (companies != null) {
+//            return Company.buildList(dbPath, companies);
+//        } else {
+//            return new ArrayList<>();
+//        }
+//    }
 
     private static LazyList<? extends Model> getModelsWithTag(String dbPath, String tag, DatabaseMediator.ItemType type) {
         DatabaseMediator.connect(dbPath);

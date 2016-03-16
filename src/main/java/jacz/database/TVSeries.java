@@ -80,7 +80,7 @@ public final class TVSeries extends ProducedCreationItem {
     }
 
     public List<Chapter> getChapters() {
-        LazyList<jacz.database.models.Person> models = getReferencedElements(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.Field.CHAPTER_LIST);
+        LazyList<jacz.database.models.Chapter> models = getReferencedElements(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.Field.CHAPTER_LIST);
         if (models != null) {
             return Chapter.buildList(dbPath, models);
         } else {
@@ -89,7 +89,8 @@ public final class TVSeries extends ProducedCreationItem {
     }
 
     public List<Chapter> getChapters(String season) {
-        LazyList<jacz.database.models.Person> models = getReferencedElements(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.Field.CHAPTER_LIST);
+        // todo
+        LazyList<jacz.database.models.Chapter> models = getReferencedElements(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.Field.CHAPTER_LIST);
         if (models != null) {
             return Chapter.buildList(dbPath, models);
         } else {

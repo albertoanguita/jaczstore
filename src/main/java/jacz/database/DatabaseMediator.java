@@ -1,11 +1,9 @@
 package jacz.database;
 
 import jacz.database.models.Chapter;
-import jacz.database.models.Company;
 import jacz.database.models.DeletedItem;
 import jacz.database.models.Metadata;
 import jacz.database.models.Movie;
-import jacz.database.models.Person;
 import jacz.database.models.SubtitleFile;
 import jacz.database.models.TVSeries;
 import jacz.database.models.Tag;
@@ -49,8 +47,8 @@ public class DatabaseMediator {
         CHAPTER("chapters", Chapter.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.TITLE,
                 Field.ORIGINAL_TITLE, Field.YEAR, Field.SYNOPSIS, Field.CREATOR_LIST, Field.ACTOR_LIST,
                 Field.COUNTRIES, Field.EXTERNAL_URLS, Field.SEASON, Field.VIDEO_FILE_LIST, Field.MINUTES),
-        PERSON("people", Person.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.NAME, Field.ALIASES),
-        COMPANY("companies", Company.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.NAME, Field.ALIASES),
+//        PERSON("people", Person.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.NAME, Field.ALIASES),
+//        COMPANY("companies", Company.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.NAME, Field.ALIASES),
         VIDEO_FILE("video_files", VideoFile.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.HASH,
                 Field.LENGTH, Field.NAME, Field.ADDITIONAL_SOURCES, Field.MINUTES, Field.RESOLUTION,
                 Field.QUALITY_CODE, Field.LANGUAGES, Field.SUBTITLE_FILE_LIST),
@@ -186,12 +184,12 @@ public class DatabaseMediator {
         ItemType getReferencedType() {
             switch (this) {
 
-                case CREATOR_LIST:
-                    return ItemType.PERSON;
-                case ACTOR_LIST:
-                    return ItemType.PERSON;
-                case COMPANY_LIST:
-                    return ItemType.COMPANY;
+//                case CREATOR_LIST:
+//                    return ItemType.PERSON;
+//                case ACTOR_LIST:
+//                    return ItemType.PERSON;
+//                case COMPANY_LIST:
+//                    return ItemType.COMPANY;
                 case VIDEO_FILE_LIST:
                     return ItemType.VIDEO_FILE;
                 case CHAPTER_LIST:
@@ -347,8 +345,8 @@ public class DatabaseMediator {
         createTable(ItemType.MOVIE);
         createTable(ItemType.TV_SERIES);
         createTable(ItemType.CHAPTER);
-        createTable(ItemType.PERSON);
-        createTable(ItemType.COMPANY);
+//        createTable(ItemType.PERSON);
+//        createTable(ItemType.COMPANY);
         createTable(ItemType.VIDEO_FILE);
         createTable(ItemType.SUBTITLE_FILE);
         createTable(ItemType.TAG);
@@ -387,11 +385,11 @@ public class DatabaseMediator {
             case CHAPTER:
                 return new jacz.database.Chapter(dbPath);
 
-            case PERSON:
-                return new jacz.database.Person(dbPath);
-
-            case COMPANY:
-                return new jacz.database.Company(dbPath);
+//            case PERSON:
+//                return new jacz.database.Person(dbPath);
+//
+//            case COMPANY:
+//                return new jacz.database.Company(dbPath);
 
             case VIDEO_FILE:
                 return new jacz.database.VideoFile(dbPath);
@@ -416,11 +414,11 @@ public class DatabaseMediator {
             case CHAPTER:
                 return jacz.database.Chapter.getChapters(dbPath);
 
-            case PERSON:
-                return jacz.database.Person.getPeople(dbPath);
-
-            case COMPANY:
-                return jacz.database.Company.getCompanies(dbPath);
+//            case PERSON:
+//                return jacz.database.Person.getPeople(dbPath);
+//
+//            case COMPANY:
+//                return jacz.database.Company.getCompanies(dbPath);
 
             case VIDEO_FILE:
                 return jacz.database.VideoFile.getVideoFiles(dbPath);
@@ -445,11 +443,11 @@ public class DatabaseMediator {
             case CHAPTER:
                 return jacz.database.Chapter.getChapterById(dbPath, id);
 
-            case PERSON:
-                return jacz.database.Person.getPersonById(dbPath, id);
-
-            case COMPANY:
-                return jacz.database.Company.getCompanyById(dbPath, id);
+//            case PERSON:
+//                return jacz.database.Person.getPersonById(dbPath, id);
+//
+//            case COMPANY:
+//                return jacz.database.Company.getCompanyById(dbPath, id);
 
             case VIDEO_FILE:
                 return jacz.database.VideoFile.getVideoFileById(dbPath, id);

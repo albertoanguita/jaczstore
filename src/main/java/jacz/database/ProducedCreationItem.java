@@ -42,66 +42,103 @@ public abstract class ProducedCreationItem extends CreationItem {
         super(model, dbPath);
     }
 
-    public List<Company> getProductionCompanies() {
-        LazyList<jacz.database.models.Company> models = getReferencedElements(DatabaseMediator.ItemType.COMPANY, DatabaseMediator.Field.COMPANY_LIST);
-        if (models != null) {
-            return Company.buildList(dbPath, models);
-        } else {
-            return new ArrayList<>();
-        }
+//    public List<Company> getProductionCompanies() {
+//        LazyList<jacz.database.models.Company> models = getReferencedElements(DatabaseMediator.ItemType.COMPANY, DatabaseMediator.Field.COMPANY_LIST);
+//        if (models != null) {
+//            return Company.buildList(dbPath, models);
+//        } else {
+//            return new ArrayList<>();
+//        }
+//    }
+
+//    public List<Integer> getProductionCompaniesIds() {
+//        return getReferencedElementsIds(DatabaseMediator.Field.COMPANY_LIST);
+//    }
+//
+//    public <C extends Model> void removeProductionCompanies() {
+//        removeReferencedElements(DatabaseMediator.Field.COMPANY_LIST, true);
+//    }
+//
+//    public <C extends Model> void removeProductionCompaniesPostponed() {
+//        removeReferencedElements(DatabaseMediator.Field.COMPANY_LIST, false);
+//    }
+//
+//    public <C extends Model> void removeProductionCompany(Company company) {
+//        removeReferencedElement(DatabaseMediator.Field.COMPANY_LIST, company, true);
+//    }
+//
+//    public <C extends Model> void removeProductionCompanyPostponed(Company company) {
+//        removeReferencedElement(DatabaseMediator.Field.COMPANY_LIST, company, false);
+//    }
+//
+//    public void setProductionCompanies(List<Company> companies) {
+//        setReferencedElements(DatabaseMediator.Field.COMPANY_LIST, companies, true);
+//    }
+//
+//    public void setProductionCompaniesPostponed(List<Company> companies) {
+//        setReferencedElements(DatabaseMediator.Field.COMPANY_LIST, companies, false);
+//    }
+//
+//    public void setProductionCompaniesIds(List<Integer> companies) {
+//        setReferencedElementsIds(DatabaseMediator.Field.COMPANY_LIST, companies, true);
+//    }
+//
+//    public void setProductionCompaniesIdsPostponed(List<Integer> companies) {
+//        setReferencedElementsIds(DatabaseMediator.Field.COMPANY_LIST, companies, false);
+//    }
+//
+//    public void setProductionCompanies(Company... companies) {
+//        setReferencedElements(DatabaseMediator.Field.COMPANY_LIST, true, companies);
+//    }
+//
+//    public void setProductionCompaniesPostponed(Company... companies) {
+//        setReferencedElements(DatabaseMediator.Field.COMPANY_LIST, false, companies);
+//    }
+//
+//    public <C extends Model> void addProductionCompany(Company company) {
+//        addReferencedElement(DatabaseMediator.Field.COMPANY_LIST, company, true);
+//    }
+//
+//    public <C extends Model> void addProductionCompanyPostponed(Company company) {
+//        addReferencedElement(DatabaseMediator.Field.COMPANY_LIST, company, false);
+//    }
+
+    public List<String> getProductionCompanies() {
+        return getStringList(DatabaseMediator.Field.COMPANY_LIST);
     }
 
-    public List<Integer> getProductionCompaniesIds() {
-        return getReferencedElementsIds(DatabaseMediator.Field.COMPANY_LIST);
+    public void removeProductionCompanies() {
+        removeStringList(DatabaseMediator.Field.COMPANY_LIST, true);
     }
 
-    public <C extends Model> void removeProductionCompanies() {
-        removeReferencedElements(DatabaseMediator.Field.COMPANY_LIST, true);
+    public void removeProductionCompaniesPostponed() {
+        removeStringList(DatabaseMediator.Field.COMPANY_LIST, false);
     }
 
-    public <C extends Model> void removeProductionCompaniesPostponed() {
-        removeReferencedElements(DatabaseMediator.Field.COMPANY_LIST, false);
+    public boolean removeProductionCompany(String company) {
+        return removeStringValue(DatabaseMediator.Field.COMPANY_LIST, company, true);
     }
 
-    public <C extends Model> void removeProductionCompany(Company company) {
-        removeReferencedElement(DatabaseMediator.Field.COMPANY_LIST, company, true);
+    public boolean removeProductionCompanyPostponed(String company) {
+        return removeStringValue(DatabaseMediator.Field.COMPANY_LIST, company, false);
     }
 
-    public <C extends Model> void removeProductionCompanyPostponed(Company company) {
-        removeReferencedElement(DatabaseMediator.Field.COMPANY_LIST, company, false);
+    public void setProductionCompanies(List<String> companies) {
+        setStringList(DatabaseMediator.Field.COMPANY_LIST, companies, true);
     }
 
-    public void setProductionCompanies(List<Company> companies) {
-        setReferencedElements(DatabaseMediator.Field.COMPANY_LIST, companies, true);
+    public void setProductionCompaniesPostponed(List<String> companies) {
+        setStringList(DatabaseMediator.Field.COMPANY_LIST, companies, false);
     }
 
-    public void setProductionCompaniesPostponed(List<Company> companies) {
-        setReferencedElements(DatabaseMediator.Field.COMPANY_LIST, companies, false);
+    public boolean addProductionCompany(String company) {
+        return addStringValue(DatabaseMediator.Field.COMPANY_LIST, company, true);
     }
 
-    public void setProductionCompaniesIds(List<Integer> companies) {
-        setReferencedElementsIds(DatabaseMediator.Field.COMPANY_LIST, companies, true);
+    public boolean addProductionCompanyPostponed(String company) {
+        return addStringValue(DatabaseMediator.Field.COMPANY_LIST, company, false);
     }
 
-    public void setProductionCompaniesIdsPostponed(List<Integer> companies) {
-        setReferencedElementsIds(DatabaseMediator.Field.COMPANY_LIST, companies, false);
-    }
-
-    public void setProductionCompanies(Company... companies) {
-        setReferencedElements(DatabaseMediator.Field.COMPANY_LIST, true, companies);
-    }
-
-    public void setProductionCompaniesPostponed(Company... companies) {
-        setReferencedElements(DatabaseMediator.Field.COMPANY_LIST, false, companies);
-    }
-
-    public <C extends Model> void addProductionCompany(Company company) {
-        addReferencedElement(DatabaseMediator.Field.COMPANY_LIST, company, true);
-    }
-
-    public <C extends Model> void addProductionCompanyPostponed(Company company) {
-        addReferencedElement(DatabaseMediator.Field.COMPANY_LIST, company, false);
-    }
 
     public List<GenreCode> getGenres() {
         return getEnums(DatabaseMediator.Field.GENRES, GenreCode.class);
@@ -158,8 +195,9 @@ public abstract class ProducedCreationItem extends CreationItem {
     public float match(DatabaseItem anotherItem) {
         float similarity = super.match(anotherItem);
         ProducedCreationItem anotherProducedItem = (ProducedCreationItem) anotherItem;
+        similarity = ItemIntegrator.addListSimilarity(similarity, getProductionCompanies(), anotherProducedItem.getProductionCompanies(), COMPANIES_SIMILARITY_CONFIDENCE);
         similarity = ItemIntegrator.addListSimilarity(similarity, getGenres(), anotherProducedItem.getGenres(), GENRES_SIMILARITY_CONFIDENCE);
-        similarity = ItemIntegrator.addListSimilarity(similarity, getProductionCompaniesIds(), anotherProducedItem.getProductionCompaniesIds(), COMPANIES_SIMILARITY_CONFIDENCE);
+//        similarity = ItemIntegrator.addListSimilarity(similarity, getProductionCompaniesIds(), anotherProducedItem.getProductionCompaniesIds(), COMPANIES_SIMILARITY_CONFIDENCE);
         return similarity;
     }
 
@@ -170,6 +208,9 @@ public abstract class ProducedCreationItem extends CreationItem {
         if (getImageHash() == null && anotherProducedItem.getImageHash() != null) {
             setImageHashPostponed(anotherProducedItem.getImageHash());
         }
+        for (String company : ((ProducedCreationItem) anotherItem).getProductionCompanies()) {
+            addProductionCompany(company);
+        }
         for (GenreCode genreCode : anotherProducedItem.getGenres()) {
             addGenrePostponed(genreCode);
         }
@@ -178,15 +219,15 @@ public abstract class ProducedCreationItem extends CreationItem {
     @Override
     public DatabaseMediator.ReferencedElements getReferencedElements() {
         DatabaseMediator.ReferencedElements referencedElements = super.getReferencedElements();
-        referencedElements.add(DatabaseMediator.ItemType.COMPANY, DatabaseMediator.ReferencedList.COMPANIES, getProductionCompaniesIds());
+//        referencedElements.add(DatabaseMediator.ItemType.COMPANY, DatabaseMediator.ReferencedList.COMPANIES, getProductionCompaniesIds());
         return referencedElements;
     }
 
     @Override
     public void mergeReferencedElementsPostponed(DatabaseMediator.ReferencedElements referencedElements) {
         super.mergeReferencedElementsPostponed(referencedElements);
-        for (Integer companyId : referencedElements.get(DatabaseMediator.ItemType.COMPANY, DatabaseMediator.ReferencedList.COMPANIES)) {
-            addReferencedElementId(DatabaseMediator.Field.COMPANY_LIST, companyId, false);
-        }
+//        for (Integer companyId : referencedElements.get(DatabaseMediator.ItemType.COMPANY, DatabaseMediator.ReferencedList.COMPANIES)) {
+//            addReferencedElementId(DatabaseMediator.Field.COMPANY_LIST, companyId, false);
+//        }
     }
 }

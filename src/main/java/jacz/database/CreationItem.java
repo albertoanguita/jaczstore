@@ -181,127 +181,201 @@ public abstract class CreationItem extends DatabaseItem {
         return addStringValue(DatabaseMediator.Field.EXTERNAL_URLS, externalURL, false);
     }
 
-    public List<Person> getCreators() {
-        LazyList<jacz.database.models.Person> models = getReferencedElements(DatabaseMediator.ItemType.PERSON, DatabaseMediator.Field.CREATOR_LIST);
-        if (models != null) {
-            return Person.buildList(dbPath, models);
-        } else {
-            return new ArrayList<>();
-        }
+    public List<String> getCreators() {
+        return getStringList(DatabaseMediator.Field.CREATOR_LIST);
     }
 
-    public List<Integer> getCreatorsIds() {
-        return getReferencedElementsIds(DatabaseMediator.Field.CREATOR_LIST);
+    public void removeCreators() {
+        removeStringList(DatabaseMediator.Field.CREATOR_LIST, true);
     }
 
-    public <C extends Model> void removeCreators() {
-        removeReferencedElements(DatabaseMediator.Field.CREATOR_LIST, true);
+    public void removeCreatorsPostponed() {
+        removeStringList(DatabaseMediator.Field.CREATOR_LIST, false);
     }
 
-    public <C extends Model> void removeCreatorsPostponed() {
-        removeReferencedElements(DatabaseMediator.Field.CREATOR_LIST, false);
+    public boolean removeCreator(String creator) {
+        return removeStringValue(DatabaseMediator.Field.CREATOR_LIST, creator, true);
     }
 
-    public <C extends Model> void removeCreator(Person person) {
-        removeReferencedElement(DatabaseMediator.Field.CREATOR_LIST, person, true);
+    public boolean removeCreatorPostponed(String creator) {
+        return removeStringValue(DatabaseMediator.Field.CREATOR_LIST, creator, false);
     }
 
-    public <C extends Model> void removeCreatorPostponed(Person person) {
-        removeReferencedElement(DatabaseMediator.Field.CREATOR_LIST, person, false);
+    public void setCreators(List<String> creators) {
+        setStringList(DatabaseMediator.Field.CREATOR_LIST, creators, true);
     }
 
-    public void setCreators(List<Person> persons) {
-        setReferencedElements(DatabaseMediator.Field.CREATOR_LIST, persons, true);
+    public void setCreatorsPostponed(List<String> creators) {
+        setStringList(DatabaseMediator.Field.CREATOR_LIST, creators, false);
     }
 
-    public void setCreatorsPostponed(List<Person> persons) {
-        setReferencedElements(DatabaseMediator.Field.CREATOR_LIST, persons, false);
+    public boolean addCreator(String creator) {
+        return addStringValue(DatabaseMediator.Field.CREATOR_LIST, creator, true);
     }
 
-    public void setCreatorsIds(List<Integer> persons) {
-        setReferencedElementsIds(DatabaseMediator.Field.CREATOR_LIST, persons, true);
+    public boolean addCreatorPostponed(String creator) {
+        return addStringValue(DatabaseMediator.Field.CREATOR_LIST, creator, false);
     }
 
-    public void setCreatorsIdsPostponed(List<Integer> persons) {
-        setReferencedElementsIds(DatabaseMediator.Field.CREATOR_LIST, persons, false);
+//    public List<Person> getCreators() {
+//        LazyList<jacz.database.models.Person> models = getReferencedElements(DatabaseMediator.ItemType.PERSON, DatabaseMediator.Field.CREATOR_LIST);
+//        if (models != null) {
+//            return Person.buildList(dbPath, models);
+//        } else {
+//            return new ArrayList<>();
+//        }
+//    }
+//
+//    public List<Integer> getCreatorsIds() {
+//        return getReferencedElementsIds(DatabaseMediator.Field.CREATOR_LIST);
+//    }
+//
+//    public <C extends Model> void removeCreators() {
+//        removeReferencedElements(DatabaseMediator.Field.CREATOR_LIST, true);
+//    }
+//
+//    public <C extends Model> void removeCreatorsPostponed() {
+//        removeReferencedElements(DatabaseMediator.Field.CREATOR_LIST, false);
+//    }
+//
+//    public <C extends Model> void removeCreator(Person person) {
+//        removeReferencedElement(DatabaseMediator.Field.CREATOR_LIST, person, true);
+//    }
+//
+//    public <C extends Model> void removeCreatorPostponed(Person person) {
+//        removeReferencedElement(DatabaseMediator.Field.CREATOR_LIST, person, false);
+//    }
+//
+//    public void setCreators(List<Person> persons) {
+//        setReferencedElements(DatabaseMediator.Field.CREATOR_LIST, persons, true);
+//    }
+//
+//    public void setCreatorsPostponed(List<Person> persons) {
+//        setReferencedElements(DatabaseMediator.Field.CREATOR_LIST, persons, false);
+//    }
+//
+//    public void setCreatorsIds(List<Integer> persons) {
+//        setReferencedElementsIds(DatabaseMediator.Field.CREATOR_LIST, persons, true);
+//    }
+//
+//    public void setCreatorsIdsPostponed(List<Integer> persons) {
+//        setReferencedElementsIds(DatabaseMediator.Field.CREATOR_LIST, persons, false);
+//    }
+//
+//    public void setCreators(Person... persons) {
+//        setReferencedElements(DatabaseMediator.Field.CREATOR_LIST, true, persons);
+//    }
+//
+//    public void setCreatorsPostponed(Person... persons) {
+//        setReferencedElements(DatabaseMediator.Field.CREATOR_LIST, false, persons);
+//    }
+//
+//    public <C extends Model> void addCreator(Person person) {
+//        addReferencedElement(DatabaseMediator.Field.CREATOR_LIST, person, true);
+//    }
+//
+//    public <C extends Model> void addCreatorPostponed(Person person) {
+//        addReferencedElement(DatabaseMediator.Field.CREATOR_LIST, person, false);
+//    }
+
+//    public List<Person> getActors() {
+//        LazyList<jacz.database.models.Person> models = getReferencedElements(DatabaseMediator.ItemType.PERSON, DatabaseMediator.Field.ACTOR_LIST);
+//        if (models != null) {
+//            return Person.buildList(dbPath, models);
+//        } else {
+//            return new ArrayList<>();
+//        }
+//    }
+//
+//    public List<Integer> getActorsIds() {
+//        return getReferencedElementsIds(DatabaseMediator.Field.ACTOR_LIST);
+//    }
+//
+//    public <C extends Model> void removeActors() {
+//        removeReferencedElements(DatabaseMediator.Field.ACTOR_LIST, true);
+//    }
+//
+//    public <C extends Model> void removeActorsPostponed() {
+//        removeReferencedElements(DatabaseMediator.Field.ACTOR_LIST, false);
+//    }
+//
+//    public <C extends Model> void removeActor(Person person) {
+//        removeReferencedElement(DatabaseMediator.Field.ACTOR_LIST, person, true);
+//    }
+//
+//    public <C extends Model> void removeActorPostponed(Person person) {
+//        removeReferencedElement(DatabaseMediator.Field.ACTOR_LIST, person, false);
+//    }
+//
+//    public void setActors(List<Person> persons) {
+//        setReferencedElements(DatabaseMediator.Field.ACTOR_LIST, persons, true);
+//    }
+//
+//    public void setActorsPostponed(List<Person> persons) {
+//        setReferencedElements(DatabaseMediator.Field.ACTOR_LIST, persons, false);
+//    }
+//
+//    public void setActorsIds(List<Integer> persons) {
+//        setReferencedElementsIds(DatabaseMediator.Field.ACTOR_LIST, persons, true);
+//    }
+//
+//    public void setActorsIdsPostponed(List<Integer> persons) {
+//        setReferencedElementsIds(DatabaseMediator.Field.ACTOR_LIST, persons, false);
+//    }
+//
+//    public void setActors(Person... persons) {
+//        setReferencedElements(DatabaseMediator.Field.ACTOR_LIST, true, persons);
+//    }
+//
+//    public void setActorsPostponed(Person... persons) {
+//        setReferencedElements(DatabaseMediator.Field.ACTOR_LIST, false, persons);
+//    }
+//
+//    public <C extends Model> void addActor(Person person) {
+//        addReferencedElement(DatabaseMediator.Field.ACTOR_LIST, person, true);
+//    }
+//
+//    public <C extends Model> void addActorPostponed(Person person) {
+//        addReferencedElement(DatabaseMediator.Field.ACTOR_LIST, person, false);
+//    }
+
+    public List<String> getActors() {
+        return getStringList(DatabaseMediator.Field.ACTOR_LIST);
     }
 
-    public void setCreators(Person... persons) {
-        setReferencedElements(DatabaseMediator.Field.CREATOR_LIST, true, persons);
+    public void removeActors() {
+        removeStringList(DatabaseMediator.Field.ACTOR_LIST, true);
     }
 
-    public void setCreatorsPostponed(Person... persons) {
-        setReferencedElements(DatabaseMediator.Field.CREATOR_LIST, false, persons);
+    public void removeActorsPostponed() {
+        removeStringList(DatabaseMediator.Field.ACTOR_LIST, false);
     }
 
-    public <C extends Model> void addCreator(Person person) {
-        addReferencedElement(DatabaseMediator.Field.CREATOR_LIST, person, true);
+    public boolean removeActor(String actor) {
+        return removeStringValue(DatabaseMediator.Field.ACTOR_LIST, actor, true);
     }
 
-    public <C extends Model> void addCreatorPostponed(Person person) {
-        addReferencedElement(DatabaseMediator.Field.CREATOR_LIST, person, false);
+    public boolean removeActorPostponed(String actor) {
+        return removeStringValue(DatabaseMediator.Field.ACTOR_LIST, actor, false);
     }
 
-    public List<Person> getActors() {
-        LazyList<jacz.database.models.Person> models = getReferencedElements(DatabaseMediator.ItemType.PERSON, DatabaseMediator.Field.ACTOR_LIST);
-        if (models != null) {
-            return Person.buildList(dbPath, models);
-        } else {
-            return new ArrayList<>();
-        }
+    public void setActors(List<String> actors) {
+        setStringList(DatabaseMediator.Field.ACTOR_LIST, actors, true);
     }
 
-    public List<Integer> getActorsIds() {
-        return getReferencedElementsIds(DatabaseMediator.Field.ACTOR_LIST);
+    public void setActorsPostponed(List<String> actors) {
+        setStringList(DatabaseMediator.Field.ACTOR_LIST, actors, false);
     }
 
-    public <C extends Model> void removeActors() {
-        removeReferencedElements(DatabaseMediator.Field.ACTOR_LIST, true);
+    public boolean addActor(String actor) {
+        return addStringValue(DatabaseMediator.Field.ACTOR_LIST, actor, true);
     }
 
-    public <C extends Model> void removeActorsPostponed() {
-        removeReferencedElements(DatabaseMediator.Field.ACTOR_LIST, false);
+    public boolean addActorPostponed(String actor) {
+        return addStringValue(DatabaseMediator.Field.ACTOR_LIST, actor, false);
     }
 
-    public <C extends Model> void removeActor(Person person) {
-        removeReferencedElement(DatabaseMediator.Field.ACTOR_LIST, person, true);
-    }
 
-    public <C extends Model> void removeActorPostponed(Person person) {
-        removeReferencedElement(DatabaseMediator.Field.ACTOR_LIST, person, false);
-    }
-
-    public void setActors(List<Person> persons) {
-        setReferencedElements(DatabaseMediator.Field.ACTOR_LIST, persons, true);
-    }
-
-    public void setActorsPostponed(List<Person> persons) {
-        setReferencedElements(DatabaseMediator.Field.ACTOR_LIST, persons, false);
-    }
-
-    public void setActorsIds(List<Integer> persons) {
-        setReferencedElementsIds(DatabaseMediator.Field.ACTOR_LIST, persons, true);
-    }
-
-    public void setActorsIdsPostponed(List<Integer> persons) {
-        setReferencedElementsIds(DatabaseMediator.Field.ACTOR_LIST, persons, false);
-    }
-
-    public void setActors(Person... persons) {
-        setReferencedElements(DatabaseMediator.Field.ACTOR_LIST, true, persons);
-    }
-
-    public void setActorsPostponed(Person... persons) {
-        setReferencedElements(DatabaseMediator.Field.ACTOR_LIST, false, persons);
-    }
-
-    public <C extends Model> void addActor(Person person) {
-        addReferencedElement(DatabaseMediator.Field.ACTOR_LIST, person, true);
-    }
-
-    public <C extends Model> void addActorPostponed(Person person) {
-        addReferencedElement(DatabaseMediator.Field.ACTOR_LIST, person, false);
-    }
 
     @Override
     public float match(DatabaseItem anotherItem) {
@@ -309,9 +383,11 @@ public abstract class CreationItem extends DatabaseItem {
         CreationItem anotherCreationItem = (CreationItem) anotherItem;
         similarity = Mycin.combine(similarity, ItemIntegrator.creationsTitleSimilarity(getTitle(), anotherCreationItem.getTitle(), getOriginalTitle(), anotherCreationItem.getOriginalTitle()));
         similarity = Mycin.combine(similarity, ItemIntegrator.eventsYearSimilarity(getYear(), anotherCreationItem.getYear()));
+        similarity = ItemIntegrator.addListSimilarity(similarity, getCreators(), anotherCreationItem.getCreators(), CREATORS_SIMILARITY_CONFIDENCE);
+        similarity = ItemIntegrator.addListSimilarity(similarity, getActors(), anotherCreationItem.getActors(), ACTORS_SIMILARITY_CONFIDENCE);
         similarity = ItemIntegrator.addListSimilarity(similarity, getCountries(), anotherCreationItem.getCountries(), COUNTRIES_SIMILARITY_CONFIDENCE);
-        similarity = ItemIntegrator.addListSimilarity(similarity, getCreatorsIds(), anotherCreationItem.getCreatorsIds(), CREATORS_SIMILARITY_CONFIDENCE);
-        similarity = ItemIntegrator.addListSimilarity(similarity, getActorsIds(), anotherCreationItem.getActorsIds(), ACTORS_SIMILARITY_CONFIDENCE);
+//        similarity = ItemIntegrator.addListSimilarity(similarity, getCreatorsIds(), anotherCreationItem.getCreatorsIds(), CREATORS_SIMILARITY_CONFIDENCE);
+//        similarity = ItemIntegrator.addListSimilarity(similarity, getActorsIds(), anotherCreationItem.getActorsIds(), ACTORS_SIMILARITY_CONFIDENCE);
         return similarity;
     }
 
@@ -330,6 +406,12 @@ public abstract class CreationItem extends DatabaseItem {
         if (getSynopsis() == null && anotherCreationItem.getSynopsis() != null) {
             setSynopsisPostponed(anotherCreationItem.getSynopsis());
         }
+        for (String creator : anotherCreationItem.getCreators()) {
+            addCreator(creator);
+        }
+        for (String actor : anotherCreationItem.getActors()) {
+            addActor(actor);
+        }
         for (CountryCode countryCode : anotherCreationItem.getCountries()) {
             addCountryPostponed(countryCode);
         }
@@ -341,18 +423,19 @@ public abstract class CreationItem extends DatabaseItem {
     @Override
     public DatabaseMediator.ReferencedElements getReferencedElements() {
         DatabaseMediator.ReferencedElements referencedElements = super.getReferencedElements();
-        referencedElements.add(DatabaseMediator.ItemType.PERSON, DatabaseMediator.ReferencedList.CREATORS, getCreatorsIds());
-        referencedElements.add(DatabaseMediator.ItemType.PERSON, DatabaseMediator.ReferencedList.ACTORS, getActorsIds());
+        // todo
+//        referencedElements.add(DatabaseMediator.ItemType.PERSON, DatabaseMediator.ReferencedList.CREATORS, getCreatorsIds());
+//        referencedElements.add(DatabaseMediator.ItemType.PERSON, DatabaseMediator.ReferencedList.ACTORS, getActorsIds());
         return referencedElements;
     }
 
     @Override
     public void mergeReferencedElementsPostponed(DatabaseMediator.ReferencedElements referencedElements) {
-        for (Integer creatorId : referencedElements.get(DatabaseMediator.ItemType.PERSON, DatabaseMediator.ReferencedList.CREATORS)) {
-            addReferencedElementId(DatabaseMediator.Field.CREATOR_LIST, creatorId, false);
-        }
-        for (Integer actorId : referencedElements.get(DatabaseMediator.ItemType.PERSON, DatabaseMediator.ReferencedList.ACTORS)) {
-            addReferencedElementId(DatabaseMediator.Field.ACTOR_LIST, actorId, false);
-        }
+//        for (Integer creatorId : referencedElements.get(DatabaseMediator.ItemType.PERSON, DatabaseMediator.ReferencedList.CREATORS)) {
+//            addReferencedElementId(DatabaseMediator.Field.CREATOR_LIST, creatorId, false);
+//        }
+//        for (Integer actorId : referencedElements.get(DatabaseMediator.ItemType.PERSON, DatabaseMediator.ReferencedList.ACTORS)) {
+//            addReferencedElementId(DatabaseMediator.Field.ACTOR_LIST, actorId, false);
+//        }
     }
 }
