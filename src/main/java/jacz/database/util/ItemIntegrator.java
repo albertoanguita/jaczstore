@@ -16,34 +16,34 @@ public class ItemIntegrator {
     public static final float THRESHOLD = 0.9f;
 
 
-    public static float genericNameSimilarity(String name1, String name2) {
-        if (name1 != null && name2 != null) {
-            if (name1.equals(name2)) {
-                return 0.99f;
-            } else if (name1.equalsIgnoreCase(name2)) {
-                return 0.98f;
-            } else {
-                return -0.5f;
-            }
-        } else {
-            return 0f;
-        }
-    }
-
-    public static float personsNameSimilarity(String name1, String name2) {
-        // todo include abbreviations (Will Smith, W. Smith).
-        if (name1 != null && name2 != null) {
-            if (name1.equals(name2)) {
-                return 0.99f;
-            } else if (name1.equalsIgnoreCase(name2)) {
-                return 0.98f;
-            } else {
-                return -0.5f;
-            }
-        } else {
-            return 0f;
-        }
-    }
+//    public static float genericNameSimilarity(String name1, String name2) {
+//        if (name1 != null && name2 != null) {
+//            if (name1.equals(name2)) {
+//                return 0.99f;
+//            } else if (name1.equalsIgnoreCase(name2)) {
+//                return 0.98f;
+//            } else {
+//                return -0.5f;
+//            }
+//        } else {
+//            return 0f;
+//        }
+//    }
+//
+//    public static float personsNameSimilarity(String name1, String name2) {
+//        // todo include abbreviations (Will Smith, W. Smith).
+//        if (name1 != null && name2 != null) {
+//            if (name1.equals(name2)) {
+//                return 0.99f;
+//            } else if (name1.equalsIgnoreCase(name2)) {
+//                return 0.98f;
+//            } else {
+//                return -0.5f;
+//            }
+//        } else {
+//            return 0f;
+//        }
+//    }
 
     public static float creationsTitleSimilarity(String title1, String title2, String originalTitle1, String originalTitle2) {
         float titlesSimilarity = 0.0f;

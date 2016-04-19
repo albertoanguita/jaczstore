@@ -78,13 +78,17 @@ public final class Chapter extends CreationItem {
         }
     }
 
-    // todo must test this method
     public List<TVSeries> getTVSeries() {
-        List<jacz.database.models.TVSeries> modelTVSeries = getElementsContainingMe(DatabaseMediator.ItemType.TV_SERIES, DatabaseMediator.Field.CHAPTER_LIST);
-        if (modelTVSeries != null) {
-            return TVSeries.buildList(dbPath, modelTVSeries);
-        } else {
-            return new ArrayList<>();
+        try {
+            connect();
+            List<jacz.database.models.TVSeries> modelTVSeries = getElementsContainingMe(DatabaseMediator.ItemType.TV_SERIES, DatabaseMediator.Field.CHAPTER_LIST);
+            if (modelTVSeries != null) {
+                return TVSeries.buildList(dbPath, modelTVSeries);
+            } else {
+                return new ArrayList<>();
+            }
+        } finally {
+            disconnect();
         }
     }
 
@@ -129,7 +133,7 @@ public final class Chapter extends CreationItem {
     }
 
     public List<VideoFile> getVideoFiles() {
-        LazyList<jacz.database.models.VideoFile> models = getReferencedElements(DatabaseMediator.ItemType.VIDEO_FILE, DatabaseMediator.Field.VIDEO_FILE_LIST);
+        List<jacz.database.models.VideoFile> models = getReferencedElements(DatabaseMediator.ItemType.VIDEO_FILE, DatabaseMediator.Field.VIDEO_FILE_LIST);
         if (models != null) {
             return VideoFile.buildList(dbPath, models);
         } else {

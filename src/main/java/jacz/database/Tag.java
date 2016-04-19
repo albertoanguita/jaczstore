@@ -16,7 +16,6 @@ import java.util.Set;
 public class Tag {
 
     public static Set<String> getAllTags(String dbPath) {
-        // todo
         DatabaseMediator.connect(dbPath);
         List<? extends Model> models = DatabaseItem.getModels(dbPath, DatabaseMediator.ItemType.TAG);
         try {
@@ -164,4 +163,7 @@ public class Tag {
                 tag);
     }
 
+    public static void removeItem(DatabaseMediator.ItemType type, int id) {
+        jacz.database.models.Tag.delete(DatabaseMediator.Field.ITEM_TYPE.value + " = ? AND " + DatabaseMediator.Field.ITEM_ID.value + " = ?", type, id);
+    }
 }

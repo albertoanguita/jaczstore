@@ -1,7 +1,6 @@
 package jacz.database;
 
 import jacz.database.util.ItemIntegrator;
-import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
 import java.util.*;
@@ -80,7 +79,7 @@ public final class TVSeries extends ProducedCreationItem {
     }
 
     public List<Chapter> getChapters() {
-        LazyList<jacz.database.models.Chapter> models = getReferencedElements(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.Field.CHAPTER_LIST);
+        List<jacz.database.models.Chapter> models = getReferencedElements(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.Field.CHAPTER_LIST);
         if (models != null) {
             return Chapter.buildList(dbPath, models);
         } else {
@@ -89,10 +88,9 @@ public final class TVSeries extends ProducedCreationItem {
     }
 
     public List<Chapter> getChapters(String season) {
-        // todo
-        LazyList<jacz.database.models.Chapter> models = getReferencedElements(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.Field.CHAPTER_LIST);
+        List<jacz.database.models.Chapter> models = getReferencedElements(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.Field.CHAPTER_LIST);
         if (models != null) {
-            return Chapter.buildList(dbPath, models);
+            return Chapter.buildList(dbPath, models, season);
         } else {
             return new ArrayList<>();
         }

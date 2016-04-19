@@ -1,7 +1,6 @@
 package jacz.database;
 
 import jacz.database.util.QualityCode;
-import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
 import java.util.ArrayList;
@@ -108,7 +107,7 @@ public final class VideoFile extends FileWithLanguages {
     }
 
     public List<SubtitleFile> getSubtitleFiles() {
-        LazyList<jacz.database.models.SubtitleFile> models = getReferencedElements(DatabaseMediator.ItemType.SUBTITLE_FILE, DatabaseMediator.Field.SUBTITLE_FILE_LIST);
+        List<jacz.database.models.SubtitleFile> models = getReferencedElements(DatabaseMediator.ItemType.SUBTITLE_FILE, DatabaseMediator.Field.SUBTITLE_FILE_LIST);
         if (models != null) {
             return SubtitleFile.buildList(dbPath, models);
         } else {
@@ -198,6 +197,7 @@ public final class VideoFile extends FileWithLanguages {
             addReferencedElementId(DatabaseMediator.Field.SUBTITLE_FILE_LIST, subtitleFileId, false);
         }
     }
+
     @Override
     public void delete() {
         // video files cannot be deleted. This way we avoid inconsistencies of references to video files pointing

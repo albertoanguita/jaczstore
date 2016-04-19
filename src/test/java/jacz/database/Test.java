@@ -5,15 +5,17 @@ import com.neovisionaries.i18n.LanguageCode;
 import jacz.database.util.GenreCode;
 import jacz.database.util.ImageHash;
 import jacz.database.util.QualityCode;
+import jacz.storage.ActiveJDBCController;
 import jacz.util.concurrency.ThreadUtil;
-import jacz.util.concurrency.task_executor.ParallelTaskExecutor;
+import jacz.util.concurrency.task_executor.ThreadExecutor;
 import junitx.framework.ListAssert;
-import org.javalite.activejdbc.Base;
 import org.junit.Assert;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Database items management tests
@@ -35,7 +37,9 @@ public class Test {
         System.out.println();
         System.out.println();
 
-        ParallelTaskExecutor.executeTask(new Runnable() {
+        ThreadExecutor.registerClient("A");
+
+        ThreadExecutor.submit(new Runnable() {
             @Override
             public void run() {
                 for (int i = 0; i < 1000; i++) {
@@ -44,7 +48,7 @@ public class Test {
             }
         });
 
-        ParallelTaskExecutor.executeTask(new Runnable() {
+        ThreadExecutor.submit(new Runnable() {
             @Override
             public void run() {
                 for (int i = 0; i < 1000; i++) {
@@ -53,6 +57,7 @@ public class Test {
             }
         });
 
+        ThreadExecutor.shutdownClient("A");
         ThreadUtil.safeSleep(4000);
     }
 
@@ -63,7 +68,7 @@ public class Test {
 
         DatabaseMediator.connect("store.db");
         try {
-            System.out.println(Base.connection().getMetaData().getURL());
+            System.out.println(ActiveJDBCController.getDB().connection().getMetaData().getURL());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -196,6 +201,11 @@ public class Test {
         added = movie.addTag("favorite");
         Assert.assertEquals(false, added);
 
+        Set<String> tags = new HashSet<>();
+        tags.add("favorite");
+        tags.add("star");
+        Assert.assertEquals(tags, Tag.getAllTags("store.db"));
+
         List<Movie> favoriteMovies = Tag.getMoviesWithTag("store.db", "favorite");
         Assert.assertEquals(1, favoriteMovies.size());
         Assert.assertEquals("Predator", favoriteMovies.get(0).getTitle());
@@ -206,6 +216,8 @@ public class Test {
         Assert.assertEquals(false, movie.removeTag("favorite"));
         Assert.assertEquals(1, movie.getTags().size());
         Assert.assertEquals("star", movie.getTags().get(0));
+
+        movie.delete();
 
 //            movie.removeVideoFiles();
 //            Assert.assertEquals(0, movie.getVideoFiles().size());
@@ -260,8 +272,6 @@ public class Test {
         ListAssert.assertEquals(genres, tvSeries1.getGenres());
         Assert.assertEquals(new ImageHash("image", "jpg"), tvSeries1.getImageHash());
 
-        tvSeries1 = TVSeries.getTVSeriesById("store.db", 1);
-
 //        Person arnold = new Person("store.db");
 //        arnold.setName("Arnold");
 //        Person silvester = new Person("store.db");
@@ -272,7 +282,7 @@ public class Test {
 //        george.setName("George");
 
         TVSeries tvSeries = new TVSeries("store.db");
-        tvSeries1.setTitle("Predator");
+        tvSeries.setTitle("Predator");
 
         tvSeries.addCreator("Arnold");
         tvSeries.addCreator("Silvester");
@@ -328,11 +338,19 @@ public class Test {
         Assert.assertEquals(2, tvSeries.getChapters().size());
         Assert.assertEquals("ch1", tvSeries.getChapters().get(0).getTitle());
         Assert.assertEquals("ch2", tvSeries.getChapters().get(1).getTitle());
+        Assert.assertEquals(2, tvSeries.getChapters("s01").size());
+        Assert.assertEquals("ch1", tvSeries.getChapters("s01").get(0).getTitle());
+        Assert.assertEquals("ch2", tvSeries.getChapters("s01").get(1).getTitle());
         Assert.assertEquals(seasons, tvSeries.getSeasons());
+        Assert.assertEquals(1, chapter1.getTVSeries().size());
+        Assert.assertEquals("Predator", chapter1.getTVSeries().get(0).getTitle());
+        Assert.assertEquals(1, chapter2.getTVSeries().size());
+        Assert.assertEquals("Predator", chapter2.getTVSeries().get(0).getTitle());
         chapter1.delete();
         Assert.assertEquals(1, tvSeries.getChapters().size());
         Assert.assertEquals("ch2", tvSeries.getChapters().get(0).getTitle());
         tvSeries.removeChapters();
+        Assert.assertEquals(new ArrayList<TVSeries>(), chapter2.getTVSeries());
         Assert.assertEquals(0, tvSeries.getChapters().size());
     }
 
@@ -382,8 +400,13 @@ public class Test {
         Assert.assertEquals(new Integer(150), chapter1.getMinutes());
 
         TVSeries tvSeries = new TVSeries("store.db");
+        tvSeries.setTitle("my series");
         tvSeries.addChapter(chapter1);
-        tvSeries.addChapter(chapter3);
+
+        Assert.assertEquals(1, chapter1.getTVSeries().size());
+        Assert.assertEquals("my series", chapter1.getTVSeries().get(0).getTitle());
+        Assert.assertEquals(0, chapter3.getTVSeries().size());
+
         tvSeries.delete();
         Assert.assertEquals(2, Chapter.getChapters("store.db").size());
 

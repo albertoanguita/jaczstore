@@ -3,12 +3,14 @@ package jacz.database.models;
 import jacz.database.DatabaseMediator;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.annotations.BelongsTo;
+import org.javalite.activejdbc.annotations.DbName;
 
 import java.util.List;
 
 /**
  * Chapter model (table chapters)
  */
+@DbName(DatabaseMediator.DATABASE_NAME)
 @BelongsTo(parent = TVSeries.class, foreignKeyName = "tv_series_id")
 public class Chapter extends Model {
 

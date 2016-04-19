@@ -1,7 +1,7 @@
 package jacz.database;
 
 import jacz.util.concurrency.ThreadUtil;
-import jacz.util.concurrency.task_executor.ParallelTaskExecutor;
+import jacz.util.concurrency.task_executor.ThreadExecutor;
 
 /**
  * Created by Alberto on 05/02/2016.
@@ -52,7 +52,9 @@ public class TestParallel {
         System.out.println();
         System.out.println();
 
-        ParallelTaskExecutor.executeTask(new Runnable() {
+        ThreadExecutor.registerClient("this");
+
+        ThreadExecutor.submit(new Runnable() {
             @Override
             public void run() {
                 for (int i = 0; i < 1000; i++) {
@@ -61,7 +63,7 @@ public class TestParallel {
             }
         });
 
-        ParallelTaskExecutor.executeTask(new Runnable() {
+        ThreadExecutor.submit(new Runnable() {
             @Override
             public void run() {
                 for (int i = 0; i < 1000; i++) {
@@ -70,7 +72,7 @@ public class TestParallel {
             }
         });
 
-        ParallelTaskExecutor.executeTask(new Runnable() {
+        ThreadExecutor.submit(new Runnable() {
             @Override
             public void run() {
                 for (int i = 0; i < 1000; i++) {
@@ -79,7 +81,7 @@ public class TestParallel {
             }
         });
 
-        ParallelTaskExecutor.executeTask(new Runnable() {
+        ThreadExecutor.submit(new Runnable() {
             @Override
             public void run() {
                 for (int i = 0; i < 1000; i++) {
@@ -87,6 +89,8 @@ public class TestParallel {
                 }
             }
         });
+
+        ThreadExecutor.shutdownClient("this");
 
         ThreadUtil.safeSleep(4000);
 

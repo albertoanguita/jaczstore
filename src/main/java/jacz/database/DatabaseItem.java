@@ -4,19 +4,18 @@ import com.neovisionaries.i18n.CountryCode;
 import com.neovisionaries.i18n.LanguageCode;
 import jacz.database.util.GenreCode;
 import jacz.database.util.QualityCode;
-import org.javalite.activejdbc.Base;
+import jacz.storage.ActiveJDBCController;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.text.ParseException;
 import java.util.*;
 
 /**
  * Generic database item
- * <p>
- * <p>
+ * <p/>
+ * <p/>
  */
 public abstract class DatabaseItem {
 
@@ -51,7 +50,7 @@ public abstract class DatabaseItem {
                 model.setId(id);
                 model.insert();
             }
-            set(DatabaseMediator.Field.CREATION_DATE, DatabaseMediator.dateFormat.format(new Date()), false);
+            set(DatabaseMediator.Field.CREATION_DATE, System.currentTimeMillis(), false);
             if (initialValues != null) {
                 for (Map.Entry<DatabaseMediator.Field, Object> initialValue : initialValues.entrySet()) {
                     set(initialValue.getKey(), initialValue.getValue(), false);
@@ -92,13 +91,7 @@ public abstract class DatabaseItem {
     }
 
     public Date getCreationDate() {
-        try {
-            return DatabaseMediator.dateFormat.parse(getString(DatabaseMediator.Field.CREATION_DATE));
-        } catch (ParseException e) {
-            // error reading the stored date
-            // todo return a fixed date
-            return null;
-        }
+        return new Date(getLong(DatabaseMediator.Field.CREATION_DATE));
     }
 
     String getString(DatabaseMediator.Field field) {
@@ -123,12 +116,7 @@ public abstract class DatabaseItem {
     }
 
     Date getDate(DatabaseMediator.Field field) {
-        try {
-            return DatabaseMediator.dateFormat.parse(getString(field));
-        } catch (ParseException e) {
-            // error reading the stored date
-            return null;
-        }
+        return new Date(getLong(field));
     }
 
     QualityCode getQuality(DatabaseMediator.Field field) {
@@ -237,7 +225,8 @@ public abstract class DatabaseItem {
         return new DatabaseMediator.ReferencedElements();
     }
 
-    public void mergeReferencedElementsPostponed(DatabaseMediator.ReferencedElements referencedElements) {}
+    public void mergeReferencedElementsPostponed(DatabaseMediator.ReferencedElements referencedElements) {
+    }
 
 //    static float evaluateListSimilarity(ListSimilarity listSimilarity, float confidence) {
 //        int min = Math.min(listSimilarity.firstListSize, listSimilarity.secondListSize);
@@ -258,9 +247,7 @@ public abstract class DatabaseItem {
         DatabaseMediator.connect(dbPath);
         try {
             Method findAll = type.modelClass.getMethod("findAll");
-            List<C> models;
-            models = (List<C>) findAll.invoke(null);
-            return models;
+            return ((LazyList<C>) findAll.invoke(null)).load();
         } catch (Exception e) {
             DatabaseMediator.reportError("Error retrieving models from the database with findAll", dbPath, type, e);
             return new ArrayList<>();
@@ -274,9 +261,7 @@ public abstract class DatabaseItem {
         try {
             Method where = type.modelClass.getMethod("where", String.class, Object[].class);
             params = params != null ? params : new Object[0];
-            List<C> models;
-            models = (List<C>) where.invoke(null, query, params);
-            return models;
+            return ((LazyList<C>) where.invoke(null, query, params)).load();
         } catch (Exception e) {
             DatabaseMediator.reportError("Error retrieving models from the database with where", dbPath, type, query, params, e);
             return new ArrayList<>();
@@ -296,21 +281,21 @@ public abstract class DatabaseItem {
         }
     }
 
-    protected <C extends Model> LazyList<C> getReferencedElements(DatabaseMediator.ItemType type, DatabaseMediator.Field field) {
+    protected <C extends Model> List<C> getReferencedElements(DatabaseMediator.ItemType type, DatabaseMediator.Field field) {
         Object[] ids = getStringList(field).toArray();
-        DatabaseMediator.connect(dbPath);
+        connect();
         try {
             Method where = type.modelClass.getMethod("where", String.class, Object[].class);
             StringBuilder query = new StringBuilder("id = -1");
             for (int i = 0; i < ids.length; i++) {
                 query.append(" OR id = ?");
             }
-            return (LazyList<C>) where.invoke(null, query.toString(), ids);
+            return ((LazyList<C>) where.invoke(null, query.toString(), ids)).load();
         } catch (Exception e) {
             DatabaseMediator.reportError("Error retrieving models from the database with where", dbPath, type, field, ids, e);
             return null;
         } finally {
-            DatabaseMediator.disconnect(dbPath);
+            disconnect();
         }
     }
 
@@ -328,10 +313,6 @@ public abstract class DatabaseItem {
 
     protected void removeReferencedElements(DatabaseMediator.Field field, boolean flush) {
         removeList(field, flush);
-    }
-
-    protected void removeReferencedElementsAndDelete(String field, boolean flush) {
-        // todo
     }
 
     protected <C extends Model> boolean removeReferencedElement(DatabaseMediator.Field field, DatabaseItem item, boolean flush) {
@@ -382,21 +363,28 @@ public abstract class DatabaseItem {
         return addStringValue(field, itemId.toString(), flush);
     }
 
-    protected <C extends Model> LazyList<C> getElementsContainingMe(DatabaseMediator.ItemType type, DatabaseMediator.Field field) {
+    /**
+     * Database must be previously connected
+     *
+     * @param type
+     * @param field
+     * @param <C>
+     * @return
+     */
+    protected <C extends Model> List<C> getElementsContainingMe(DatabaseMediator.ItemType type, DatabaseMediator.Field field) {
         Object[] myId = new String[]{"%\n" + getId().toString() + "\n%"};
-        DatabaseMediator.connect(dbPath);
         try {
+            connect();
             Method where = type.modelClass.getMethod("where", String.class, Object[].class);
             String query = field.value + " LIKE ?";
-            return (LazyList<C>) where.invoke(null, query, myId);
+            return ((LazyList<C>) where.invoke(null, query, myId)).load();
         } catch (Exception e) {
             DatabaseMediator.reportError("Error retrieving models from the database with where", dbPath, type, field, myId, e);
             return null;
         } finally {
-            DatabaseMediator.disconnect(dbPath);
+            disconnect();
         }
     }
-
 
     protected List<String> getStringList(DatabaseMediator.Field field) {
         return deserializeList(getString(field));
@@ -640,6 +628,7 @@ public abstract class DatabaseItem {
 
     public void delete() {
         connect();
+        Tag.removeItem(getItemType(), getId());
         model.delete();
         disconnect();
     }
@@ -649,15 +638,15 @@ public abstract class DatabaseItem {
     }
 
     protected void openTransaction() {
-        Base.openTransaction();
+        ActiveJDBCController.getDB().openTransaction();
     }
 
     protected void commitTransaction() {
-        Base.commitTransaction();
+        ActiveJDBCController.getDB().commitTransaction();
     }
 
     protected void rollbackTransaction() {
-        Base.rollbackTransaction();
+        ActiveJDBCController.getDB().rollbackTransaction();
     }
 
     protected void disconnect() {

@@ -3,10 +3,8 @@ package jacz.database;
 import com.neovisionaries.i18n.CountryCode;
 import jacz.database.util.ItemIntegrator;
 import jacz.util.AI.inference.Mycin;
-import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

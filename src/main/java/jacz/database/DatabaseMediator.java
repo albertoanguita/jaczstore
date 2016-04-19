@@ -13,11 +13,9 @@ import jacz.storage.ActiveJDBCController;
 import jacz.util.log.ErrorFactory;
 import jacz.util.log.ErrorHandler;
 import jacz.util.log.ErrorLog;
-import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.Model;
 
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -101,7 +99,7 @@ public class DatabaseMediator {
         CHAPTER_LIST("chapter_list", DBType.ID_LIST),
         SEASON("season", DBType.TEXT),
         NAME("name", DBType.TEXT),
-        ALIASES("aliases", DBType.STRING_LIST),
+//        ALIASES("aliases", DBType.STRING_LIST),
         HASH("hash", DBType.TEXT),
         LENGTH("length", DBType.LONG),
         ADDITIONAL_SOURCES("additional_sources", DBType.STRING_LIST),
@@ -227,7 +225,7 @@ public class DatabaseMediator {
         TEXT("TEXT"),
         INTEGER("INTEGER"),
         LONG("INTEGER"),
-        DATE("TEXT"),
+        DATE("INTEGER"),
         QUALITY("TEXT"),
         ID_LIST("TEXT"),
         STRING_LIST("TEXT"),
@@ -298,18 +296,17 @@ public class DatabaseMediator {
         }
     }
 
+    public static final String DATABASE_NAME = "jczMediaDatabase";
+
     private static final String VERSION_0_1 = "0.1";
 
     public static final String CURRENT_VERSION = VERSION_0_1;
 
     private static final Map<String, ItemType> tableNameToItemType = new HashMap<>();
 
-    // todo remove, use millis
-    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("y/M/d-HH:mm:ss:SSS");
-
 //    private static final Pattern AUTOCOMPLETE_DB = Pattern.compile("^(.)*store.db$");
 
-    private static int connectionCount = 0;
+//    private static int connectionCount = 0;
 
     private static ErrorHandler errorHandler = null;
 
@@ -331,7 +328,7 @@ public class DatabaseMediator {
         connect(path);
 
         for (ItemType itemType : ItemType.values()) {
-            Base.exec("DROP TABLE IF EXISTS " + itemType.table);
+            ActiveJDBCController.getDB().exec("DROP TABLE IF EXISTS " + itemType.table);
         }
 
         disconnect(path);
@@ -351,12 +348,12 @@ public class DatabaseMediator {
         createTable(ItemType.SUBTITLE_FILE);
         createTable(ItemType.TAG);
 
-        String nowString = dateFormat.format(new Date());
+        long now = System.currentTimeMillis();
         new Metadata()
                 .set(Field.VERSION.value, version)
                 .set(Field.IDENTIFIER.value, identifier)
-                .set(Field.CREATION_DATE.value, nowString)
-                .set(Field.LAST_UPDATE.value, nowString)
+                .set(Field.CREATION_DATE.value, now)
+                .set(Field.LAST_UPDATE.value, now)
                 .set(Field.NEXT_TIMESTAMP.value, 1L)
                 .saveIt();
 
@@ -370,7 +367,7 @@ public class DatabaseMediator {
         }
         // replace last comma with a ')'
         create.replace(create.length() - 1, create.length(), ")");
-        Base.exec(create.toString());
+        ActiveJDBCController.getDB().exec(create.toString());
     }
 
     public static DatabaseItem createNewItem(String dbPath, ItemType type) {
@@ -485,7 +482,7 @@ public class DatabaseMediator {
     public static void updateLastUpdateTime(String dbPath) {
         connect(dbPath);
         Metadata metadata = getMetadata();
-        metadata.set(Field.LAST_UPDATE.value, dateFormat.format(new Date())).saveIt();
+        metadata.set(Field.LAST_UPDATE.value, System.currentTimeMillis()).saveIt();
         disconnect(dbPath);
     }
 
@@ -527,16 +524,16 @@ public class DatabaseMediator {
     }
 
     public static void connect(String dbPath) {
-        ActiveJDBCController.connect(dbPath);
+        ActiveJDBCController.connect(DATABASE_NAME, dbPath);
     }
 
     public static void disconnect(String dbPath) {
-        ActiveJDBCController.disconnect(dbPath);
+        ActiveJDBCController.disconnect();
     }
 
     public static String getDBPath() {
         try {
-            String url = Base.connection().getMetaData().getURL();
+            String url = ActiveJDBCController.getDB().connection().getMetaData().getURL();
             return url.substring(url.indexOf(':') + 1);
         } catch (SQLException e) {
             reportError("Error obtaining the database path");
@@ -544,8 +541,8 @@ public class DatabaseMediator {
         }
     }
 
-    public static void main(String[] args) {
-        dropAndCreate("store.db", "a");
+    public static void checkConsistency(String dbPath) {
+        // todo
     }
 
     public static void registerErrorHandler(ErrorHandler errorHandler) {
