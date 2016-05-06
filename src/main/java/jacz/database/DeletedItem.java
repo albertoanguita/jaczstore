@@ -42,6 +42,11 @@ public class DeletedItem extends DatabaseItem {
         return DatabaseMediator.ItemType.DELETED_ITEM;
     }
 
+    @Override
+    public boolean isOrphan() {
+        return false;
+    }
+
     public DatabaseMediator.ItemType getDeletedItemType() {
         return DatabaseMediator.ItemType.valueOf(getString(DatabaseMediator.Field.ITEM_TYPE));
     }

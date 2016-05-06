@@ -1,6 +1,7 @@
 package jacz.database;
 
 import com.neovisionaries.i18n.CountryCode;
+import com.neovisionaries.i18n.LanguageCode;
 import jacz.database.util.ItemIntegrator;
 import jacz.util.AI.inference.Mycin;
 import org.javalite.activejdbc.Model;
@@ -27,8 +28,6 @@ public abstract class CreationItem extends DatabaseItem {
 //    private List<CountryCode> countries;
 
 //    private List<String> externalURLs;
-
-    private static final String COUNTRIES_NAME_METHOD = "getAlpha2";
 
     private static final float COUNTRIES_SIMILARITY_CONFIDENCE = 0.1f;
 
@@ -57,6 +56,18 @@ public abstract class CreationItem extends DatabaseItem {
 
     public CreationItem(Model model, String dbPath) {
         super(model, dbPath);
+    }
+
+    public LanguageCode getLanguage() {
+        return getEnum(DatabaseMediator.Field.LANGUAGE, LanguageCode.class);
+    }
+
+    public void setLanguage(LanguageCode language) {
+        setEnum(DatabaseMediator.Field.LANGUAGE, LanguageCode.class, language, DatabaseMediator.LANGUAGE_NAME_METHOD, true);
+    }
+
+    public void setLanguagePostponed(LanguageCode language) {
+        setEnum(DatabaseMediator.Field.LANGUAGE, LanguageCode.class, language, DatabaseMediator.LANGUAGE_NAME_METHOD, false);
     }
 
     public String getTitle() {
@@ -120,27 +131,27 @@ public abstract class CreationItem extends DatabaseItem {
     }
 
     public boolean removeCountry(CountryCode country) {
-        return removeEnum(DatabaseMediator.Field.COUNTRIES, CountryCode.class, country, COUNTRIES_NAME_METHOD, true);
+        return removeEnum(DatabaseMediator.Field.COUNTRIES, CountryCode.class, country, DatabaseMediator.COUNTRY_NAME_METHOD, true);
     }
 
     public boolean removeCountryPostponed(CountryCode country) {
-        return removeEnum(DatabaseMediator.Field.COUNTRIES, CountryCode.class, country, COUNTRIES_NAME_METHOD, false);
+        return removeEnum(DatabaseMediator.Field.COUNTRIES, CountryCode.class, country, DatabaseMediator.COUNTRY_NAME_METHOD, false);
     }
 
     public void setCountries(List<CountryCode> countries) {
-        setEnums(DatabaseMediator.Field.COUNTRIES, CountryCode.class, countries, COUNTRIES_NAME_METHOD, true);
+        setEnums(DatabaseMediator.Field.COUNTRIES, CountryCode.class, countries, DatabaseMediator.COUNTRY_NAME_METHOD, true);
     }
 
     public void setCountriesPostponed(List<CountryCode> countries) {
-        setEnums(DatabaseMediator.Field.COUNTRIES, CountryCode.class, countries, COUNTRIES_NAME_METHOD, false);
+        setEnums(DatabaseMediator.Field.COUNTRIES, CountryCode.class, countries, DatabaseMediator.COUNTRY_NAME_METHOD, false);
     }
 
     public boolean addCountry(CountryCode country) {
-        return addEnum(DatabaseMediator.Field.COUNTRIES, CountryCode.class, country, COUNTRIES_NAME_METHOD, true);
+        return addEnum(DatabaseMediator.Field.COUNTRIES, CountryCode.class, country, DatabaseMediator.COUNTRY_NAME_METHOD, true);
     }
 
     public boolean addCountryPostponed(CountryCode country) {
-        return addEnum(DatabaseMediator.Field.COUNTRIES, CountryCode.class, country, COUNTRIES_NAME_METHOD, false);
+        return addEnum(DatabaseMediator.Field.COUNTRIES, CountryCode.class, country, DatabaseMediator.COUNTRY_NAME_METHOD, false);
     }
 
     public List<String> getExternalURLs() {
@@ -392,6 +403,9 @@ public abstract class CreationItem extends DatabaseItem {
     @Override
     public void mergeBasicPostponed(DatabaseItem anotherItem) {
         CreationItem anotherCreationItem = (CreationItem) anotherItem;
+        if (getLanguage() == null && anotherCreationItem.getLanguage() != null) {
+            setLanguagePostponed(anotherCreationItem.getLanguage());
+        }
         if (getTitle() == null && anotherCreationItem.getTitle() != null) {
             setTitlePostponed(anotherCreationItem.getTitle());
         }
@@ -405,10 +419,10 @@ public abstract class CreationItem extends DatabaseItem {
             setSynopsisPostponed(anotherCreationItem.getSynopsis());
         }
         for (String creator : anotherCreationItem.getCreators()) {
-            addCreator(creator);
+            addCreatorPostponed(creator);
         }
         for (String actor : anotherCreationItem.getActors()) {
-            addActor(actor);
+            addActorPostponed(actor);
         }
         for (CountryCode countryCode : anotherCreationItem.getCountries()) {
             addCountryPostponed(countryCode);
@@ -416,24 +430,5 @@ public abstract class CreationItem extends DatabaseItem {
         for (String externalURL : anotherCreationItem.getExternalURLs()) {
             addExternalURLPostponed(externalURL);
         }
-    }
-
-    @Override
-    public DatabaseMediator.ReferencedElements getReferencedElements() {
-        DatabaseMediator.ReferencedElements referencedElements = super.getReferencedElements();
-        // todo
-//        referencedElements.add(DatabaseMediator.ItemType.PERSON, DatabaseMediator.ReferencedList.CREATORS, getCreatorsIds());
-//        referencedElements.add(DatabaseMediator.ItemType.PERSON, DatabaseMediator.ReferencedList.ACTORS, getActorsIds());
-        return referencedElements;
-    }
-
-    @Override
-    public void mergeReferencedElementsPostponed(DatabaseMediator.ReferencedElements referencedElements) {
-//        for (Integer creatorId : referencedElements.get(DatabaseMediator.ItemType.PERSON, DatabaseMediator.ReferencedList.CREATORS)) {
-//            addReferencedElementId(DatabaseMediator.Field.CREATOR_LIST, creatorId, false);
-//        }
-//        for (Integer actorId : referencedElements.get(DatabaseMediator.ItemType.PERSON, DatabaseMediator.ReferencedList.ACTORS)) {
-//            addReferencedElementId(DatabaseMediator.Field.ACTOR_LIST, actorId, false);
-//        }
     }
 }

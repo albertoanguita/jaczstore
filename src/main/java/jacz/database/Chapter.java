@@ -43,6 +43,11 @@ public final class Chapter extends CreationItem {
         return DatabaseMediator.ItemType.CHAPTER;
     }
 
+    @Override
+    public boolean isOrphan() {
+        return getTVSeries().isEmpty();
+    }
+
     public static List<Chapter> getChapters(String dbPath) {
         return buildList(dbPath, getModels(dbPath, DatabaseMediator.ItemType.CHAPTER));
     }
@@ -226,5 +231,14 @@ public final class Chapter extends CreationItem {
         for (Integer videoFileId : referencedElements.get(DatabaseMediator.ItemType.VIDEO_FILE, DatabaseMediator.ReferencedList.VIDEO_FILES)) {
             addReferencedElementId(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFileId, false);
         }
+    }
+
+    @Override
+    public void delete() {
+        // check any tv series pointing to me, delete their reference to me
+        for (TVSeries tvSeries : getTVSeries()) {
+            tvSeries.removeChapter(this);
+        }
+        super.delete();
     }
 }

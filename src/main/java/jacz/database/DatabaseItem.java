@@ -3,6 +3,7 @@ package jacz.database;
 import com.neovisionaries.i18n.CountryCode;
 import com.neovisionaries.i18n.LanguageCode;
 import jacz.database.util.GenreCode;
+import jacz.database.util.LocalizedLanguage;
 import jacz.database.util.QualityCode;
 import jacz.storage.ActiveJDBCController;
 import org.javalite.activejdbc.LazyList;
@@ -77,6 +78,8 @@ public abstract class DatabaseItem {
 
     public abstract DatabaseMediator.ItemType getItemType();
 
+    public abstract boolean isOrphan();
+
     static boolean contains(Collection<? extends DatabaseItem> items, Model model) {
         for (DatabaseItem item : items) {
             if (item.getId().equals(model.getInteger(DatabaseMediator.Field.ID.value))) {
@@ -119,9 +122,15 @@ public abstract class DatabaseItem {
         return new Date(getLong(field));
     }
 
-    QualityCode getQuality(DatabaseMediator.Field field) {
-        String fieldValue = getString(field);
-        return fieldValue != null ? QualityCode.valueOf(getString(field)) : null;
+    <E> E getEnum(DatabaseMediator.Field field, Class<E> enum_) {
+        try {
+            Method valueOf = enum_.getMethod("valueOf", String.class);
+            String fieldValue = getString(field);
+            return fieldValue != null ? (E) valueOf.invoke(null, fieldValue) : null;
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            DatabaseMediator.reportError("Error retrieving enum from the database with valueOf", dbPath, field, enum_, e);
+            return null;
+        }
     }
 
     private void updateTimestamp() {
@@ -163,6 +172,16 @@ public abstract class DatabaseItem {
         pendingChanges.put(field, value);
         if (flush) {
             flushChanges();
+        }
+    }
+
+    protected <E> void setEnum(DatabaseMediator.Field field, Class<E> enum_, Object value, String getNameMethod, boolean flush) {
+        try {
+            Method getName = enum_.getMethod(getNameMethod);
+            String str = value != null ? (String) getName.invoke(value) : null;
+            set(field, str, flush);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            DatabaseMediator.reportError("Error retrieving enums from the database with user provided getNameMethod", dbPath, field, enum_, value, getNameMethod, flush, e);
         }
     }
 
@@ -324,14 +343,6 @@ public abstract class DatabaseItem {
         boolean removed = stringList.remove(id);
         setStringList(field, stringList, flush);
         return removed;
-    }
-
-    protected <C extends Model> boolean removeReferencedElementAndDelete(DatabaseMediator.Field field, C model, boolean flush) {
-        List<String> stringList = getStringList(field);
-        boolean removed = stringList.remove(model.getId().toString());
-        setStringList(field, stringList, flush);
-        return removed;
-        // todo
     }
 
     protected void setReferencedElements(DatabaseMediator.Field field, List<? extends DatabaseItem> models, boolean flush) {
@@ -562,8 +573,8 @@ public abstract class DatabaseItem {
                         }
                         break;
                     case QUALITY:
-                        QualityCode quality1 = getQuality(field);
-                        QualityCode quality2 = that.getQuality(field);
+                        QualityCode quality1 = getEnum(field, QualityCode.class);
+                        QualityCode quality2 = that.getEnum(field, QualityCode.class);
                         if (onlyOneDefined(quality1, quality2)) {
                             return false;
                         }
@@ -590,6 +601,33 @@ public abstract class DatabaseItem {
                         List<GenreCode> genreList1 = getEnums(DatabaseMediator.Field.GENRES, GenreCode.class);
                         List<GenreCode> genreList2 = that.getEnums(DatabaseMediator.Field.GENRES, GenreCode.class);
                         if (!genreList1.equals(genreList2)) {
+                            return false;
+                        }
+                        break;
+                    case LANGUAGE:
+                        LanguageCode language1 = getEnum(DatabaseMediator.Field.LANGUAGE, LanguageCode.class);
+                        LanguageCode language2 = that.getEnum(DatabaseMediator.Field.LANGUAGE, LanguageCode.class);
+                        if (onlyOneDefined(language1, language2)) {
+                            return false;
+                        }
+                        if (bothDefined(language1, language2) && !language1.equals(language2)) {
+                            return false;
+                        }
+                        break;
+                    case LOCALIZED_LANGUAGE:
+                        LocalizedLanguage localizedLanguage1 = LocalizedLanguage.deserialize(getString(DatabaseMediator.Field.LOCALIZED_LANGUAGE));;
+                        LocalizedLanguage localizedLanguage2 = LocalizedLanguage.deserialize(that.getString(DatabaseMediator.Field.LOCALIZED_LANGUAGE));;
+                        if (onlyOneDefined(localizedLanguage1, localizedLanguage2)) {
+                            return false;
+                        }
+                        if (bothDefined(localizedLanguage1, localizedLanguage2) && !localizedLanguage1.equals(localizedLanguage2)) {
+                            return false;
+                        }
+                        break;
+                    case LOCALIZED_LANGUAGE_LIST:
+                        List<LocalizedLanguage> localizedLanguageList1 = LocalizedLanguage.deserialize(getStringList(DatabaseMediator.Field.LOCALIZED_LANGUAGE_LIST));
+                        List<LocalizedLanguage> localizedLanguageList2 = LocalizedLanguage.deserialize(that.getStringList(DatabaseMediator.Field.LOCALIZED_LANGUAGE_LIST));
+                        if (!localizedLanguageList1.equals(localizedLanguageList2)) {
                             return false;
                         }
                         break;

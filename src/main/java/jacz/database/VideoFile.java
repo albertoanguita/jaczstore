@@ -1,5 +1,6 @@
 package jacz.database;
 
+import jacz.database.util.LocalizedLanguage;
 import jacz.database.util.QualityCode;
 import org.javalite.activejdbc.Model;
 
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * Created by Alberto on 12/09/2015.
  */
-public final class VideoFile extends FileWithLanguages {
+public final class VideoFile extends File {
 
 //    private Integer minutes;
 //
@@ -38,6 +39,11 @@ public final class VideoFile extends FileWithLanguages {
     @Override
     public DatabaseMediator.ItemType getItemType() {
         return DatabaseMediator.ItemType.VIDEO_FILE;
+    }
+
+    @Override
+    public boolean isOrphan() {
+        return getMovies().isEmpty() && getChapters().isEmpty();
     }
 
     public static List<VideoFile> getVideoFiles(String dbPath) {
@@ -93,17 +99,15 @@ public final class VideoFile extends FileWithLanguages {
     }
 
     public QualityCode getQuality() {
-        return getQuality(DatabaseMediator.Field.QUALITY_CODE);
+        return getEnum(DatabaseMediator.Field.QUALITY_CODE, QualityCode.class);
     }
 
     public void setQuality(QualityCode quality) {
-        String qualityValue = quality != null ? quality.name() : null;
-        set(DatabaseMediator.Field.QUALITY_CODE, qualityValue, true);
+        setEnum(DatabaseMediator.Field.QUALITY_CODE, QualityCode.class, quality, DatabaseMediator.QUALITY_NAME_METHOD, true);
     }
 
     public void setQualityPostponed(QualityCode quality) {
-        String qualityValue = quality != null ? quality.name() : null;
-        set(DatabaseMediator.Field.QUALITY_CODE, qualityValue, false);
+        setEnum(DatabaseMediator.Field.QUALITY_CODE, QualityCode.class, quality, DatabaseMediator.QUALITY_NAME_METHOD, false);
     }
 
     public List<SubtitleFile> getSubtitleFiles() {
@@ -167,6 +171,43 @@ public final class VideoFile extends FileWithLanguages {
         addReferencedElement(DatabaseMediator.Field.SUBTITLE_FILE_LIST, subtitleFile, false);
     }
 
+    public List<LocalizedLanguage> getLocalizedLanguages() {
+        return LocalizedLanguage.deserialize(getStringList(DatabaseMediator.Field.LOCALIZED_LANGUAGE_LIST));
+    }
+
+    public void removeLocalizedLanguages() {
+        removeList(DatabaseMediator.Field.LOCALIZED_LANGUAGE_LIST, true);
+    }
+
+    public void removeLocalizedLanguagesPostponed() {
+        removeList(DatabaseMediator.Field.LOCALIZED_LANGUAGE_LIST, false);
+    }
+
+    public boolean removeLocalizedLanguage(LocalizedLanguage localizedLanguage) {
+        return removeStringValue(DatabaseMediator.Field.LOCALIZED_LANGUAGE_LIST, LocalizedLanguage.serialize(localizedLanguage), true);
+    }
+
+    public boolean removeLocalizedLanguagePostponed(LocalizedLanguage localizedLanguage) {
+        return removeStringValue(DatabaseMediator.Field.LOCALIZED_LANGUAGE_LIST, LocalizedLanguage.serialize(localizedLanguage), false);
+    }
+
+    public void setLocalizedLanguages(List<LocalizedLanguage> languages) {
+        setStringList(DatabaseMediator.Field.LOCALIZED_LANGUAGE_LIST, languages, true);
+    }
+
+    public void setLocalizedLanguagesPostponed(List<LocalizedLanguage> languages) {
+        setStringList(DatabaseMediator.Field.LOCALIZED_LANGUAGE_LIST, languages, false);
+    }
+
+    public boolean addLocalizedLanguage(LocalizedLanguage localizedLanguage) {
+        return addStringValue(DatabaseMediator.Field.LOCALIZED_LANGUAGE_LIST, LocalizedLanguage.serialize(localizedLanguage), true);
+    }
+
+    public boolean addLocalizedLanguagePostponed(LocalizedLanguage localizedLanguage) {
+        return addStringValue(DatabaseMediator.Field.LOCALIZED_LANGUAGE_LIST, LocalizedLanguage.serialize(localizedLanguage), false);
+    }
+
+
     @Override
     public void mergeBasicPostponed(DatabaseItem anotherItem) {
         super.mergeBasicPostponed(anotherItem);
@@ -179,6 +220,9 @@ public final class VideoFile extends FileWithLanguages {
         }
         if (getQuality() == null && anotherVideoFile.getQuality() != null) {
             setQualityPostponed(anotherVideoFile.getQuality());
+        }
+        for (LocalizedLanguage localizedLanguage : anotherVideoFile.getLocalizedLanguages()) {
+            addLocalizedLanguagePostponed(localizedLanguage);
         }
     }
 
@@ -198,10 +242,43 @@ public final class VideoFile extends FileWithLanguages {
         }
     }
 
+    public List<Movie> getMovies() {
+        try {
+            connect();
+            List<jacz.database.models.Movie> modelMovies = getElementsContainingMe(DatabaseMediator.ItemType.MOVIE, DatabaseMediator.Field.VIDEO_FILE_LIST);
+            if (modelMovies != null) {
+                return Movie.buildList(dbPath, modelMovies);
+            } else {
+                return new ArrayList<>();
+            }
+        } finally {
+            disconnect();
+        }
+    }
+
+    public List<Chapter> getChapters() {
+        try {
+            connect();
+            List<jacz.database.models.Chapter> modelChapters = getElementsContainingMe(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.Field.VIDEO_FILE_LIST);
+            if (modelChapters != null) {
+                return Chapter.buildList(dbPath, modelChapters);
+            } else {
+                return new ArrayList<>();
+            }
+        } finally {
+            disconnect();
+        }
+    }
+
     @Override
     public void delete() {
-        // video files cannot be deleted. This way we avoid inconsistencies of references to video files pointing
-        // to an non-existent item. We simply delete references to these
-        // todo in the future, add the process of removing non-referenced video files at startup
+        // check any tv series pointing to me, delete their reference to me
+        for (Movie movie : getMovies()) {
+            movie.removeVideoFile(this);
+        }
+        for (Chapter chapter : getChapters()) {
+            chapter.removeVideoFile(this);
+        }
+        super.delete();
     }
 }

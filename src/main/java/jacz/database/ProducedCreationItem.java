@@ -42,7 +42,12 @@ public abstract class ProducedCreationItem extends CreationItem {
         super(model, dbPath);
     }
 
-//    public List<Company> getProductionCompanies() {
+    @Override
+    public boolean isOrphan() {
+        return false;
+    }
+
+    //    public List<Company> getProductionCompanies() {
 //        LazyList<jacz.database.models.Company> models = getReferencedElements(DatabaseMediator.ItemType.COMPANY, DatabaseMediator.Field.COMPANY_LIST);
 //        if (models != null) {
 //            return Company.buildList(dbPath, models);

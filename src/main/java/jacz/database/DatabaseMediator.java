@@ -23,35 +23,24 @@ import java.util.*;
  */
 public class DatabaseMediator {
 
-//    private static final ThreadLocal<ArrayDeque<String>> connectionsStack = new ThreadLocal();
-//
-//    public static ArrayDeque<String> getConnectionsStack() {
-//        if (connectionsStack.get() == null) {
-//            connectionsStack.set(new ArrayDeque<>());
-//        }
-//        return connectionsStack.get();
-//    }
-
     public enum ItemType {
         METADATA("metadata", Metadata.class, Field.ID, Field.VERSION, Field.IDENTIFIER, Field.CREATION_DATE,
                 Field.LAST_UPDATE, Field.NEXT_TIMESTAMP, Field.HIGHEST_MANUAL_TIMESTAMP),
         DELETED_ITEM("deleted_items", DeletedItem.class, Field.ID, Field.ITEM_TYPE, Field.ITEM_ID, Field.TIMESTAMP),
-        MOVIE("movies", Movie.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.TITLE, Field.ORIGINAL_TITLE,
+        MOVIE("movies", Movie.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.LANGUAGE, Field.TITLE, Field.ORIGINAL_TITLE,
                 Field.YEAR, Field.SYNOPSIS, Field.CREATOR_LIST, Field.ACTOR_LIST, Field.COMPANY_LIST, Field.COUNTRIES,
                 Field.EXTERNAL_URLS, Field.GENRES, Field.VIDEO_FILE_LIST, Field.IMAGE_HASH, Field.MINUTES),
-        TV_SERIES("tv_series", TVSeries.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.TITLE,
+        TV_SERIES("tv_series", TVSeries.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.LANGUAGE, Field.TITLE,
                 Field.ORIGINAL_TITLE, Field.YEAR, Field.SYNOPSIS, Field.CREATOR_LIST, Field.ACTOR_LIST, Field.COMPANY_LIST,
                 Field.COUNTRIES, Field.EXTERNAL_URLS, Field.GENRES, Field.IMAGE_HASH, Field.CHAPTER_LIST),
-        CHAPTER("chapters", Chapter.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.TITLE,
+        CHAPTER("chapters", Chapter.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.LANGUAGE, Field.TITLE,
                 Field.ORIGINAL_TITLE, Field.YEAR, Field.SYNOPSIS, Field.CREATOR_LIST, Field.ACTOR_LIST,
                 Field.COUNTRIES, Field.EXTERNAL_URLS, Field.SEASON, Field.VIDEO_FILE_LIST, Field.MINUTES),
-//        PERSON("people", Person.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.NAME, Field.ALIASES),
-//        COMPANY("companies", Company.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.NAME, Field.ALIASES),
         VIDEO_FILE("video_files", VideoFile.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP, Field.HASH,
                 Field.LENGTH, Field.NAME, Field.ADDITIONAL_SOURCES, Field.MINUTES, Field.RESOLUTION,
-                Field.QUALITY_CODE, Field.LANGUAGES, Field.SUBTITLE_FILE_LIST),
+                Field.QUALITY_CODE, Field.LOCALIZED_LANGUAGE_LIST, Field.SUBTITLE_FILE_LIST),
         SUBTITLE_FILE("subtitle_files", SubtitleFile.class, Field.ID, Field.CREATION_DATE, Field.TIMESTAMP,
-                Field.HASH, Field.LENGTH, Field.NAME, Field.ADDITIONAL_SOURCES, Field.LANGUAGES),
+                Field.HASH, Field.LENGTH, Field.NAME, Field.ADDITIONAL_SOURCES, Field.LOCALIZED_LANGUAGE),
         TAG("tags", Tag.class, Field.ID, Field.ITEM_TYPE, Field.ITEM_ID, Field.NAME);
 
         public final String table;
@@ -99,12 +88,15 @@ public class DatabaseMediator {
         CHAPTER_LIST("chapter_list", DBType.ID_LIST),
         SEASON("season", DBType.TEXT),
         NAME("name", DBType.TEXT),
-//        ALIASES("aliases", DBType.STRING_LIST),
         HASH("hash", DBType.TEXT),
         LENGTH("length", DBType.LONG),
         ADDITIONAL_SOURCES("additional_sources", DBType.STRING_LIST),
         RESOLUTION("resolution", DBType.INTEGER),
         QUALITY_CODE("quality_code", DBType.QUALITY),
+        LANGUAGE("language", DBType.LANGUAGE),
+        LOCALIZED_LANGUAGE("localized_language", DBType.LOCALIZED_LANGUAGE),
+        LOCALIZED_LANGUAGE_LIST("localized_language_list", DBType.LOCALIZED_LANGUAGE_LIST),
+        // todo remove
         LANGUAGES("languages", DBType.LANGUAGE_LIST),
         SUBTITLE_FILE_LIST("subtitle_file_list", DBType.ID_LIST);
 
@@ -117,52 +109,6 @@ public class DatabaseMediator {
             this.dbType = dbType;
         }
 
-        //    public enum Field {
-//        ID("id", DBType.ID),
-//        VERSION("version", DBType.TEXT),
-//        IDENTIFIER("identifier", DBType.TEXT),
-//        CREATION_DATE("creation_date", DBType.TEXT),
-//        LAST_ACCESS("last_access", DBType.TEXT),
-//        LAST_UPDATE("last_update", DBType.TEXT),
-//        NEXT_TIMESTAMP("next_timestamp", DBType.INTEGER),
-//        HIGHEST_MANUAL_TIMESTAMP("highest_manual_timestamp", DBType.INTEGER),
-//        ITEM_TYPE("item_type", DBType.TEXT),
-//        ITEM_ID("item_id", DBType.INTEGER),
-//        TIMESTAMP("timestamp", DBType.INTEGER),
-//        TITLE("title", DBType.TEXT),
-//        ORIGINAL_TITLE("original_title", DBType.TEXT),
-//        YEAR("year", DBType.INTEGER),
-//        SYNOPSIS("synopsis", DBType.TEXT),
-//        CREATOR_LIST("creator_list", DBType.TEXT),
-//        ACTOR_LIST("actor_list", DBType.TEXT),
-//        COMPANY_LIST("company_list", DBType.TEXT),
-//        COUNTRIES("countries", DBType.TEXT),
-//        EXTERNAL_URLS("external_urls", DBType.TEXT),
-//        GENRES("genres", DBType.TEXT),
-//        VIDEO_FILE_LIST("video_file_list", DBType.TEXT),
-//        IMAGE_HASH("image_hash", DBType.TEXT),
-//        MINUTES("minutes", DBType.INTEGER),
-//        CHAPTER_LIST("chapter_list", DBType.TEXT),
-//        SEASON("season", DBType.TEXT),
-//        NAME("name", DBType.TEXT),
-//        ALIASES("aliases", DBType.TEXT),
-//        HASH("hash", DBType.TEXT),
-//        LENGTH("length", DBType.INTEGER),
-//        ADDITIONAL_SOURCES("additional_sources", DBType.TEXT),
-//        RESOLUTION("resolution", DBType.INTEGER),
-//        QUALITY_CODE("quality_code", DBType.TEXT),
-//        LANGUAGES("languages", DBType.TEXT),
-//        SUBTITLE_FILE_LIST("subtitle_file_list", DBType.TEXT);
-//
-//        public final String value;
-//
-//        public final DBType dbType;
-//
-//        Field(String value, DBType dbType) {
-//            this.value = value;
-//            this.dbType = dbType;
-//        }
-//
         boolean canBeReset() {
             return this != DatabaseMediator.Field.ID &&
                     this != DatabaseMediator.Field.CREATION_DATE &&
@@ -182,12 +128,6 @@ public class DatabaseMediator {
         ItemType getReferencedType() {
             switch (this) {
 
-//                case CREATOR_LIST:
-//                    return ItemType.PERSON;
-//                case ACTOR_LIST:
-//                    return ItemType.PERSON;
-//                case COMPANY_LIST:
-//                    return ItemType.COMPANY;
                 case VIDEO_FILE_LIST:
                     return ItemType.VIDEO_FILE;
                 case CHAPTER_LIST:
@@ -230,12 +170,11 @@ public class DatabaseMediator {
         ID_LIST("TEXT"),
         STRING_LIST("TEXT"),
         GENRE_LIST("TEXT"),
+        LANGUAGE("TEXT"),
+        LOCALIZED_LANGUAGE("TEXT"),
+        LOCALIZED_LANGUAGE_LIST("TEXT"),
         LANGUAGE_LIST("TEXT"),
         COUNTRY_LIST("TEXT");
-
-
-//        INTEGER_REF_TV_SERIES("INTEGER REFERENCES tv_series(id)"),
-//        INTEGER_REF_VIDEO_FILES("INTEGER REFERENCES video_files(id)");
 
         private final String value;
 
@@ -298,15 +237,19 @@ public class DatabaseMediator {
 
     public static final String DATABASE_NAME = "jczMediaDatabase";
 
+    static final String LANGUAGE_NAME_METHOD = "name";
+
+    static final String COUNTRY_NAME_METHOD = "getAlpha2";
+
+    static final String QUALITY_NAME_METHOD = "name";
+
+
+
     private static final String VERSION_0_1 = "0.1";
 
     public static final String CURRENT_VERSION = VERSION_0_1;
 
     private static final Map<String, ItemType> tableNameToItemType = new HashMap<>();
-
-//    private static final Pattern AUTOCOMPLETE_DB = Pattern.compile("^(.)*store.db$");
-
-//    private static int connectionCount = 0;
 
     private static ErrorHandler errorHandler = null;
 
@@ -342,8 +285,6 @@ public class DatabaseMediator {
         createTable(ItemType.MOVIE);
         createTable(ItemType.TV_SERIES);
         createTable(ItemType.CHAPTER);
-//        createTable(ItemType.PERSON);
-//        createTable(ItemType.COMPANY);
         createTable(ItemType.VIDEO_FILE);
         createTable(ItemType.SUBTITLE_FILE);
         createTable(ItemType.TAG);
@@ -382,12 +323,6 @@ public class DatabaseMediator {
             case CHAPTER:
                 return new jacz.database.Chapter(dbPath);
 
-//            case PERSON:
-//                return new jacz.database.Person(dbPath);
-//
-//            case COMPANY:
-//                return new jacz.database.Company(dbPath);
-
             case VIDEO_FILE:
                 return new jacz.database.VideoFile(dbPath);
 
@@ -411,12 +346,6 @@ public class DatabaseMediator {
             case CHAPTER:
                 return jacz.database.Chapter.getChapters(dbPath);
 
-//            case PERSON:
-//                return jacz.database.Person.getPeople(dbPath);
-//
-//            case COMPANY:
-//                return jacz.database.Company.getCompanies(dbPath);
-
             case VIDEO_FILE:
                 return jacz.database.VideoFile.getVideoFiles(dbPath);
 
@@ -439,12 +368,6 @@ public class DatabaseMediator {
 
             case CHAPTER:
                 return jacz.database.Chapter.getChapterById(dbPath, id);
-
-//            case PERSON:
-//                return jacz.database.Person.getPersonById(dbPath, id);
-//
-//            case COMPANY:
-//                return jacz.database.Company.getCompanyById(dbPath, id);
 
             case VIDEO_FILE:
                 return jacz.database.VideoFile.getVideoFileById(dbPath, id);
@@ -542,7 +465,17 @@ public class DatabaseMediator {
     }
 
     public static void checkConsistency(String dbPath) {
-        // todo
+        deleteOrphans(jacz.database.Chapter.getChapters(dbPath));
+        deleteOrphans(jacz.database.VideoFile.getVideoFiles(dbPath));
+        deleteOrphans(jacz.database.SubtitleFile.getSubtitleFiles(dbPath));
+    }
+
+    private static void deleteOrphans(List<? extends DatabaseItem> items) {
+        for (DatabaseItem item : items) {
+            if (item.isOrphan()) {
+                item.delete();
+            }
+        }
     }
 
     public static void registerErrorHandler(ErrorHandler errorHandler) {
