@@ -76,9 +76,9 @@ public class DatabaseMediator {
         ORIGINAL_TITLE("original_title", DBType.TEXT),
         YEAR("year", DBType.INTEGER),
         SYNOPSIS("synopsis", DBType.TEXT),
-        CREATOR_LIST("creator_list", DBType.ID_LIST),
-        ACTOR_LIST("actor_list", DBType.ID_LIST),
-        COMPANY_LIST("company_list", DBType.ID_LIST),
+        CREATOR_LIST("creator_list", DBType.STRING_LIST),
+        ACTOR_LIST("actor_list", DBType.STRING_LIST),
+        COMPANY_LIST("company_list", DBType.STRING_LIST),
         COUNTRIES("countries", DBType.COUNTRY_LIST),
         EXTERNAL_URLS("external_urls", DBType.STRING_LIST),
         GENRES("genres", DBType.GENRE_LIST),
@@ -135,6 +135,7 @@ public class DatabaseMediator {
                 case SUBTITLE_FILE_LIST:
                     return ItemType.SUBTITLE_FILE;
                 default:
+                    // todo fatal error
                     return null;
             }
         }
@@ -155,6 +156,7 @@ public class DatabaseMediator {
                 case SUBTITLE_FILE_LIST:
                     return ReferencedList.SUBTITLE_FILES;
                 default:
+                    // todo fatal error
                     return null;
             }
         }
