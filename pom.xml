@@ -69,7 +69,7 @@
         <repository>
             <id>central</id>
             <name>libs-release-local</name>
-            <url>http://localhost:8080/artifactory/libs-release-local</url>
+            <url>http://139.162.162.223:8081/artifactory/libs-release-local</url>
         </repository>
     </distributionManagement>
 
@@ -106,11 +106,11 @@
         <artifactId>activejdbc</artifactId>
         <version>1.4.11</version>
     </dependency>
-    <dependency>
-        <groupId>jacz.storage</groupId>
-        <artifactId>activejdbc-controller</artifactId>
-        <version>0.1a</version>
-    </dependency>
+    <!--<dependency>-->
+        <!--<groupId>jacz.storage</groupId>-->
+        <!--<artifactId>activejdbc-controller</artifactId>-->
+        <!--<version>0.1a</version>-->
+    <!--</dependency>-->
     <dependency>
     	<groupId>org.slf4j</groupId>
     	<artifactId>slf4j-api</artifactId>

@@ -9,7 +9,7 @@ import jacz.database.models.TVSeries;
 import jacz.database.models.Tag;
 import jacz.database.models.VideoFile;
 import jacz.database.util.ImageHash;
-import jacz.storage.ActiveJDBCController;
+import jacz.util.io.serialization.activejdbcsupport.ActiveJDBCController;
 import jacz.util.log.ErrorFactory;
 import jacz.util.log.ErrorHandler;
 import jacz.util.log.ErrorLog;
