@@ -6,6 +6,7 @@ import jacz.database.util.ItemIntegrator;
 import jacz.util.AI.inference.Mycin;
 import org.javalite.activejdbc.Model;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -154,40 +155,40 @@ public abstract class CreationItem extends DatabaseItem {
         return addEnum(DatabaseMediator.Field.COUNTRIES, CountryCode.class, country, DatabaseMediator.COUNTRY_NAME_METHOD, false);
     }
 
-    public List<String> getExternalURLs() {
-        return getStringList(DatabaseMediator.Field.EXTERNAL_URLS);
+    public List<String> getExternalURIs() {
+        return getStringList(DatabaseMediator.Field.URIS);
     }
 
-    public void removeExternalURLs() {
-        removeStringList(DatabaseMediator.Field.EXTERNAL_URLS, true);
+    public void removeExternalURIs() {
+        removeStringList(DatabaseMediator.Field.URIS, true);
     }
 
-    public void removeExternalURLsPostponed() {
-        removeStringList(DatabaseMediator.Field.EXTERNAL_URLS, false);
+    public void removeExternalURIsPostponed() {
+        removeStringList(DatabaseMediator.Field.URIS, false);
     }
 
-    public boolean removeExternalURL(String externalURL) {
-        return removeStringValue(DatabaseMediator.Field.EXTERNAL_URLS, externalURL, true);
+    public boolean removeExternalURI(String externalURL) {
+        return removeStringValue(DatabaseMediator.Field.URIS, externalURL, true);
     }
 
-    public boolean removeExternalURLPostponed(String externalURL) {
-        return removeStringValue(DatabaseMediator.Field.EXTERNAL_URLS, externalURL, false);
+    public boolean removeExternalURIPostponed(String externalURL) {
+        return removeStringValue(DatabaseMediator.Field.URIS, externalURL, false);
     }
 
-    public void setExternalURLs(List<String> externalURLs) {
-        setStringList(DatabaseMediator.Field.EXTERNAL_URLS, externalURLs, true);
+    public void setExternalURIs(List<String> externalURLs) {
+        setStringList(DatabaseMediator.Field.URIS, externalURLs, true);
     }
 
-    public void setExternalURLsPostponed(List<String> externalURLs) {
-        setStringList(DatabaseMediator.Field.EXTERNAL_URLS, externalURLs, false);
+    public void setExternalURIsPostponed(List<String> externalURLs) {
+        setStringList(DatabaseMediator.Field.URIS, externalURLs, false);
     }
 
-    public boolean addExternalURL(String externalURL) {
-        return addStringValue(DatabaseMediator.Field.EXTERNAL_URLS, externalURL, true);
+    public boolean addExternalURI(String externalURL) {
+        return addStringValue(DatabaseMediator.Field.URIS, externalURL, true);
     }
 
-    public boolean addExternalURLPostponed(String externalURL) {
-        return addStringValue(DatabaseMediator.Field.EXTERNAL_URLS, externalURL, false);
+    public boolean addExternalURIPostponed(String externalURL) {
+        return addStringValue(DatabaseMediator.Field.URIS, externalURL, false);
     }
 
     public List<String> getCreators() {
@@ -427,8 +428,8 @@ public abstract class CreationItem extends DatabaseItem {
         for (CountryCode countryCode : anotherCreationItem.getCountries()) {
             addCountryPostponed(countryCode);
         }
-        for (String externalURL : anotherCreationItem.getExternalURLs()) {
-            addExternalURLPostponed(externalURL);
+        for (String externalURL : anotherCreationItem.getExternalURIs()) {
+            addExternalURIPostponed(externalURL);
         }
     }
 }

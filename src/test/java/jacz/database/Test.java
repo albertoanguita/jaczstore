@@ -125,8 +125,8 @@ public class Test {
         movie1.setSynopsis("A synopsis...");
         movie1.addCountry(CountryCode.ES);
         movie1.addCountry(CountryCode.US);
-        movie1.addExternalURL("url1");
-        movie1.addExternalURL("url2");
+        movie1.addExternalURI("url1");
+        movie1.addExternalURI("url2");
         movie1.addGenre(GenreCode.DOCUMENTARY);
         movie1.addGenre(GenreCode.FAMILY);
         movie1.setImageHash(new ImageHash("image", "jpg"));
@@ -146,7 +146,7 @@ public class Test {
         Assert.assertEquals(new Integer(1999), movie1.getYear());
         Assert.assertEquals("A synopsis...", movie1.getSynopsis());
         ListAssert.assertEquals(countries, movie1.getCountries());
-        ListAssert.assertEquals(externalURLs, movie1.getExternalURLs());
+        ListAssert.assertEquals(externalURLs, movie1.getExternalURIs());
         ListAssert.assertEquals(genres, movie1.getGenres());
         Assert.assertEquals(new ImageHash("image", "jpg"), movie1.getImageHash());
         Assert.assertEquals(new Integer(150), movie1.getMinutes());
@@ -276,8 +276,8 @@ public class Test {
         tvSeries1.setYear(1999);
         tvSeries1.addCountry(CountryCode.ES);
         tvSeries1.addCountry(CountryCode.US);
-        tvSeries1.addExternalURL("url1");
-        tvSeries1.addExternalURL("url2");
+        tvSeries1.addExternalURI("url1");
+        tvSeries1.addExternalURI("url2");
         tvSeries1.addGenre(GenreCode.DOCUMENTARY);
         tvSeries1.addGenre(GenreCode.FAMILY);
         tvSeries1.setImageHash(new ImageHash("image", "jpg"));
@@ -295,7 +295,7 @@ public class Test {
         Assert.assertEquals("Titanic original", tvSeries1.getOriginalTitle());
         Assert.assertEquals(new Integer(1999), tvSeries1.getYear());
         ListAssert.assertEquals(countries, tvSeries1.getCountries());
-        ListAssert.assertEquals(externalURLs, tvSeries1.getExternalURLs());
+        ListAssert.assertEquals(externalURLs, tvSeries1.getExternalURIs());
         ListAssert.assertEquals(genres, tvSeries1.getGenres());
         Assert.assertEquals(new ImageHash("image", "jpg"), tvSeries1.getImageHash());
 
@@ -407,8 +407,8 @@ public class Test {
         chapter1.setYear(1999);
         chapter1.addCountry(CountryCode.ES);
         chapter1.addCountry(CountryCode.US);
-        chapter1.addExternalURL("url1");
-        chapter1.addExternalURL("url2");
+        chapter1.addExternalURI("url1");
+        chapter1.addExternalURI("url2");
         chapter1.setSeason("01");
         chapter1.setMinutes(150);
 
@@ -422,7 +422,7 @@ public class Test {
         Assert.assertEquals("Titanic original", chapter1.getOriginalTitle());
         Assert.assertEquals(new Integer(1999), chapter1.getYear());
         ListAssert.assertEquals(countries, chapter1.getCountries());
-        ListAssert.assertEquals(externalURLs, chapter1.getExternalURLs());
+        ListAssert.assertEquals(externalURLs, chapter1.getExternalURIs());
         Assert.assertEquals("01", chapter1.getSeason());
         Assert.assertEquals(new Integer(150), chapter1.getMinutes());
 
