@@ -80,7 +80,7 @@ public class DatabaseMediator {
         ACTOR_LIST("actor_list", DBType.STRING_LIST),
         COMPANY_LIST("company_list", DBType.STRING_LIST),
         COUNTRIES("countries", DBType.COUNTRY_LIST),
-        URIS("external_urls", DBType.STRING_LIST),
+        URIS("uris", DBType.STRING_LIST),
         GENRES("genres", DBType.GENRE_LIST),
         VIDEO_FILE_LIST("video_file_list", DBType.ID_LIST),
         IMAGE_HASH("image_hash", DBType.TEXT),
