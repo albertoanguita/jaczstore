@@ -200,6 +200,7 @@ public final class Chapter extends CreationItem {
 
     @Override
     public float match(DatabaseItem anotherItem) {
+        // todo add comparison of tv series, and season/chapter number
         float similarity = super.match(anotherItem);
         Chapter anotherChapterItem = (Chapter) anotherItem;
         similarity = Mycin.combine(similarity, ItemIntegrator.durationSimilarity(getMinutes(), anotherChapterItem.getMinutes()));
