@@ -140,7 +140,19 @@ public class ItemIntegrator {
 
 
     public static float chapterSeasonAndNumber(Integer season1, Integer number1, Integer season2, Integer number2) {
-        // todo
-        return 0;
+        float similarity = 0.0f;
+        if (season1 != null && season2 != null && number1 != null && number2 != null) {
+            if (season1.equals(season2)) {
+                similarity = Mycin.combine(similarity, 0.1f);
+            } else if (Math.abs(season1 - season2) > 1) {
+                similarity = Mycin.combine(similarity, -0.1f);
+            }
+            if (number1.equals(number2)) {
+                similarity = Mycin.combine(similarity, 0.2f);
+            } else if (Math.abs(number1 - number2) > 1) {
+                similarity = Mycin.combine(similarity, -0.2f);
+            }
+        }
+        return similarity;
     }
 }
