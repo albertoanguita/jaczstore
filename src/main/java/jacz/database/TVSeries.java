@@ -63,17 +63,17 @@ public final class TVSeries extends ProducedCreationItem {
         }
     }
 
-    public List<String> getSeasons() {
+    public List<Integer> getSeasons() {
         List<Chapter> chapters = getChapters();
         return getSeasons(chapters);
     }
 
-    private static List<String> getSeasons(List<Chapter> chapters) {
-        Set<String> seasonSet = new HashSet<>();
+    private static List<Integer> getSeasons(List<Chapter> chapters) {
+        Set<Integer> seasonSet = new HashSet<>();
         for (Chapter chapter : chapters) {
             seasonSet.add(chapter.getSeason());
         }
-        List<String> seasons = new ArrayList<>(seasonSet);
+        List<Integer> seasons = new ArrayList<>(seasonSet);
         Collections.sort(seasons);
         return seasons;
     }
@@ -87,7 +87,7 @@ public final class TVSeries extends ProducedCreationItem {
         }
     }
 
-    public List<Chapter> getChapters(String season) {
+    public List<Chapter> getChapters(Integer season) {
         List<jacz.database.models.Chapter> models = getReferencedElements(DatabaseMediator.ItemType.CHAPTER, DatabaseMediator.Field.CHAPTER_LIST);
         if (models != null) {
             return Chapter.buildList(dbPath, models, season);

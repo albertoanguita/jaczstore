@@ -2,7 +2,6 @@ package jacz.database;
 
 import jacz.database.util.ItemIntegrator;
 import jacz.util.AI.inference.Mycin;
-import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
 import java.util.ArrayList;
@@ -65,7 +64,7 @@ public final class Chapter extends CreationItem {
         return buildList(dbPath, models, null);
     }
 
-    static List<Chapter> buildList(String dbPath, List<? extends Model> models, String season) {
+    static List<Chapter> buildList(String dbPath, List<? extends Model> models, Integer season) {
         DatabaseMediator.connect(dbPath);
         try {
             List<Chapter> chapters = new ArrayList<>();
@@ -97,32 +96,28 @@ public final class Chapter extends CreationItem {
         }
     }
 
-//    public void setTVSeries(TVSeries tvSeries) {
-//        tvSeries.addChapter(this);
-//    }
-//
-//    public void setTVSeriesPostponed(TVSeries tvSeries) {
-//
-//    }
-//
-//    public void setTVSeriesId(Integer tvSeriesId) {
-//        setTVSeries(TVSeries.getTVSeriesById(dbPath, tvSeriesId));
-//    }
-//
-//    public void setTVSeriesIdPostponed(Integer tvSeriesId) {
-//        setTVSeriesPostponed(TVSeries.getTVSeriesById(dbPath, tvSeriesId));
-//    }
-
-    public String getSeason() {
-        return getString(DatabaseMediator.Field.SEASON);
+    public Integer getSeason() {
+        return getInteger(DatabaseMediator.Field.SEASON);
     }
 
-    public void setSeason(String season) {
+    public void setSeason(Integer season) {
         set(DatabaseMediator.Field.SEASON, season, true);
     }
 
-    public void setSeasonPostponed(String season) {
+    public void setSeasonPostponed(Integer season) {
         set(DatabaseMediator.Field.SEASON, season, false);
+    }
+
+    public Integer getNumber() {
+        return getInteger(DatabaseMediator.Field.NUMBER);
+    }
+
+    public void setNumber(Integer number) {
+        set(DatabaseMediator.Field.NUMBER, number, true);
+    }
+
+    public void setNumberPostponed(Integer number) {
+        set(DatabaseMediator.Field.NUMBER, number, false);
     }
 
     public Integer getMinutes() {
@@ -204,6 +199,7 @@ public final class Chapter extends CreationItem {
         float similarity = super.match(anotherItem);
         Chapter anotherChapterItem = (Chapter) anotherItem;
         similarity = Mycin.combine(similarity, ItemIntegrator.durationSimilarity(getMinutes(), anotherChapterItem.getMinutes()));
+        similarity = Mycin.combine(similarity, ItemIntegrator.chapterSeasonAndNumber(getSeason(), getNumber(), anotherChapterItem.getSeason(), anotherChapterItem.getNumber()));
         return similarity;
     }
 

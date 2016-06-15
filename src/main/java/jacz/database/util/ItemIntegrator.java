@@ -139,4 +139,8 @@ public class ItemIntegrator {
     }
 
 
+    public static float chapterSeasonAndNumber(Integer season1, Integer number1, Integer season2, Integer number2) {
+        // todo
+        return 0;
+    }
 }

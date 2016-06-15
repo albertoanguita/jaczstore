@@ -37,7 +37,7 @@ public class Test {
         System.out.println();
         System.out.println();
 
-        ThreadExecutor.registerClient("A");
+        String id = ThreadExecutor.registerClient("A");
 
         ThreadExecutor.submit(new Runnable() {
             @Override
@@ -57,7 +57,7 @@ public class Test {
             }
         });
 
-        ThreadExecutor.shutdownClient("A");
+        ThreadExecutor.shutdownClient(id);
         ThreadUtil.safeSleep(4000);
     }
 
@@ -355,19 +355,21 @@ public class Test {
 
         Chapter chapter1 = new Chapter(dbPath);
         chapter1.setTitle("ch1");
-        chapter1.setSeason("s01");
+        chapter1.setSeason(1);
+        chapter1.setNumber(5);
         Chapter chapter2 = new Chapter(dbPath);
         chapter2.setTitle("ch2");
-        chapter2.setSeason("s01");
+        chapter2.setSeason(1);
+        chapter2.setNumber(6);
         tvSeries.setChapters(chapter1, chapter2);
-        List<String> seasons = new ArrayList<>();
-        seasons.add("s01");
+        List<Integer> seasons = new ArrayList<>();
+        seasons.add(1);
         Assert.assertEquals(2, tvSeries.getChapters().size());
         Assert.assertEquals("ch1", tvSeries.getChapters().get(0).getTitle());
         Assert.assertEquals("ch2", tvSeries.getChapters().get(1).getTitle());
-        Assert.assertEquals(2, tvSeries.getChapters("s01").size());
-        Assert.assertEquals("ch1", tvSeries.getChapters("s01").get(0).getTitle());
-        Assert.assertEquals("ch2", tvSeries.getChapters("s01").get(1).getTitle());
+        Assert.assertEquals(2, tvSeries.getChapters(1).size());
+        Assert.assertEquals("ch1", tvSeries.getChapters(1).get(0).getTitle());
+        Assert.assertEquals("ch2", tvSeries.getChapters(1).get(1).getTitle());
         Assert.assertEquals(seasons, tvSeries.getSeasons());
         Assert.assertEquals(1, chapter1.getTVSeries().size());
         Assert.assertEquals("Predator", chapter1.getTVSeries().get(0).getTitle());
@@ -409,7 +411,8 @@ public class Test {
         chapter1.addCountry(CountryCode.US);
         chapter1.addExternalURI("url1");
         chapter1.addExternalURI("url2");
-        chapter1.setSeason("01");
+        chapter1.setSeason(1);
+        chapter1.setNumber(2);
         chapter1.setMinutes(150);
 
         List<CountryCode> countries = new ArrayList<>();
@@ -423,7 +426,8 @@ public class Test {
         Assert.assertEquals(new Integer(1999), chapter1.getYear());
         ListAssert.assertEquals(countries, chapter1.getCountries());
         ListAssert.assertEquals(externalURLs, chapter1.getExternalURIs());
-        Assert.assertEquals("01", chapter1.getSeason());
+        Assert.assertEquals(new Integer(1), chapter1.getSeason());
+        Assert.assertEquals(new Integer(2), chapter1.getNumber());
         Assert.assertEquals(new Integer(150), chapter1.getMinutes());
 
         TVSeries tvSeries = new TVSeries(dbPath);
