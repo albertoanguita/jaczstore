@@ -6,6 +6,7 @@ package jacz.database.util;
 public enum GenreCode {
 
     ACTION,
+    ADULT,
     ADVENTURE,
     ANIMATION,
     BIOGRAPHY,
