@@ -123,6 +123,7 @@ public class Test {
         movie1.setOriginalTitle("Titanic original");
         movie1.setYear(1999);
         movie1.setSynopsis("A synopsis...");
+        movie1.setSynopsisLocalizedLanguage(new LocalizedLanguage(LanguageCode.ab, CountryCode.AM));
         movie1.addCountry(CountryCode.ES);
         movie1.addCountry(CountryCode.US);
         movie1.addExternalURI("url1");
@@ -145,6 +146,7 @@ public class Test {
         Assert.assertEquals("Titanic original", movie1.getOriginalTitle());
         Assert.assertEquals(new Integer(1999), movie1.getYear());
         Assert.assertEquals("A synopsis...", movie1.getSynopsis());
+        Assert.assertEquals(new LocalizedLanguage(LanguageCode.ab, CountryCode.AM), movie1.getSynopsisLocalizedLanguage());
         ListAssert.assertEquals(countries, movie1.getCountries());
         ListAssert.assertEquals(externalURLs, movie1.getExternalURIs());
         ListAssert.assertEquals(genres, movie1.getGenres());
