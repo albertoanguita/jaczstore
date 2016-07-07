@@ -99,6 +99,9 @@ public class Test {
         movie1.setTitle("Predator");
         movie2.setTitle("Alien");
         movie3.setTitle("Rambo");
+        movie1.setTitleLocalizedLanguage(new LocalizedLanguage(LanguageCode.es));
+        movie2.setTitleLocalizedLanguage(new LocalizedLanguage(LanguageCode.en, CountryCode.AF));
+        movie3.setTitleLocalizedLanguage(null);
 
         Assert.assertEquals(3, Movie.getMovies(dbPath).size());
         Assert.assertEquals(LanguageCode.es, Movie.getMovies(dbPath).get(0).getLanguage());
@@ -107,6 +110,9 @@ public class Test {
         Assert.assertEquals("Predator", Movie.getMovies(dbPath).get(0).getTitle());
         Assert.assertEquals("Alien", Movie.getMovies(dbPath).get(1).getTitle());
         Assert.assertEquals("Rambo", Movie.getMovies(dbPath).get(2).getTitle());
+        Assert.assertEquals(new LocalizedLanguage(LanguageCode.es), Movie.getMovies(dbPath).get(0).getTitleLocalizedLanguage());
+        Assert.assertEquals(new LocalizedLanguage(LanguageCode.en, CountryCode.AF), Movie.getMovies(dbPath).get(1).getTitleLocalizedLanguage());
+        Assert.assertEquals(null, Movie.getMovies(dbPath).get(2).getTitleLocalizedLanguage());
 
         movie2.delete();
         Assert.assertEquals(2, Movie.getMovies(dbPath).size());
