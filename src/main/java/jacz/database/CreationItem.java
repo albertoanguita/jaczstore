@@ -3,6 +3,7 @@ package jacz.database;
 import com.neovisionaries.i18n.CountryCode;
 import com.neovisionaries.i18n.LanguageCode;
 import jacz.database.util.ItemIntegrator;
+import jacz.database.util.LocalizedLanguage;
 import jacz.util.AI.inference.Mycin;
 import org.javalite.activejdbc.Model;
 
@@ -83,6 +84,18 @@ public abstract class CreationItem extends DatabaseItem {
         set(DatabaseMediator.Field.TITLE, title, false);
     }
 
+    public LocalizedLanguage getTitleLocalizedLanguage() {
+        return LocalizedLanguage.deserialize(getString(DatabaseMediator.Field.TITLE_LOCALIZED_LANGUAGE));
+    }
+
+    public void setTitleLocalizedLanguage(LocalizedLanguage localizedLanguage) {
+        set(DatabaseMediator.Field.TITLE_LOCALIZED_LANGUAGE, LocalizedLanguage.serialize(localizedLanguage), true);
+    }
+
+    public void setTitleLocalizedLanguagePostponed(LocalizedLanguage localizedLanguage) {
+        set(DatabaseMediator.Field.TITLE_LOCALIZED_LANGUAGE, LocalizedLanguage.serialize(localizedLanguage), false);
+    }
+
     public String getOriginalTitle() {
         return getString(DatabaseMediator.Field.ORIGINAL_TITLE);
     }
@@ -117,6 +130,18 @@ public abstract class CreationItem extends DatabaseItem {
 
     public void setSynopsisPostponed(String synopsis) {
         set(DatabaseMediator.Field.SYNOPSIS, synopsis, false);
+    }
+
+    public LocalizedLanguage getSynopsisLocalizedLanguage() {
+        return LocalizedLanguage.deserialize(getString(DatabaseMediator.Field.SYNOPSIS_LOCALIZED_LANGUAGE));
+    }
+
+    public void setSynopsisLocalizedLanguage(LocalizedLanguage localizedLanguage) {
+        set(DatabaseMediator.Field.SYNOPSIS_LOCALIZED_LANGUAGE, LocalizedLanguage.serialize(localizedLanguage), true);
+    }
+
+    public void setSynopsisLocalizedLanguagePostponed(LocalizedLanguage localizedLanguage) {
+        set(DatabaseMediator.Field.SYNOPSIS_LOCALIZED_LANGUAGE, LocalizedLanguage.serialize(localizedLanguage), false);
     }
 
     public List<CountryCode> getCountries() {
