@@ -60,17 +60,17 @@ public abstract class CreationItem extends DatabaseItem {
         super(model, dbPath);
     }
 
-    public LanguageCode getLanguage() {
-        return getEnum(DatabaseMediator.Field.LANGUAGE, LanguageCode.class);
-    }
-
-    public void setLanguage(LanguageCode language) {
-        setEnum(DatabaseMediator.Field.LANGUAGE, LanguageCode.class, language, DatabaseMediator.LANGUAGE_NAME_METHOD, true);
-    }
-
-    public void setLanguagePostponed(LanguageCode language) {
-        setEnum(DatabaseMediator.Field.LANGUAGE, LanguageCode.class, language, DatabaseMediator.LANGUAGE_NAME_METHOD, false);
-    }
+//    public LanguageCode getLanguage() {
+//        return getEnum(DatabaseMediator.Field.LANGUAGE, LanguageCode.class);
+//    }
+//
+//    public void setLanguage(LanguageCode language) {
+//        setEnum(DatabaseMediator.Field.LANGUAGE, LanguageCode.class, language, DatabaseMediator.LANGUAGE_NAME_METHOD, true);
+//    }
+//
+//    public void setLanguagePostponed(LanguageCode language) {
+//        setEnum(DatabaseMediator.Field.LANGUAGE, LanguageCode.class, language, DatabaseMediator.LANGUAGE_NAME_METHOD, false);
+//    }
 
     public String getTitle() {
         return getString(DatabaseMediator.Field.TITLE);
@@ -429,11 +429,14 @@ public abstract class CreationItem extends DatabaseItem {
     @Override
     public void mergeBasicPostponed(DatabaseItem anotherItem) {
         CreationItem anotherCreationItem = (CreationItem) anotherItem;
-        if (getLanguage() == null && anotherCreationItem.getLanguage() != null) {
-            setLanguagePostponed(anotherCreationItem.getLanguage());
-        }
+//        if (getLanguage() == null && anotherCreationItem.getLanguage() != null) {
+//            setLanguagePostponed(anotherCreationItem.getLanguage());
+//        }
         if (getTitle() == null && anotherCreationItem.getTitle() != null) {
             setTitlePostponed(anotherCreationItem.getTitle());
+        }
+        if (getTitleLocalizedLanguage() == null && anotherCreationItem.getTitleLocalizedLanguage() != null) {
+            setTitleLocalizedLanguagePostponed(anotherCreationItem.getTitleLocalizedLanguage());
         }
         if (getOriginalTitle() == null && anotherCreationItem.getOriginalTitle() != null) {
             setOriginalTitlePostponed(anotherCreationItem.getOriginalTitle());
@@ -443,6 +446,9 @@ public abstract class CreationItem extends DatabaseItem {
         }
         if (getSynopsis() == null && anotherCreationItem.getSynopsis() != null) {
             setSynopsisPostponed(anotherCreationItem.getSynopsis());
+        }
+        if (getSynopsisLocalizedLanguage() == null && anotherCreationItem.getSynopsisLocalizedLanguage() != null) {
+            setSynopsisLocalizedLanguagePostponed(anotherCreationItem.getSynopsisLocalizedLanguage());
         }
         for (String creator : anotherCreationItem.getCreators()) {
             addCreatorPostponed(creator);

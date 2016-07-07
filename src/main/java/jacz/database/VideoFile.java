@@ -230,6 +230,9 @@ public final class VideoFile extends File {
         if (getResolution() == null && anotherVideoFile.getResolution() != null) {
             setResolutionPostponed(anotherVideoFile.getResolution());
         }
+        if (getBitrate() == null && anotherVideoFile.getBitrate() != null) {
+            setBitratePostponed(anotherVideoFile.getBitrate());
+        }
         if (getQuality() == null && anotherVideoFile.getQuality() != null) {
             setQualityPostponed(anotherVideoFile.getQuality());
         }
