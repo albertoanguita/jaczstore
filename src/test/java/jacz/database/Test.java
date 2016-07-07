@@ -39,21 +39,15 @@ public class Test {
 
         String id = ThreadExecutor.registerClient("A");
 
-        ThreadExecutor.submit(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < 1000; i++) {
-                    Movie.getMovies(dbPath);
-                }
+        ThreadExecutor.submit(() -> {
+            for (int i = 0; i < 1000; i++) {
+                Movie.getMovies(dbPath);
             }
         });
 
-        ThreadExecutor.submit(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < 1000; i++) {
-                    Movie.getMovies("store2.db");
-                }
+        ThreadExecutor.submit(() -> {
+            for (int i = 0; i < 1000; i++) {
+                Movie.getMovies(dbPath);
             }
         });
 
@@ -652,6 +646,7 @@ public class Test {
         videoFile.addAdditionalSource("torrent2");
         videoFile.setMinutes(120);
         videoFile.setResolution(1080);
+        videoFile.setBitrate(970);
         videoFile.setQuality(QualityCode.HD);
         videoFile.addLocalizedLanguage(new LocalizedLanguage(LanguageCode.es, CountryCode.ES));
         videoFile.addLocalizedLanguage(new LocalizedLanguage(LanguageCode.en, CountryCode.US));
@@ -669,6 +664,7 @@ public class Test {
         ListAssert.assertEquals(additionalSources, videoFile.getAdditionalSources());
         Assert.assertEquals(new Integer(120), videoFile.getMinutes());
         Assert.assertEquals(new Integer(1080), videoFile.getResolution());
+        Assert.assertEquals(new Integer(970), videoFile.getBitrate());
         Assert.assertEquals(QualityCode.HD, videoFile.getQuality());
         ListAssert.assertEquals(localizedLanguages, videoFile.getLocalizedLanguages());
 
