@@ -604,16 +604,16 @@ public abstract class DatabaseItem {
                             return false;
                         }
                         break;
-                    case LANGUAGE:
-                        LanguageCode language1 = getEnum(DatabaseMediator.Field.LANGUAGE, LanguageCode.class);
-                        LanguageCode language2 = that.getEnum(DatabaseMediator.Field.LANGUAGE, LanguageCode.class);
-                        if (onlyOneDefined(language1, language2)) {
-                            return false;
-                        }
-                        if (bothDefined(language1, language2) && !language1.equals(language2)) {
-                            return false;
-                        }
-                        break;
+//                    case LANGUAGE:
+//                        LanguageCode language1 = getEnum(DatabaseMediator.Field.LANGUAGE, LanguageCode.class);
+//                        LanguageCode language2 = that.getEnum(DatabaseMediator.Field.LANGUAGE, LanguageCode.class);
+//                        if (onlyOneDefined(language1, language2)) {
+//                            return false;
+//                        }
+//                        if (bothDefined(language1, language2) && !language1.equals(language2)) {
+//                            return false;
+//                        }
+//                        break;
                     case LOCALIZED_LANGUAGE:
                         LocalizedLanguage localizedLanguage1 = LocalizedLanguage.deserialize(getString(DatabaseMediator.Field.LOCALIZED_LANGUAGE));;
                         LocalizedLanguage localizedLanguage2 = LocalizedLanguage.deserialize(that.getString(DatabaseMediator.Field.LOCALIZED_LANGUAGE));;

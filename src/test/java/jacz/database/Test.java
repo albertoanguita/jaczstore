@@ -93,9 +93,9 @@ public class Test {
         Movie movie1 = new Movie(dbPath, 517);
         Movie movie2 = new Movie(dbPath);
         Movie movie3 = new Movie(dbPath);
-        movie1.setLanguage(LanguageCode.es);
-        movie2.setLanguage(LanguageCode.en);
-        movie3.setLanguage(null);
+//        movie1.setLanguage(LanguageCode.es);
+//        movie2.setLanguage(LanguageCode.en);
+//        movie3.setLanguage(null);
         movie1.setTitle("Predator");
         movie2.setTitle("Alien");
         movie3.setTitle("Rambo");
@@ -104,9 +104,9 @@ public class Test {
         movie3.setTitleLocalizedLanguage(null);
 
         Assert.assertEquals(3, Movie.getMovies(dbPath).size());
-        Assert.assertEquals(LanguageCode.es, Movie.getMovies(dbPath).get(0).getLanguage());
-        Assert.assertEquals(LanguageCode.en, Movie.getMovies(dbPath).get(1).getLanguage());
-        Assert.assertEquals(null, Movie.getMovies(dbPath).get(2).getLanguage());
+//        Assert.assertEquals(LanguageCode.es, Movie.getMovies(dbPath).get(0).getLanguage());
+//        Assert.assertEquals(LanguageCode.en, Movie.getMovies(dbPath).get(1).getLanguage());
+//        Assert.assertEquals(null, Movie.getMovies(dbPath).get(2).getLanguage());
         Assert.assertEquals("Predator", Movie.getMovies(dbPath).get(0).getTitle());
         Assert.assertEquals("Alien", Movie.getMovies(dbPath).get(1).getTitle());
         Assert.assertEquals("Rambo", Movie.getMovies(dbPath).get(2).getTitle());
