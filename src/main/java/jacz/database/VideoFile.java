@@ -98,6 +98,18 @@ public final class VideoFile extends File {
         set(DatabaseMediator.Field.RESOLUTION, resolution, false);
     }
 
+    public Integer getBitrate() {
+        return getInteger(DatabaseMediator.Field.BITRATE);
+    }
+
+    public void setBitrate(Integer bitrate) {
+        set(DatabaseMediator.Field.BITRATE, bitrate, true);
+    }
+
+    public void setBitratePostponed(Integer bitrate) {
+        set(DatabaseMediator.Field.BITRATE, bitrate, false);
+    }
+
     public QualityCode getQuality() {
         return getEnum(DatabaseMediator.Field.QUALITY_CODE, QualityCode.class);
     }
