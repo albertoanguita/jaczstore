@@ -5,7 +5,7 @@ import com.neovisionaries.i18n.LanguageCode;
 import jacz.database.util.GenreCode;
 import jacz.database.util.LocalizedLanguage;
 import jacz.database.util.QualityCode;
-import jacz.util.io.serialization.activejdbcsupport.ActiveJDBCController;
+import org.aanguita.jacuzzi.io.serialization.activejdbcsupport.ActiveJDBCController;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 

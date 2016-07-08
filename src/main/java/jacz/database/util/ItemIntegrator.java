@@ -1,7 +1,7 @@
 package jacz.database.util;
 
-import jacz.util.AI.inference.Mycin;
-import jacz.util.numeric.NumericUtil;
+import org.aanguita.jacuzzi.AI.inference.Mycin;
+import org.aanguita.jacuzzi.numeric.NumericUtil;
 
 import java.util.List;
 

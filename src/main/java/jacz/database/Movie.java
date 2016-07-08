@@ -1,7 +1,7 @@
 package jacz.database;
 
 import jacz.database.util.ItemIntegrator;
-import jacz.util.AI.inference.Mycin;
+import org.aanguita.jacuzzi.AI.inference.Mycin;
 import org.javalite.activejdbc.Model;
 
 import java.util.ArrayList;

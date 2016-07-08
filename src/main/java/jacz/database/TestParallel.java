@@ -1,7 +1,7 @@
 package jacz.database;
 
-import jacz.util.concurrency.ThreadUtil;
-import jacz.util.concurrency.task_executor.ThreadExecutor;
+import org.aanguita.jacuzzi.concurrency.ThreadUtil;
+import org.aanguita.jacuzzi.concurrency.task_executor.ThreadExecutor;
 
 /**
  * Created by Alberto on 05/02/2016.

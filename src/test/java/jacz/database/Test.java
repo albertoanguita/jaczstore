@@ -3,9 +3,9 @@ package jacz.database;
 import com.neovisionaries.i18n.CountryCode;
 import com.neovisionaries.i18n.LanguageCode;
 import jacz.database.util.*;
-import jacz.util.concurrency.ThreadUtil;
-import jacz.util.concurrency.task_executor.ThreadExecutor;
-import jacz.util.io.serialization.activejdbcsupport.ActiveJDBCController;
+import org.aanguita.jacuzzi.concurrency.ThreadUtil;
+import org.aanguita.jacuzzi.concurrency.task_executor.ThreadExecutor;
+import org.aanguita.jacuzzi.io.serialization.activejdbcsupport.ActiveJDBCController;
 import junitx.framework.ListAssert;
 import org.junit.Assert;
 

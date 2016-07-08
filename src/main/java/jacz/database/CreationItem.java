@@ -4,7 +4,7 @@ import com.neovisionaries.i18n.CountryCode;
 import com.neovisionaries.i18n.LanguageCode;
 import jacz.database.util.ItemIntegrator;
 import jacz.database.util.LocalizedLanguage;
-import jacz.util.AI.inference.Mycin;
+import org.aanguita.jacuzzi.AI.inference.Mycin;
 import org.javalite.activejdbc.Model;
 
 import java.net.URI;
