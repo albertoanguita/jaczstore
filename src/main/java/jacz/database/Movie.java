@@ -169,4 +169,11 @@ public final class Movie extends ProducedCreationItem {
             addReferencedElementId(DatabaseMediator.Field.VIDEO_FILE_LIST, videoFileId, false);
         }
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                ", minutes='" + getMinutes() +
+                ", video file ids='" + getVideoFilesIds();
+    }
 }

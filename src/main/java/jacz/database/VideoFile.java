@@ -296,4 +296,15 @@ public final class VideoFile extends File {
         }
         super.delete();
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                ", minutes=" + getMinutes() +
+                ", res=" + getResolution() +
+                ", bitrate=" + getBitrate() +
+                ", quality=" + getQuality() +
+                ", subtitles=" + getSubtitleFilesIds() +
+                ", localized languages=" + getLocalizedLanguages();
+    }
 }

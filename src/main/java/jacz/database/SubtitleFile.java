@@ -112,4 +112,10 @@ public final class SubtitleFile extends File {
         }
         super.delete();
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                ", localized language=" + getLocalizedLanguage();
+    }
 }

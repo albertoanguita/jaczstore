@@ -690,4 +690,14 @@ public abstract class DatabaseItem {
     protected void disconnect() {
         DatabaseMediator.disconnect(dbPath);
     }
+
+    @Override
+    public String toString() {
+        return "DatabaseItem{" +
+                "dbPath='" + dbPath + '\'' +
+                ", type=" + getItemType() +
+                ", id=" + getId() +
+                ", pendingChanges=" + pendingChanges +
+                '}';
+    }
 }

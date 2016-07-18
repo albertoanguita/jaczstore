@@ -135,4 +135,13 @@ public abstract class File extends DatabaseItem {
             addAdditionalSource(additionalSource);
         }
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                ", hash=" + getHash() +
+                ", length=" + getLength() +
+                ", name=" + getName() +
+                ", add sources=" + getAdditionalSources();
+    }
 }

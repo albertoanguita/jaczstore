@@ -49,7 +49,7 @@ public abstract class CreationItem extends DatabaseItem {
     private static Map<DatabaseMediator.Field, Object> buildInitialValues(String title) {
         Map<DatabaseMediator.Field, Object> initialValues = new HashMap<>();
         initialValues.put(DatabaseMediator.Field.TITLE, title);
-        return  initialValues;
+        return initialValues;
     }
 
     public CreationItem(String dbPath, Integer id) {
@@ -411,7 +411,6 @@ public abstract class CreationItem extends DatabaseItem {
     }
 
 
-
     @Override
     public float match(DatabaseItem anotherItem) {
         float similarity = super.match(anotherItem);
@@ -462,5 +461,19 @@ public abstract class CreationItem extends DatabaseItem {
         for (String externalURL : anotherCreationItem.getExternalURIs()) {
             addExternalURIPostponed(externalURL);
         }
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                ", title'" + getTitle() +
+                ", title localized language=" + getTitleLocalizedLanguage() +
+                ", original title=" + getOriginalTitle() +
+                ", year=" + getYear() +
+                ", synopsis=" + getSynopsis() +
+                ", countries=" + getCountries() +
+                ", external URIs=" + getExternalURIs() +
+                ", creators=" + getCreators() +
+                ", actors=" + getActors();
     }
 }

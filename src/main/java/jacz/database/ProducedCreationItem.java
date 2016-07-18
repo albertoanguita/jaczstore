@@ -235,4 +235,12 @@ public abstract class ProducedCreationItem extends CreationItem {
 //            addReferencedElementId(DatabaseMediator.Field.COMPANY_LIST, companyId, false);
 //        }
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                ", production companies='" + getProductionCompanies() +
+                ", genres=" + getGenres() +
+                ", image hash=" + getImageHash();
+    }
 }

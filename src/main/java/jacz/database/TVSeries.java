@@ -170,4 +170,10 @@ public final class TVSeries extends ProducedCreationItem {
             addReferencedElementId(DatabaseMediator.Field.CHAPTER_LIST, chapterId, false);
         }
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                ", chapters=" + getChaptersIds();
+    }
 }

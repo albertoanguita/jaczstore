@@ -238,4 +238,13 @@ public final class Chapter extends CreationItem {
         }
         super.delete();
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                ", season=" + getSeason() +
+                ", number=" + getNumber() +
+                ", minutes=" + getMinutes() +
+                ", video file ids='" + getVideoFilesIds();
+    }
 }
